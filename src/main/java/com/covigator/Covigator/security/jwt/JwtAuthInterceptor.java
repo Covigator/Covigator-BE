@@ -1,4 +1,4 @@
-package com.covigator.Covigator.common.interceptor;
+package com.covigator.Covigator.security.jwt;
 
 import com.covigator.Covigator.exception.jwt.JwtNotFoundException;
 import com.covigator.Covigator.exception.jwt.JwtUnsupportedTokenException;
