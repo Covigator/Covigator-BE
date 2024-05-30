@@ -3,6 +3,7 @@ package com.covigator.Covigator.service;
 import com.covigator.Covigator.domain.Member;
 import com.covigator.Covigator.repository.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ class MemberServiceTest {
     @Autowired
     MemberRepository memberRepository;
 
-    @AfterEach
+    @BeforeEach
     void tearDown() {
         memberRepository.deleteAllInBatch();
     }
