@@ -20,7 +20,6 @@ public class MemberController {
 
     @PostMapping
     public ResponseEntity<Void> signUp(@RequestBody MemberSignUpRequest request) {
-        log.info("MemberController.signUp");
         memberService.signUp(request.toEntity());
         return ResponseEntity.ok().build();
     }

@@ -1,7 +1,7 @@
 package com.covigator.Covigator.service;
 
 import com.covigator.Covigator.domain.Member;
-import com.covigator.Covigator.exception.DuplicateMemberException;
+import com.covigator.Covigator.exception.badrequest.DuplicateMemberException;
 import com.covigator.Covigator.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class MemberService {
     private void validateDuplicateMember(Member member) {
         Optional<Member> savedMember = memberRepository.findByEmail(member.getEmail());
         if(savedMember.isPresent()) {
-            throw new DuplicateMemberException("이미 가입된 사용자입니다.");
+            throw new DuplicateMemberException();
         }
     }
 }
