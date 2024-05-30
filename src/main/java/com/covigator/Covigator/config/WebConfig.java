@@ -1,6 +1,6 @@
 package com.covigator.Covigator.config;
 
-import com.covigator.Covigator.common.interceptor.JwtAuthInterceptor;
+import com.covigator.Covigator.security.jwt.JwtAuthInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

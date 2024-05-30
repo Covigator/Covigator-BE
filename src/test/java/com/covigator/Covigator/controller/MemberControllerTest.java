@@ -1,8 +1,7 @@
 package com.covigator.Covigator.controller;
 
-import com.covigator.Covigator.common.interceptor.JwtAuthInterceptor;
+import com.covigator.Covigator.security.jwt.JwtAuthInterceptor;
 import com.covigator.Covigator.dto.request.MemberSignUpRequest;
-import com.covigator.Covigator.security.jwt.JwtProvider;
 import com.covigator.Covigator.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -14,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
