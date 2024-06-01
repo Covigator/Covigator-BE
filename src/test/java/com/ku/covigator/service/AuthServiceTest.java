@@ -79,11 +79,12 @@ class AuthServiceTest {
     @Test
     void signInWithInvalidPassword() {
         //given
+        String email = "covi@naver.com";
         String password = "covigator123";
         String invalidPassword = "invalidPassword";
         Member member = Member.builder()
                 .name("김코비")
-                .email("covi@naver.com")
+                .email(email)
                 .password(password)
                 .nickname("covi")
                 .imageUrl("www.covi.com")
@@ -92,7 +93,7 @@ class AuthServiceTest {
         memberRepository.save(member);
 
         //when //then
-        assertThatThrownBy(() -> authService.signIn(member.getEmail(), invalidPassword))
+        assertThatThrownBy(() -> authService.signIn(email, invalidPassword))
                 .isInstanceOf(PasswordMismatchException.class);
     }
 }

@@ -59,15 +59,15 @@ class JwtProviderTest {
     void getPayloadByExpiredToken() throws InterruptedException {
         //given
         String jwtSecretKey = "covicovicovicovicovicovicovicovicovicovicovicovicovicovicovicovi";
-        JwtProperties jwtProperties = new JwtProperties(jwtSecretKey, 1L);
-        JwtProvider jwtProvider = new JwtProvider(jwtProperties);
+        JwtProperties jwtProperties = new JwtProperties(jwtSecretKey, 0L);
+        JwtProvider customJwtProvider = new JwtProvider(jwtProperties);
 
         //when
-        String token = jwtProvider.createToken("covi@naver.com");
+        String token = customJwtProvider.createToken("covi@naver.com");
         sleep(1);
 
         //then
-        assertThatThrownBy(() -> jwtProvider.getPrincipal(token))
+        assertThatThrownBy(() -> customJwtProvider.getPrincipal(token))
                 .isInstanceOf(JwtExpiredException.class);
     }
 
@@ -95,15 +95,15 @@ class JwtProviderTest {
     void expiredTokenThrowsException() throws InterruptedException {
         //given
         String jwtSecretKey = "covicovicovicovicovicovicovicovicovicovicovicovicovicovicovicovi";
-        JwtProperties jwtProperties = new JwtProperties(jwtSecretKey, 1L);
-        JwtProvider jwtProvider = new JwtProvider(jwtProperties);
+        JwtProperties jwtProperties = new JwtProperties(jwtSecretKey, 0L);
+        JwtProvider customJwtProvider = new JwtProvider(jwtProperties);
 
         //when
-        String token = jwtProvider.createToken("covi@naver.com");
+        String token = customJwtProvider.createToken("covi@naver.com");
         sleep(1);
 
         //then
-        assertThatThrownBy(() -> jwtProvider.validateToken(token))
+        assertThatThrownBy(() -> customJwtProvider.validateToken(token))
                 .isInstanceOf(JwtExpiredException.class);
     }
 
