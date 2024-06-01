@@ -66,15 +66,6 @@ tasks.named('test') {
 
 def jacocoDir = layout.buildDirectory.dir("reports/")
 
-def jacocoExcludePatterns = [
-		// 측정에서 제외하는 패턴
-		"**/*Application*",
-		"**/config/*",
-		"**/exception/*",
-		"**/security/*",
-		"**/support/*"
-]
-
 jacocoTestReport {
 	dependsOn test //테스트가 수행되어야만 report를 생성할 수 있도록 설정
 	reports {
@@ -87,7 +78,13 @@ jacocoTestReport {
 	afterEvaluate {
 		classDirectories.setFrom(
 				files(classDirectories.files.collect {
-					fileTree(dir: it, excludes: jacocoExcludePatterns)
+					fileTree(dir: it, excludes: [
+							"**/*Application*",
+							"**/config/*",
+							"**/exception/*",
+							"**/security/*",
+							"**/support/*"
+					])
 				})
 		)
 	}
@@ -120,7 +117,13 @@ jacocoTestCoverageVerification {
 				minimum = 0.60
 			}
 
-			excludes = jacocoExcludePatterns
+			excludes = [
+					"**/*Application*",
+					"**/config/*",
+					"**/exception/*",
+					"**/security/*",
+					"**/support/*"
+			]
 		}
 	}
 }
