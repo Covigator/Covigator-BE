@@ -10,6 +10,10 @@ on:
       - main
       - develop
 
+env:
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  JWT_EXPIRATION_LENGTH: ${{ secrets.JWT_EXPIRATION_LENGTH }}
+
 jobs:
   build:
     name: Build and analyze
