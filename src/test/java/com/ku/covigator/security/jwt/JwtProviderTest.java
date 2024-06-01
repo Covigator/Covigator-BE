@@ -64,7 +64,6 @@ class JwtProviderTest {
 
         //when
         String token = customJwtProvider.createToken("covi@naver.com");
-        sleep(1);
 
         //then
         assertThatThrownBy(() -> customJwtProvider.getPrincipal(token))
@@ -100,7 +99,6 @@ class JwtProviderTest {
 
         //when
         String token = customJwtProvider.createToken("covi@naver.com");
-        sleep(1);
 
         //then
         assertThatThrownBy(() -> customJwtProvider.validateToken(token))
