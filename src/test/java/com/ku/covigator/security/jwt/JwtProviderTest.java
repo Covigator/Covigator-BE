@@ -56,7 +56,7 @@ class JwtProviderTest {
 
     @DisplayName("만료된 토큰으로 payload 를 조회할 경우 예외를 발생시킨다.")
     @Test
-    void getPayloadByExpiredToken() throws InterruptedException {
+    void getPayloadByExpiredToken() {
         //given
         String jwtSecretKey = "covicovicovicovicovicovicovicovicovicovicovicovicovicovicovicovi";
         JwtProperties jwtProperties = new JwtProperties(jwtSecretKey, 0L);
@@ -91,7 +91,7 @@ class JwtProviderTest {
 
     @DisplayName("만료된 토큰 검증 시 예외가 발생한다.")
     @Test
-    void expiredTokenThrowsException() throws InterruptedException {
+    void expiredTokenThrowsException() {
         //given
         String jwtSecretKey = "covicovicovicovicovicovicovicovicovicovicovicovicovicovicovicovi";
         JwtProperties jwtProperties = new JwtProperties(jwtSecretKey, 0L);
