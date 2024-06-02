@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 
 @Transactional
@@ -40,7 +42,8 @@ class TravelStyleServiceTest {
         memberRepository.save(member);
 
         //when
-        long savedTravelStyleId = travelStyleService.saveTravelStyle(member.getId(), travelStyle);
+        travelStyleService.saveTravelStyle(member.getId(), travelStyle);
+        Long savedTravelStyleId = travelStyleRepository.findAll().getFirst().getId();
         Member savedMember = memberRepository.findById(member.getId()).get();
 
         //then
@@ -99,7 +102,8 @@ class TravelStyleServiceTest {
                 .build();
 
         //when
-        long travelStyleId = travelStyleService.updateTravelStyle(savedMemberId, updatedTravelStyle);
+        travelStyleService.updateTravelStyle(savedMemberId, updatedTravelStyle);
+        Long travelStyleId = travelStyleRepository.findAll().getFirst().getId();
         TravelStyle savedTravelStyle = travelStyleRepository.findById(travelStyleId).get();
 
         //then

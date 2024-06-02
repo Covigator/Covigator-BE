@@ -1,11 +1,9 @@
 package com.ku.covigator.domain.travelstyle;
 
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class TravelStyleTest {
 
@@ -37,6 +35,35 @@ class TravelStyleTest {
         assertThat(travelStyle.getPlanningType()).isEqualTo(PlanningType.PLANNED);
         assertThat(travelStyle.getFamiliarity()).isEqualTo(Familiarity.FAMILIAR);
         assertThat(travelStyle.getActivityType()).isEqualTo(ActivityType.ACTIVITY);
+    }
+
+    @DisplayName("여행 스타일을 모두 변경한다.")
+    @Test
+    void patchTravelStyleAll() {
+        //given
+        TravelStyle travelStyle = TravelStyle.builder()
+                .areaType(AreaType.CITY)
+                .planningType(PlanningType.PLANNED)
+                .familiarity(Familiarity.FAMILIAR)
+                .photoPriority(PhotoPriority.IMPORTANT)
+                .popularity(Popularity.WELL_KNOWN)
+                .activityType(ActivityType.ACTIVITY)
+                .build();
+
+        TravelStyle newTravelStyle = TravelStyle.builder()
+                .areaType(AreaType.NATURE)
+                .planningType(PlanningType.SITUATIONAL)
+                .familiarity(Familiarity.NEW)
+                .photoPriority(PhotoPriority.NOT_IMPORTANT)
+                .popularity(Popularity.NOT_WIDELY_KNOWN)
+                .activityType(ActivityType.REST)
+                .build();
+
+        //when
+        travelStyle.patchTravelStyle(newTravelStyle);
+
+        //then
+        assertThat(travelStyle).usingRecursiveComparison().isEqualTo(newTravelStyle);
     }
 
 }

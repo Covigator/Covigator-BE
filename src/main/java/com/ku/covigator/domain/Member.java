@@ -58,8 +58,7 @@ public class Member extends BaseTime{
         this.travelStyle = travelStyle;
     }
 
-    public Long updateTravelStyle(TravelStyle newTravelStyle) {
+    public void updateTravelStyle(TravelStyle newTravelStyle) {
         this.travelStyle.patchTravelStyle(newTravelStyle);
-        return this.travelStyle.getId();
     }
 }
