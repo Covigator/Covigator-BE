@@ -1,7 +1,8 @@
 package com.ku.covigator.controller;
 
+import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
 import com.ku.covigator.security.jwt.JwtAuthInterceptor;
-import com.ku.covigator.dto.request.MemberSignInRequest;
+import com.ku.covigator.dto.request.PostSignInRequest;
 import com.ku.covigator.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -28,14 +29,16 @@ class AuthControllerTest {
     @MockBean
     private AuthService authService;
     @MockBean
-    private JwtAuthInterceptor jwtAuthInterceptor;
+    JwtAuthInterceptor jwtAuthInterceptor;
+    @MockBean
+    JwtAuthArgumentResolver jwtAuthArgumentResolver;
 
     @DisplayName("로그인을 요청한다.")
     @WithMockUser(username = "test")
     @Test
     void signIn() throws Exception {
         //given
-        MemberSignInRequest request = new MemberSignInRequest("covi@naver.com", "covigator123");
+        PostSignInRequest request = new PostSignInRequest("covi@naver.com", "covigator123");
 
         //when //then
         mockMvc.perform(post("/accounts/sign-in")

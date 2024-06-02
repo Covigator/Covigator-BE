@@ -1,7 +1,8 @@
 package com.ku.covigator.controller;
 
+import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
 import com.ku.covigator.security.jwt.JwtAuthInterceptor;
-import com.ku.covigator.dto.request.MemberSignUpRequest;
+import com.ku.covigator.dto.request.PostSignUpRequest;
 import com.ku.covigator.service.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
@@ -28,14 +29,22 @@ class MemberControllerTest {
     @MockBean
     private MemberService memberService;
     @MockBean
-    private JwtAuthInterceptor jwtAuthInterceptor;
+    JwtAuthInterceptor jwtAuthInterceptor;
+    @MockBean
+    JwtAuthArgumentResolver jwtAuthArgumentResolver;
 
     @WithMockUser(username = "test")
     @DisplayName("회원 가입한다.")
     @Test
     void test() throws Exception {
         //given
-        MemberSignUpRequest request = new MemberSignUpRequest("www.covi.com", "김코비", "covi", "covi@naver.com", "covigator123");
+        PostSignUpRequest request = PostSignUpRequest.builder()
+                .email("www.covi.com")
+                .name("김코비")
+                .nickname("covi")
+                .imageUrl("covi@naver.com")
+                .imageUrl("covigator123")
+                .build();
 
         //when //then
         mockMvc.perform(post("/members")
