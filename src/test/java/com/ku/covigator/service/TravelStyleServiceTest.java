@@ -43,11 +43,12 @@ class TravelStyleServiceTest {
 
         //when
         travelStyleService.saveTravelStyle(member.getId(), travelStyle);
-        Long savedTravelStyleId = travelStyleRepository.findAll().getFirst().getId();
+        List<TravelStyle> travelStyles = travelStyleRepository.findAll();
+        TravelStyle savedTravelStyle = travelStyles.getFirst();
         Member savedMember = memberRepository.findById(member.getId()).get();
 
         //then
-        assertThat(savedTravelStyleId).isEqualTo(travelStyle.getId());
+        assertThat(savedTravelStyle.getId()).isEqualTo(travelStyle.getId());
         assertThat(savedMember.getTravelStyle()).usingRecursiveComparison().isEqualTo(travelStyle);
     }
 
@@ -103,7 +104,8 @@ class TravelStyleServiceTest {
 
         //when
         travelStyleService.updateTravelStyle(savedMemberId, updatedTravelStyle);
-        Long travelStyleId = travelStyleRepository.findAll().getFirst().getId();
+        List<TravelStyle> travelStyles = travelStyleRepository.findAll();
+        Long travelStyleId = travelStyles.getFirst().getId();
         TravelStyle savedTravelStyle = travelStyleRepository.findById(travelStyleId).get();
 
         //then
