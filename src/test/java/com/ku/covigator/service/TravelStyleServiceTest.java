@@ -44,7 +44,7 @@ class TravelStyleServiceTest {
         //when
         travelStyleService.saveTravelStyle(member.getId(), travelStyle);
         List<TravelStyle> travelStyles = travelStyleRepository.findAll();
-        TravelStyle savedTravelStyle = travelStyles.getFirst();
+        TravelStyle savedTravelStyle = travelStyles.get(0);
         Member savedMember = memberRepository.findById(member.getId()).get();
 
         //then
@@ -105,7 +105,7 @@ class TravelStyleServiceTest {
         //when
         travelStyleService.updateTravelStyle(savedMemberId, updatedTravelStyle);
         List<TravelStyle> travelStyles = travelStyleRepository.findAll();
-        Long travelStyleId = travelStyles.getFirst().getId();
+        Long travelStyleId = travelStyles.get(0).getId();
         TravelStyle savedTravelStyle = travelStyleRepository.findById(travelStyleId).get();
 
         //then
