@@ -1,22 +1,10 @@
 package com.ku.covigator.dto.request;
 
 import com.ku.covigator.domain.Member;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
 
-@Getter
-@AllArgsConstructor
-public class MemberSignUpRequest {
-    private String imageUrl;
-
-    private String name;
-
-    private String nickname;
-
-    private String email;
-
-    private String password;
-
+@Builder
+public record PostSignUpRequest(String imageUrl, String name, String nickname, String email, String password) {
     public Member toEntity() {
         return Member.builder()
                 .email(email)
