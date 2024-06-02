@@ -1,10 +1,7 @@
 package com.ku.covigator.security.jwt;
 
 import com.ku.covigator.config.properties.JwtProperties;
-import com.ku.covigator.exception.jwt.JwtExpiredException;
-import com.ku.covigator.exception.jwt.JwtInvalidException;
-import com.ku.covigator.exception.jwt.JwtMalformedTokenException;
-import com.ku.covigator.exception.jwt.JwtUnsupportedTokenException;
+import com.ku.covigator.exception.jwt.*;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -18,6 +15,7 @@ public class JwtProvider {
 
     private final JwtProperties jwtProperties;
     private final SecretKey secretKey;
+    private static final String JWT_TOKEN_PREFIX = "Bearer ";
 
     public JwtProvider(JwtProperties jwtProperties) {
         this.jwtProperties = jwtProperties;
@@ -52,6 +50,16 @@ public class JwtProvider {
         return true;
     }
 
+    public String getTokenFromRequestHeader(String requestHeader) {
+        if(requestHeader == null) {
+            throw new JwtNotFoundException();
+        }
+        if(!requestHeader.startsWith(JWT_TOKEN_PREFIX)) {
+            throw new JwtUnsupportedTokenException();
+        }
+        return requestHeader.substring(JWT_TOKEN_PREFIX.length());
+    }
+
     public String getPrincipal(String token) {
         try {
             return Jwts.parser()
@@ -65,6 +73,5 @@ public class JwtProvider {
         } catch (IllegalArgumentException e) {
             throw new JwtInvalidException();
         }
-
     }
 }
