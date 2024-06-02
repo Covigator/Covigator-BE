@@ -6,12 +6,12 @@ import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;
 import com.ku.covigator.security.jwt.JwtProvider;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class AuthService {
 
@@ -19,6 +19,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
 
+    @Transactional(readOnly = true)
     public String signIn(String email, String password) {
 
         Member member = memberRepository.findByEmail(email)
@@ -26,7 +27,7 @@ public class AuthService {
 
         validatePassword(password, member.getPassword());
 
-        return jwtProvider.createToken(member.getEmail());
+        return jwtProvider.createToken(member.getId().toString());
 
     }
 

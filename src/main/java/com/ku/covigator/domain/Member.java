@@ -1,5 +1,6 @@
 package com.ku.covigator.domain;
 
+import com.ku.covigator.domain.travelstyle.TravelStyle;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -35,6 +36,10 @@ public class Member extends BaseTime{
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "travel_style_id", referencedColumnName = "id")
+    private TravelStyle travelStyle;
+
     @Builder
     public Member(String name, String nickname, String email, String password, String imageUrl) {
         this.name = name;
@@ -47,5 +52,14 @@ public class Member extends BaseTime{
 
     public void encodePassword(String encodedPassword) {
         this.password = encodedPassword;
+    }
+
+    public void putTravelStyle(TravelStyle travelStyle) {
+        this.travelStyle = travelStyle;
+    }
+
+    public Long updateTravelStyle(TravelStyle newTravelStyle) {
+        this.travelStyle.patchTravelStyle(newTravelStyle);
+        return this.travelStyle.getId();
     }
 }
