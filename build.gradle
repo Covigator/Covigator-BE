@@ -21,7 +21,8 @@ def jacocoExcludePatterns = [
 		"**/config/*",
 		"**/exception/*",
 		"**/security/*",
-		"**/support/*"
+		"**/support/*",
+		"**/dto/*"
 ]
 
 
@@ -33,7 +34,7 @@ sonar {
 		property 'sonar.sources', 'src'
 		property 'sonar.language', 'java'
 		property 'sonar.sourceEncoding', 'UTF-8'
-		property 'sonar.exclusions', '**/test/**, **/resources/**, **/*Application*, **/config/**, **/exception/**, **/security/**, **/support/**'
+		property 'sonar.exclusions', '**/test/**, **/resources/**, **/*Application*, **/config/**, **/exception/**, **/dto/**, **/security/**, **/support/**'
 		property 'sonar.test.inclusions', '**/*Test.java'
 		property 'sonar.java.coveragePlugin', 'jacoco'
 		property 'sonar.coverage.jacoco.xmlReportPaths', jacocoDir.get().file("jacoco/index.xml").asFile
