@@ -14,24 +14,14 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class JwtAuthInterceptor implements HandlerInterceptor {
 
     private final JwtProvider jwtProvider;
-    private static final String JWT_TOKEN_PREFIX = "Bearer ";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        String accessToken = resolveAccessToken(request);
+        String requestHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String accessToken = jwtProvider.getTokenFromRequestHeader(requestHeader);
         return jwtProvider.validateToken(accessToken);
-    }
 
-    private String resolveAccessToken(HttpServletRequest request) {
-        String accessToken = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(accessToken == null) {
-            throw new JwtNotFoundException();
-        }
-        if(!accessToken.startsWith(JWT_TOKEN_PREFIX)) {
-            throw new JwtUnsupportedTokenException();
-        }
-        return accessToken.substring(JWT_TOKEN_PREFIX.length());
     }
 
 }

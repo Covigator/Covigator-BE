@@ -2,13 +2,12 @@ package com.ku.covigator.service;
 
 import com.ku.covigator.domain.Member;
 import com.ku.covigator.repository.MemberRepository;
+import com.ku.covigator.security.jwt.JwtProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,13 +18,15 @@ class MemberServiceTest {
     MemberService memberService;
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    JwtProvider jwtProvider;
 
     @BeforeEach
     void tearDown() {
         memberRepository.deleteAllInBatch();
     }
 
-    @DisplayName("중복 회원이 아닌 경우 정상적으로 회원 가입 된다.")
+    @DisplayName("중복 회원이 아닌 경우 정상적으로 회원 가입 되어 토큰을 반환한다.")
     @Test
     void signUpSuccessIfThereIsNoDuplicateMember() {
         //given
@@ -38,11 +39,11 @@ class MemberServiceTest {
                 .build();
 
         //when
-        Long savedMemberId = memberService.signUp(member);
-        Optional<Member> savedMember = memberRepository.findById(savedMemberId);
+        String accessToken = memberService.signUp(member);
+        Long savedMemberId = Long.parseLong(jwtProvider.getPrincipal(accessToken));
 
         //then
-        assertThat(savedMember.get().getEmail()).isEqualTo(member.getEmail());
+        assertThat(savedMemberId).isEqualTo(member.getId());
     }
 
     @DisplayName("회원 가입 시 중복 회원은 등록될 수 없다.")

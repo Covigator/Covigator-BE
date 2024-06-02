@@ -1,6 +1,6 @@
 package com.ku.covigator.controller;
 
-import com.ku.covigator.dto.request.MemberSignInRequest;
+import com.ku.covigator.dto.request.PostSignInRequest;
 import com.ku.covigator.dto.response.AccessTokenResponse;
 import com.ku.covigator.service.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +18,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/sign-in")
-    public ResponseEntity<AccessTokenResponse> signIn(@RequestBody MemberSignInRequest request) {
-        String accessToken = authService.signIn(request.getEmail(), request.getPassword());
+    public ResponseEntity<AccessTokenResponse> signIn(@RequestBody PostSignInRequest request) {
+        String accessToken = authService.signIn(request.email(), request.password());
         return ResponseEntity.ok(AccessTokenResponse.from(accessToken));
     }
 
