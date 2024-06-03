@@ -1,18 +1,27 @@
 package com.ku.covigator.service;
 
-import com.ku.covigator.domain.Member;
+import com.ku.covigator.domain.member.Member;
+import com.ku.covigator.domain.member.Platform;
+import com.ku.covigator.dto.response.KakaoSignInResponse;
+import com.ku.covigator.dto.response.KakaoTokenResponse;
+import com.ku.covigator.dto.response.KakaoUserInfoResponse;
 import com.ku.covigator.exception.badrequest.PasswordMismatchException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;
+import com.ku.covigator.security.jwt.JwtProvider;
+import com.ku.covigator.security.kakao.KakaoOauthProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.*;
 
 @SpringBootTest
 class AuthServiceTest {
@@ -23,6 +32,10 @@ class AuthServiceTest {
     MemberRepository memberRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    JwtProvider jwtProvider;
+    @MockBean
+    KakaoOauthProvider kakaoOauthProvider;
 
     @BeforeEach
     void tearDown() {
@@ -42,6 +55,7 @@ class AuthServiceTest {
                 .password(encodedPassword)
                 .nickname("covi")
                 .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
                 .build();
 
         memberRepository.save(member);
@@ -66,6 +80,7 @@ class AuthServiceTest {
                 .password(password)
                 .nickname("covi")
                 .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
                 .build();
 
         memberRepository.save(member);
@@ -88,6 +103,7 @@ class AuthServiceTest {
                 .password(password)
                 .nickname("covi")
                 .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
                 .build();
 
         memberRepository.save(member);
@@ -95,5 +111,129 @@ class AuthServiceTest {
         //when //then
         assertThatThrownBy(() -> authService.signIn(email, invalidPassword))
                 .isInstanceOf(PasswordMismatchException.class);
+    }
+
+    @DisplayName("로컬 회원 가입 시 중복 회원이 아닌 경우 정상적으로 회원 가입 되어 토큰을 반환한다.")
+    @Test
+    void signUpLocalSuccessIfThereIsNoDuplicateMember() {
+        //given
+        Member member = Member.builder()
+                .name("김코비")
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+
+        //when
+        String accessToken = authService.signUp(member);
+        Long savedMemberId = Long.parseLong(jwtProvider.getPrincipal(accessToken));
+
+        //then
+        assertThat(savedMemberId).isEqualTo(member.getId());
+    }
+
+    @DisplayName("로컬 회원 가입 시 중복 회원은 등록될 수 없다.")
+    @Test
+    void signUpLocalFailWhenMemberIsDuplicated() {
+        //given
+        Member member = Member.builder()
+                .name("김코비")
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+
+        Member newMember = Member.builder()
+                .name("박코비")
+                .email("covi@naver.com")
+                .password("covigator1234")
+                .nickname("covi2")
+                .imageUrl("www.covi2.com")
+                .platform(Platform.LOCAL)
+                .build();
+
+        memberRepository.save(member);
+
+        //when //then
+        assertThatThrownBy(() -> authService.signUp(newMember))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("이미 가입된 사용자입니다.");
+    }
+
+    @DisplayName("회원 가입 시 비밀번호는 암호화되어 저장된다.")
+    @Test
+    void saveEncodedPassword() {
+        //given
+        String password = "covigator123";
+        Member member = Member.builder()
+                .name("김코비")
+                .email("covi@naver.com")
+                .password(password)
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+
+        //when
+        authService.signUp(member);
+
+        // then
+        assertThat(member.getPassword()).isNotEqualTo(password);
+    }
+
+    @DisplayName("이미 가입된 회원에 대한 로그인 요청 결과 상태를 반환한다.")
+    @Test
+    void returnIsNewFalseWhenExistsMemberLogIn() {
+        //given
+        String email = "covi@naver.com";
+        Member member = Member.builder()
+                .name("김코비")
+                .email(email)
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.KAKAO)
+                .build();
+
+        memberRepository.save(member);
+
+        KakaoTokenResponse tokenResponse = new KakaoTokenResponse("token", 100);
+        given(kakaoOauthProvider.getKakaoToken("code")).willReturn(tokenResponse);
+
+        KakaoUserInfoResponse userInfoResponse =
+                new KakaoUserInfoResponse(
+                        new KakaoUserInfoResponse.KakaoAccount("name", email,
+                                new KakaoUserInfoResponse.KakaoAccount.Profile("nickname", "image")));
+        given(kakaoOauthProvider.getKakaoUserInfo(any())).willReturn(userInfoResponse);
+
+        //when
+        KakaoSignInResponse response = authService.signInKakao("code");
+
+        //then
+        assertThat(response.isNew()).isEqualTo("False");
+    }
+
+    @DisplayName("신규 회원에 대한 로그인 요청 결과 상태를 반환한다.")
+    @Test
+    void returnIsNewTrueWhenNewMemberLogIn() {
+        //given
+        KakaoTokenResponse tokenResponse = new KakaoTokenResponse("token", 100);
+        given(kakaoOauthProvider.getKakaoToken("code")).willReturn(tokenResponse);
+
+        KakaoUserInfoResponse userInfoResponse =
+                new KakaoUserInfoResponse(
+                        new KakaoUserInfoResponse.KakaoAccount("name", "email",
+                                new KakaoUserInfoResponse.KakaoAccount.Profile("nickname", "image")));
+        given(kakaoOauthProvider.getKakaoUserInfo(any())).willReturn(userInfoResponse);
+
+        //when
+        KakaoSignInResponse response = authService.signInKakao("code");
+
+        //then
+        assertThat(response.isNew()).isEqualTo("True");
     }
 }
