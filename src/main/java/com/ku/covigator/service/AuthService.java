@@ -1,6 +1,7 @@
 package com.ku.covigator.service;
 
 import com.ku.covigator.domain.member.Member;
+import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.dto.response.KakaoTokenResponse;
 import com.ku.covigator.dto.response.KakaoUserInfoResponse;
@@ -28,7 +29,8 @@ public class AuthService {
 
     @Transactional(readOnly = true)
     public String signIn(String email, String password) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(NotFoundMemberException::new);
+        Member member = memberRepository.findByEmailAndPlatform(email, Platform.LOCAL)
+                .orElseThrow(NotFoundMemberException::new);
         validatePassword(password, member.getPassword());
         return jwtProvider.createToken(member.getId().toString());
     }
@@ -37,7 +39,7 @@ public class AuthService {
     public String signUp(Member member) {
 
         // 회원 가입 중복 검증
-        validateDuplicateMemberByEmail(member.getEmail());
+        validateDuplicateMemberByEmailAndPlatform(member.getEmail(), Platform.LOCAL);
 
         // 패스워드 인코딩
         String encodedPassword = passwordEncoder.encode(member.getPassword());
@@ -61,7 +63,7 @@ public class AuthService {
 
         // 회원 가입 여부 확인
         String email = kakaoUserInfoResponse.kakaoAccount().email();
-        Optional<Member> member = memberRepository.findByEmail(email);
+        Optional<Member> member = memberRepository.findByEmailAndPlatform(email, Platform.KAKAO);
 
         // 가입된 회원 반환
         if(member.isPresent()) {
@@ -77,8 +79,8 @@ public class AuthService {
     }
 
     // 회원 가입 중복 검증
-    private void validateDuplicateMemberByEmail(String email) {
-        Optional<Member> savedMember = memberRepository.findByEmail(email);
+    private void validateDuplicateMemberByEmailAndPlatform(String email, Platform platform) {
+        Optional<Member> savedMember = memberRepository.findByEmailAndPlatform(email, platform);
         if (savedMember.isPresent()) {
             throw new DuplicateMemberException();
         }

@@ -42,7 +42,7 @@ class AuthServiceTest {
         memberRepository.deleteAllInBatch();
     }
 
-    @DisplayName("등록된 회원에 대한 유효한 이메일, 비밀번호 입력 시 로그인에 성공한다.")
+    @DisplayName("등록된 회원에 대한 유효한 이메일, 비밀번호 입력 시 로컬 로그인에 성공한다.")
     @Test
     void signIn() {
         //given
@@ -68,7 +68,7 @@ class AuthServiceTest {
         assertFalse(token.isBlank());
     }
 
-    @DisplayName("존재하지 않는 회원의 이메일로 로그인을 시도할 경우 예외가 발생한다.")
+    @DisplayName("존재하지 않는 회원의 이메일로 로컬 로그인을 시도할 경우 예외가 발생한다.")
     @Test
     void signInWithUnknownEmail() {
         //given
@@ -90,7 +90,7 @@ class AuthServiceTest {
                 .isInstanceOf(NotFoundMemberException.class);
     }
 
-    @DisplayName("유효한 이메일에 대한 잘못된 비밀번호 입력 시 예외가 발생한다.")
+    @DisplayName("로컬 로그인 시도 중 유효한 이메일에 대한 잘못된 비밀번호 입력 시 예외가 발생한다.")
     @Test
     void signInWithInvalidPassword() {
         //given
@@ -113,7 +113,7 @@ class AuthServiceTest {
                 .isInstanceOf(PasswordMismatchException.class);
     }
 
-    @DisplayName("로컬 회원 가입 시 중복 회원이 아닌 경우 정상적으로 회원 가입 되어 토큰을 반환한다.")
+    @DisplayName("로컬 회원 가입 시 같은 플랫폼에 대한 중복 회원이 아닌 경우 정상적으로 회원 가입 되어 토큰을 반환한다.")
     @Test
     void signUpLocalSuccessIfThereIsNoDuplicateMember() {
         //given
@@ -134,7 +134,7 @@ class AuthServiceTest {
         assertThat(savedMemberId).isEqualTo(member.getId());
     }
 
-    @DisplayName("로컬 회원 가입 시 중복 회원은 등록될 수 없다.")
+    @DisplayName("로컬 회원 가입 시 같은 플랫폼에 대한 중복 회원은 등록될 수 없다.")
     @Test
     void signUpLocalFailWhenMemberIsDuplicated() {
         //given
@@ -164,7 +164,35 @@ class AuthServiceTest {
                 .hasMessage("이미 가입된 사용자입니다.");
     }
 
-    @DisplayName("회원 가입 시 비밀번호는 암호화되어 저장된다.")
+    @DisplayName("로컬 회원 가입 시 다른 플랫폼에 대한 중복 회원은 등록될 수 있다.")
+    @Test
+    void signUpLocalFailWhenMemberIsDuplicatedInDifferentPlatform() {
+        //given
+        Member member = Member.builder()
+                .name("김코비")
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.KAKAO)
+                .build();
+
+        Member newMember = Member.builder()
+                .name("박코비")
+                .email("covi@naver.com")
+                .password("covigator1234")
+                .nickname("covi2")
+                .imageUrl("www.covi2.com")
+                .platform(Platform.LOCAL)
+                .build();
+
+        memberRepository.save(member);
+
+        //when // then
+        assertDoesNotThrow(() -> authService.signUp(newMember));
+    }
+
+    @DisplayName("로컬 회원 가입 시 비밀번호는 암호화되어 저장된다.")
     @Test
     void saveEncodedPassword() {
         //given
@@ -185,7 +213,7 @@ class AuthServiceTest {
         assertThat(member.getPassword()).isNotEqualTo(password);
     }
 
-    @DisplayName("이미 가입된 회원에 대한 로그인 요청 결과 상태를 반환한다.")
+    @DisplayName("이미 가입된 회원에 대한 카카오 로그인 요청 시 기존 회원이 조회된다.")
     @Test
     void returnIsNewFalseWhenExistsMemberLogIn() {
         //given
@@ -217,7 +245,39 @@ class AuthServiceTest {
         assertThat(response.isNew()).isEqualTo("False");
     }
 
-    @DisplayName("신규 회원에 대한 로그인 요청 결과 상태를 반환한다.")
+    @DisplayName("로컬에서 이미 가입된 회원에 대한 카카오 로그인 요청 시 신규 회원으로 등록된다.")
+    @Test
+    void registerNewMemberWhenKakaoLoginDespiteOfLocalMemberExists() {
+        //given
+        String email = "covi@naver.com";
+        Member member = Member.builder()
+                .name("김코비")
+                .email(email)
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+
+        memberRepository.save(member);
+
+        KakaoTokenResponse tokenResponse = new KakaoTokenResponse("token", 100);
+        given(kakaoOauthProvider.getKakaoToken("code")).willReturn(tokenResponse);
+
+        KakaoUserInfoResponse userInfoResponse =
+                new KakaoUserInfoResponse(
+                        new KakaoUserInfoResponse.KakaoAccount("name", email,
+                                new KakaoUserInfoResponse.KakaoAccount.Profile("nickname", "image")));
+        given(kakaoOauthProvider.getKakaoUserInfo(any())).willReturn(userInfoResponse);
+
+        //when
+        KakaoSignInResponse response = authService.signInKakao("code");
+
+        //then
+        assertThat(response.isNew()).isEqualTo("True");
+    }
+
+    @DisplayName("신규 회원에 대한 카카오 로그인 요청 시 새로 가입된다.")
     @Test
     void returnIsNewTrueWhenNewMemberLogIn() {
         //given
