@@ -1,5 +1,6 @@
-package com.ku.covigator.domain;
+package com.ku.covigator.domain.member;
 
+import com.ku.covigator.domain.BaseTime;
 import com.ku.covigator.domain.travelstyle.TravelStyle;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member extends BaseTime{
+public class Member extends BaseTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,18 +37,23 @@ public class Member extends BaseTime{
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
+    @Column(name = "platform")
+    @Enumerated(value = EnumType.STRING)
+    private Platform platform;
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_style_id", referencedColumnName = "id")
     private TravelStyle travelStyle;
 
     @Builder
-    public Member(String name, String nickname, String email, String password, String imageUrl) {
+    public Member(String name, String nickname, String email, String password, String imageUrl, Platform platform) {
         this.name = name;
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.imageUrl = imageUrl;
         this.status = Status.ACTIVE;
+        this.platform = platform;
     }
 
     public void encodePassword(String encodedPassword) {

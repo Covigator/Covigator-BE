@@ -1,4 +1,4 @@
-package com.ku.covigator.domain;
+package com.ku.covigator.domain.member;
 import com.ku.covigator.domain.travelstyle.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +17,7 @@ class MemberTest {
                 .password("covigator123")
                 .nickname("covi")
                 .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
                 .build();
 
         //when //then
@@ -33,6 +34,7 @@ class MemberTest {
                 .password("covigator123")
                 .nickname("covi")
                 .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
                 .build();
 
         TravelStyle travelStyle = TravelStyle.builder()
@@ -61,6 +63,7 @@ class MemberTest {
                 .password("covigator123")
                 .nickname("covi")
                 .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
                 .build();
 
         TravelStyle travelStyle = TravelStyle.builder()
