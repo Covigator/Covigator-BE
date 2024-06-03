@@ -1,4 +1,4 @@
-package com.ku.covigator.domain;
+package com.ku.covigator.domain.member;
 
 import lombok.Getter;
 

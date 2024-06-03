@@ -1,6 +1,6 @@
 package com.ku.covigator.service;
 
-import com.ku.covigator.domain.Member;
+import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.travelstyle.TravelStyle;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;

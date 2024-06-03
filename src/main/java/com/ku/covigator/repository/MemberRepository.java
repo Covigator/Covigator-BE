@@ -1,6 +1,6 @@
 package com.ku.covigator.repository;
 
-import com.ku.covigator.domain.Member;
+import com.ku.covigator.domain.member.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
