@@ -20,3 +20,9 @@ security:
   jwt:
     secret-key: ${JWT_SECRET_KEY}
     expiration-length: ${JWT_EXPIRATION_LENGTH}
+  oauth:
+    kakao:
+      client-id: ${REST_API_KEY}
+      redirect-uri: ${REDIRECT_URI}
+      user-info-url: https://kapi.kakao.com/v2/user/me
+      token-url: https://kauth.kakao.com/oauth/token

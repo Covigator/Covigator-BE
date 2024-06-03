@@ -5,12 +5,14 @@ import com.ku.covigator.exception.jwt.*;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
+@EnableConfigurationProperties(JwtProperties.class)
 public class JwtProvider {
 
     private final JwtProperties jwtProperties;
