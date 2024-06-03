@@ -1,7 +1,6 @@
 package com.ku.covigator.controller;
 
 import com.ku.covigator.dto.request.PostSignUpRequest;
-import com.ku.covigator.dto.response.AccessTokenResponse;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
 import com.ku.covigator.security.jwt.JwtAuthInterceptor;
@@ -10,7 +9,6 @@ import com.ku.covigator.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
