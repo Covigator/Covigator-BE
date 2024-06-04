@@ -26,3 +26,7 @@ security:
       redirect-uri: ${REDIRECT_URI}
       user-info-url: https://kapi.kakao.com/v2/user/me
       token-url: https://kauth.kakao.com/oauth/token
+
+springdoc:
+  swagger-ui:
+    path: "/api-doc"
