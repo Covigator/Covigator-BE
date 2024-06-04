@@ -70,6 +70,9 @@ dependencies {
 
 	//jwt
 	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.12.5'
+
+	//spring-doc
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0'
 }
 
 tasks.named('test') {
