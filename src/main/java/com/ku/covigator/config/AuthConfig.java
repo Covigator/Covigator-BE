@@ -12,7 +12,7 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-public class WebConfig implements WebMvcConfigurer {
+public class AuthConfig implements WebMvcConfigurer {
 
     private final JwtAuthInterceptor jwtAuthInterceptor;
     private final JwtAuthArgumentResolver jwtAuthArgumentResolver;
@@ -20,8 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtAuthInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/accounts/**");
+                .addPathPatterns("/members/travel-styles");
     }
 
     @Override
