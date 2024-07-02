@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -36,7 +34,6 @@ class TravelStyleControllerTest {
     @MockBean
     JwtAuthArgumentResolver jwtAuthArgumentResolver;
 
-    @WithMockUser(username = "test")
     @DisplayName("여행 스타일 선택을 완료한다.")
     @Test
     void saveTravelStyle() throws Exception {
@@ -54,13 +51,11 @@ class TravelStyleControllerTest {
         mockMvc.perform(post("/members/travel-styles")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf())
                 ).andDo(print())
                 .andExpect(status().isOk());
 
     }
 
-    @WithMockUser(username = "test")
     @DisplayName("여행 스타일을 수정한다.")
     @Test
     void patchTravelStyle() throws Exception {
@@ -78,7 +73,6 @@ class TravelStyleControllerTest {
         mockMvc.perform(patch("/members/travel-styles")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf())
                 ).andDo(print())
                 .andExpect(status().isOk());
 

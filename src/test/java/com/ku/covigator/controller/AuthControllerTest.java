@@ -13,11 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.BDDMockito.*;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -39,7 +37,6 @@ class AuthControllerTest {
     JwtAuthArgumentResolver jwtAuthArgumentResolver;
 
     @DisplayName("로그인을 요청한다.")
-    @WithMockUser(username = "test")
     @Test
     void signIn() throws Exception {
         //given
@@ -54,13 +51,11 @@ class AuthControllerTest {
         mockMvc.perform(post("/accounts/sign-in")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf())
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").value(token));
     }
 
-    @WithMockUser(username = "test")
     @DisplayName("회원 가입한다.")
     @Test
     void signUp() throws Exception {
@@ -79,14 +74,12 @@ class AuthControllerTest {
         mockMvc.perform(post("/accounts/sign-up")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").value("token"));
     }
 
-    @WithMockUser(username = "test")
     @DisplayName("신규 회원에 대한 카카오 로그인을 요청한다.")
     @Test
     void signInKakaoNewMember() throws Exception {
@@ -97,14 +90,12 @@ class AuthControllerTest {
         //when //then
         mockMvc.perform(get("/accounts/oauth/kakao")
                         .param("code", "code")
-                        .with(csrf())
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").value("token"))
                 .andExpect(jsonPath("$.is_new").value("True"));
     }
 
-    @WithMockUser(username = "test")
     @DisplayName("기존 회원에 대한 카카오 로그인을 요청한다.")
     @Test
     void signInKakaoOldMember() throws Exception {
@@ -115,7 +106,6 @@ class AuthControllerTest {
         //when //then
         mockMvc.perform(get("/accounts/oauth/kakao")
                         .param("code", "code")
-                        .with(csrf())
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").value("token"))
