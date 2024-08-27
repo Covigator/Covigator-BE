@@ -10,14 +10,18 @@ on:
       - main
       - develop
 
-env:
-  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-  JWT_EXPIRATION_LENGTH: ${{ secrets.JWT_EXPIRATION_LENGTH }}
-
 jobs:
   build:
     name: Build and analyze
     runs-on: ubuntu-latest
+    env:
+      REST_API_KEY: ${{ secrets.REST_API_KEY}}
+      REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      JWT_EXPIRATION_LENGTH: ${{ secrets.JWT_EXPIRATION_LENGTH }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+      DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
     steps:
       - uses: actions/checkout@v3
@@ -42,10 +46,6 @@ jobs:
         with:
           arguments: check
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
-        env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
       - name: Build and analyze
         env:
