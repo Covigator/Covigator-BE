@@ -13,9 +13,6 @@ on:
 env:
   JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
   JWT_EXPIRATION_LENGTH: ${{ secrets.JWT_EXPIRATION_LENGTH }}
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
-  DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
 jobs:
   build:
@@ -45,6 +42,10 @@ jobs:
         with:
           arguments: check
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
 
       - name: Build and analyze
         env:
