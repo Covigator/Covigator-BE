@@ -26,6 +26,15 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Connect to MySQL
+        uses: mirromutth/mysql-action@v1.1
+        with:
+          host port: 3306
+          container port: 3306
+          mysql database: 'covigator'
+          mysql user: ${{ secrets.DATABASE_USERNAME }}
+          mysql password: ${{ secrets.DATABASE_PASSWORD }}
+
       - name: Set yml file
         uses: microsoft/variable-substitution@v1
         with:
