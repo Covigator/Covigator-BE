@@ -10,8 +10,12 @@ on:
       - main
       - develop
 
+#env:
+#  RESOURCE_PATH: ./src/main/resources/application.yml
+
 env:
-  RESOURCE_PATH: ./src/main/resources/application.yml
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  JWT_EXPIRATION_LENGTH: ${{ secrets.JWT_EXPIRATION_LENGTH }}
 
 jobs:
   build:
@@ -26,29 +30,29 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Shutdown Ubuntu MySQL (SUDO)
-        run: sudo service mysql stop
+#      - name: Shutdown Ubuntu MySQL (SUDO)
+#        run: sudo service mysql stop
+#
+#      - name: Connect to MySQL
+#        uses: mirromutth/mysql-action@v1.1
+#        with:
+#          host port: 3306
+#          container port: 3306
+#          mysql database: 'covigator'
+#          mysql user: ${{ secrets.DATABASE_USERNAME }}
+#          mysql password: ${{ secrets.DATABASE_PASSWORD }}
 
-      - name: Connect to MySQL
-        uses: mirromutth/mysql-action@v1.1
-        with:
-          host port: 3306
-          container port: 3306
-          mysql database: 'covigator'
-          mysql user: ${{ secrets.DATABASE_USERNAME }}
-          mysql password: ${{ secrets.DATABASE_PASSWORD }}
-
-      - name: Set yml file
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ${{ env.RESOURCE_PATH }}
-        env:
-          spring.datasource.url: ${{ secrets.DATABASE_URL }}
-          spring.datasource.username: ${{ secrets.DATABASE_USERNAME }}
-          spring.datasource.password: ${{ secrets.DATABASE_PASSWORD }}
-          security.jwt.secret-key: ${{ secrets.JWT_SECRET_KEY }}
-          security.oauth.kakao.client-id: ${{ secrets.REST_API_KEY }}
-          security.oauth.kakao.redirect-uri: ${{ secrets.REDIRECT_URI }}
+#      - name: Set yml file
+#        uses: microsoft/variable-substitution@v1
+#        with:
+#          files: ${{ env.RESOURCE_PATH }}
+#        env:
+#          spring.datasource.url: ${{ secrets.DATABASE_URL }}
+#          spring.datasource.username: ${{ secrets.DATABASE_USERNAME }}
+#          spring.datasource.password: ${{ secrets.DATABASE_PASSWORD }}
+#          security.jwt.secret-key: ${{ secrets.JWT_SECRET_KEY }}
+#          security.oauth.kakao.client-id: ${{ secrets.REST_API_KEY }}
+#          security.oauth.kakao.redirect-uri: ${{ secrets.REDIRECT_URI }}
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
