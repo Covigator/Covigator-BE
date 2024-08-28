@@ -12,9 +12,9 @@ spring:
         show_sql: true
         format_sql: true
 
-  h2:
-    console:
-      enabled: true
+    h2:
+      console:
+        enabled: true
 
 security:
   jwt:
