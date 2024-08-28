@@ -1,0 +1,89 @@
+name: covigator-backend-cd with AWS CodeDeploy
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # gradle caching - 빌드 시간 향상
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: make application-prod.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application-prod.yml
+          echo "${{ secrets.PROD_YML }}" >> ./application-prod.yml
+        shell: bash
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle (without Test)
+        run: ./gradlew clean build -x test --stacktrace
+
+      # make zip file
+      - name: Make zip file
+        run: zip -qq -r ./$GITHUB_SHA.zip .
+        shell: bash
+
+      # AWS 사용자 정보 입력
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+          aws-region: us-east-1
+
+      # S3에 zip 파일 업로드
+      - name: Upload to S3
+        run: aws s3 cp --region us-east-1 ./$GITHUB_SHA.zip s3://${{ secrets.S3_BUCKET_NAME }}/deploy/$GITHUB_SHA.zip --source .
+
+      # CodeDeploy에 배포 요청
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name ${{ secrets.CODE_DEPLOY_APP_NAME }}
+          --deployment-config-name CodeDeployDefault.OneAtATime
+          --deployment-group-name ${{ secrets.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }}
+          --s3-location bucket=${{ secrets.S3_BUCKET_NAME }},bundleType=zip,key=deploy/$GITHUB_SHA.zip
+
+      # docker build & push to production
+#      - name: Docker build & push to prod
+#        run: |
+#          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+#          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} .
+#          docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+
+      ## deploy to production
+#      - name: Deploy to prod
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.HOST_PROD }} # EC2 퍼블릭 IPv4 DNS
+#          username: ${{ secrets.USERNAME }}
+#          key: ${{ secrets.PRIVATE_KEY }}
+#          port: 22
+#          script: |
+#            sudo docker ps
+#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+#            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+#            sudo docker image prune -f
