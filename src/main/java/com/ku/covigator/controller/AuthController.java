@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @Operation(summary = "회원가입")
-    @PostMapping("sign-up")
+    @PostMapping("/sign-up")
     public ResponseEntity<AccessTokenResponse> signUp(@RequestBody PostSignUpRequest request) {
         String accessToken = authService.signUp(request.toEntity());
         return ResponseEntity.ok(AccessTokenResponse.from(accessToken));
