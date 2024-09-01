@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @SpringBootTest
 class PlaceServiceTest {
@@ -51,11 +52,13 @@ class PlaceServiceTest {
         Place savedPlace = placeService.getPlaceInfo(name, address);
 
         //then
-        assertThat(savedPlace.getFloor()).isEqualTo("2");
-        assertThat(savedPlace.getBuildingName()).isEqualTo("건국대학교");
-        assertThat(savedPlace.getCategory()).isEqualTo("식당");
-        assertThat(savedPlace.getCoordinate().getX()).isEqualTo(1.0);
-        assertThat(savedPlace.getCoordinate().getY()).isEqualTo(2.0);
+        assertAll(
+                () -> assertThat(savedPlace.getFloor()).isEqualTo("2"),
+                () -> assertThat(savedPlace.getBuildingName()).isEqualTo("건국대학교"),
+                () -> assertThat(savedPlace.getCategory()).isEqualTo("식당"),
+                () -> assertThat(savedPlace.getCoordinate().getX()).isEqualTo(1.0),
+                () -> assertThat(savedPlace.getCoordinate().getY()).isEqualTo(2.0)
+        );
     }
 
     @DisplayName("잘못된 장소 조회 시 예외가 발생한다.")
