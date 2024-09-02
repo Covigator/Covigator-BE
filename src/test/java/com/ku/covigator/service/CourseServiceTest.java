@@ -2,19 +2,22 @@ package com.ku.covigator.service;
 
 import com.ku.covigator.domain.Course;
 import com.ku.covigator.domain.CoursePlace;
+import com.ku.covigator.domain.Like;
+import com.ku.covigator.domain.Review;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.request.PostCourseRequest;
+import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
-import com.ku.covigator.repository.CoursePlaceRepository;
-import com.ku.covigator.repository.CourseRepository;
-import com.ku.covigator.repository.MemberRepository;
-import org.assertj.core.api.Assertions;
+import com.ku.covigator.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -24,17 +27,24 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class CourseServiceTest {
 
-    @Autowired CourseService courseService;
+    @Autowired
+    CourseService courseService;
     @Autowired
     MemberRepository memberRepository;
     @Autowired
     CourseRepository courseRepository;
     @Autowired
     CoursePlaceRepository coursePlaceRepository;
+    @Autowired
+    ReviewRepository reviewRepository;
+    @Autowired
+    LikeRepository likeRepository;
 
     @BeforeEach()
     void tearDown() {
         coursePlaceRepository.deleteAllInBatch();
+        likeRepository.deleteAllInBatch();
+        reviewRepository.deleteAllInBatch();
         courseRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
     }
@@ -122,6 +132,143 @@ class CourseServiceTest {
         //when //then
         assertThatThrownBy(() -> courseService.addCommunityCourse(1L, postCourseRequest))
                         .isInstanceOf(NotFoundMemberException.class);
+    }
+
+    @DisplayName("전체 코스 리스트를 최신순으로 조회한다.")
+    @Test
+    void findCoursesSortByCreatedAt() {
+        //given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .build();
+        courseRepository.save(course);
+
+        Course course2 = Course.builder()
+                .name("건대 풀코스2")
+                .isPublic('Y')
+                .description("건대 핫플 리스트2")
+                .member(member)
+                .build();
+        courseRepository.save(course2);
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+
+        //when
+        GetCourseListResponse response = courseService.findAllCourses(pageable, null);
+
+        //then
+        assertAll(
+                () -> assertThat(response.courses().size()).isEqualTo(2),
+                () -> assertThat(response.courses())
+                        .extracting("name")
+                        .containsExactly("건대 풀코스2", "건대 풀코스"),
+                () -> assertThat(response.courses())
+                        .extracting("description")
+                        .containsExactly("건대 핫플 리스트2", "건대 핫플 리스트")
+        );
+    }
+
+    @DisplayName("전체 코스 리스트를 별점순으로 조회한다.")
+    @Test
+    void findCoursesSortByReviewScore() {
+        //given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .build();
+        courseRepository.save(course);
+
+        Review review = Review.builder()
+                .course(course)
+                .score(5)
+                .comment("굿")
+                .member(member)
+                .build();
+        reviewRepository.save(review);
+
+        Course course2 = Course.builder()
+                .name("건대 풀코스2")
+                .isPublic('Y')
+                .description("건대 핫플 리스트2")
+                .member(member)
+                .build();
+        courseRepository.save(course2);
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+
+        //when
+        GetCourseListResponse response = courseService.findAllCourses(pageable, "score");
+
+        //then
+        assertAll(
+                () -> assertThat(response.courses().size()).isEqualTo(2),
+                () -> assertThat(response.courses())
+                        .extracting("name")
+                        .containsExactly("건대 풀코스", "건대 풀코스2"),
+                () -> assertThat(response.courses())
+                        .extracting("description")
+                        .containsExactly("건대 핫플 리스트", "건대 핫플 리스트2"),
+                () -> assertThat(response.courses())
+                        .extracting("score")
+                        .containsExactly(5.0, 0.0)
+        );
+    }
+
+    @DisplayName("전체 코스 리스트를 좋아요순으로 조회한다.")
+    @Test
+    void findCoursesSortByLikes() {
+        //given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .build();
+        courseRepository.save(course);
+
+        Like like = Like.builder()
+                .member(member)
+                .course(course)
+                .build();
+        likeRepository.save(like);
+
+        Course course2 = Course.builder()
+                .name("건대 풀코스2")
+                .isPublic('Y')
+                .description("건대 핫플 리스트2")
+                .member(member)
+                .build();
+        courseRepository.save(course2);
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+
+        //when
+        GetCourseListResponse response = courseService.findAllCourses(pageable, "like");
+
+        //then
+        assertAll(
+                () -> assertThat(response.courses().size()).isEqualTo(2),
+                () -> assertThat(response.courses())
+                        .extracting("name")
+                        .containsExactly("건대 풀코스", "건대 풀코스2"),
+                () -> assertThat(response.courses())
+                        .extracting("description")
+                        .containsExactly("건대 핫플 리스트", "건대 핫플 리스트2")
+        );
     }
 
     private Member createMember() {

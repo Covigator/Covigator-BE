@@ -32,6 +32,7 @@ class TravelStyleServiceTest {
 
     @BeforeEach
     void tearDown() {
+        travelStyleRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
     }
 
