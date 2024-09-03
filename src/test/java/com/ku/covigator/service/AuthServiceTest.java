@@ -10,6 +10,7 @@ import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;
 import com.ku.covigator.security.jwt.JwtProvider;
 import com.ku.covigator.security.kakao.KakaoOauthProvider;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ class AuthServiceTest {
     @MockBean
     KakaoOauthProvider kakaoOauthProvider;
 
-    @BeforeEach
+    @AfterEach
     void tearDown() {
         memberRepository.deleteAllInBatch();
     }
