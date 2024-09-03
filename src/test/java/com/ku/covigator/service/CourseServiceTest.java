@@ -3,7 +3,6 @@ package com.ku.covigator.service;
 import com.ku.covigator.domain.Course;
 import com.ku.covigator.domain.CoursePlace;
 import com.ku.covigator.domain.Like;
-import com.ku.covigator.domain.Review;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.request.PostCourseRequest;
@@ -12,7 +11,6 @@ import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.*;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -354,7 +352,7 @@ class CourseServiceTest {
         coursePlaceRepository.saveAll(List.of(place, place2));
 
         //when
-        courseRepository.deleteById(savedCourse.getId());
+        courseService.deleteCourse(savedCourse.getId());
 
         //then
         List<Course> courses = courseRepository.findAll();
