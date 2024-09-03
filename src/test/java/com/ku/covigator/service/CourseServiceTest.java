@@ -319,6 +319,51 @@ class CourseServiceTest {
         );
     }
 
+    @DisplayName("삭제하고자 하는 코스에 포함된 장소와 함께 코스를 삭제한다.")
+    @Test
+    void test() {
+        //given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .likeCnt(100L)
+                .build();
+        Course savedCourse = courseRepository.save(course);
+
+        CoursePlace place = CoursePlace.builder()
+                .course(course)
+                .address("광진구")
+                .name("가츠시")
+                .description("공대생 추천 맛집")
+                .category("식당")
+                .build();
+
+        CoursePlace place2 = CoursePlace.builder()
+                .course(course)
+                .address("광진구")
+                .name("레스티오")
+                .description("공대생 추천 카페")
+                .category("카페")
+                .build();
+        coursePlaceRepository.saveAll(List.of(place, place2));
+
+        //when
+        courseRepository.deleteById(savedCourse.getId());
+
+        //then
+        List<Course> courses = courseRepository.findAll();
+        List<CoursePlace> places = coursePlaceRepository.findAll();
+        assertAll(
+                () -> assertEquals(courses.size(), 0),
+                () -> assertEquals(places.size(), 0)
+        );
+    }
+
     private Member createMember() {
         return Member.builder()
                 .name("김코비")

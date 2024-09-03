@@ -64,6 +64,12 @@ public class CourseService {
         return GetCommunityCourseInfoResponse.from(course, isLiked);
     }
 
+    public void deleteCourse(Long courseId) {
+
+        courseRepository.deleteById(courseId);
+
+    }
+
     private boolean checkIfLiked(Long courseId, Member member) {
         return member.getLikes().stream().anyMatch(
                 like -> like.getCourse().getId().equals(courseId)
