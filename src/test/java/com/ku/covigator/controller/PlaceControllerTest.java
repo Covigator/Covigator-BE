@@ -14,8 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -53,19 +53,21 @@ class PlaceControllerTest {
         BDDMockito.given(placeService.getPlaceInfo(name, address)).willReturn(place);
 
         //when //then
-        mockMvc.perform(MockMvcRequestBuilders.get("/places")
+        mockMvc.perform(get("/places")
                         .param("name", name)
                         .param("address", address)
                 ).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("코비식당"))
-                .andExpect(jsonPath("$.address").value("서울시 광진구"))
-                .andExpect(jsonPath("$.floor").value("1"))
-                .andExpect(jsonPath("$.building_name").value("건국대학교"))
-                .andExpect(jsonPath("$.dong_name").value("자양동"))
-                .andExpect(jsonPath("$.latitude").value("2.0"))
-                .andExpect(jsonPath("$.longitude").value("1.0"))
-                .andExpect(jsonPath("$.category").value("식당"));
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.name").value("코비식당"),
+                        jsonPath("$.address").value("서울시 광진구"),
+                        jsonPath("$.floor").value("1"),
+                        jsonPath("$.building_name").value("건국대학교"),
+                        jsonPath("$.dong_name").value("자양동"),
+                        jsonPath("$.latitude").value("2.0"),
+                        jsonPath("$.longitude").value("1.0"),
+                        jsonPath("$.category").value("식당")
+                );
     }
 
     private Point createPoint(double x, double y) {

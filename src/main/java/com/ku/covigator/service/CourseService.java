@@ -4,7 +4,9 @@ import com.ku.covigator.domain.Course;
 import com.ku.covigator.domain.CoursePlace;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.dto.request.PostCourseRequest;
+import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
 import com.ku.covigator.dto.response.GetCourseListResponse;
+import com.ku.covigator.exception.notfound.NotFoundCourseException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.CoursePlaceRepository;
 import com.ku.covigator.repository.CourseRepository;
@@ -16,8 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
@@ -26,11 +26,6 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CoursePlaceRepository coursePlaceRepository;
     private final MemberRepository memberRepository;
-
-    private final Map<String, Function<Pageable, Slice<Course>>> filterMap = Map.of(
-            "score", this::findAllCoursesSortedByAvgScore,
-            "like", this::findAllCoursesSortedByLike
-    );
 
     @Transactional
     public void addCommunityCourse(Long memberId, PostCourseRequest request) {
@@ -47,25 +42,32 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public GetCourseListResponse findAllCourses(Pageable pageable, String filter) {
+    public GetCourseListResponse findAllCourses(Pageable pageable) {
 
-        Slice<Course> courseSlice = filterMap
-                .getOrDefault(filter != null ? filter : "", this::findAllCoursesSortedByCreatedAt)
-                .apply(pageable);
+        Slice<Course> courses = courseRepository.findAllCoursesBy(pageable);
+        return GetCourseListResponse.fromCourseSlice(courses);
 
-        return GetCourseListResponse.fromCourseSlice(courseSlice);
     }
 
-    private Slice<Course> findAllCoursesSortedByAvgScore(Pageable pageable) {
-        return courseRepository.findAllCoursesSortedByAvgScore(pageable);
+    @Transactional(readOnly = true)
+    public GetCommunityCourseInfoResponse findCourse(Long memberId, Long courseId) {
+
+        Member member = memberRepository.findMemberWithLikesById(memberId)
+                .orElseThrow(NotFoundMemberException::new);
+
+        Course course = courseRepository.findCourseWithPlacesById(courseId)
+                .orElseThrow(NotFoundCourseException::new);
+
+        //좋아요 여부 확인
+        boolean isLiked = checkIfLiked(courseId, member);
+
+        return GetCommunityCourseInfoResponse.from(course, isLiked);
     }
 
-    private Slice<Course> findAllCoursesSortedByLike(Pageable pageable) {
-        return courseRepository.findAllCoursesSortedByLike(pageable);
-    }
-
-    private Slice<Course> findAllCoursesSortedByCreatedAt(Pageable pageable) {
-        return courseRepository.findAllCoursesByCreatedAt(pageable);
+    private boolean checkIfLiked(Long courseId, Member member) {
+        return member.getLikes().stream().anyMatch(
+                like -> like.getCourse().getId().equals(courseId)
+        );
     }
 
 }

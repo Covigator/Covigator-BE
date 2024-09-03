@@ -27,7 +27,7 @@ public class JwtProvider {
 
     public String createToken(String principal) {
         Date now = new Date();
-        Date expiresIn = new Date(now.getTime() + jwtProperties.getExpirationLength());
+        Date expiresIn = new Date(now.getTime() + jwtProperties.getExpirationLength() * 1000L);
 
         return Jwts.builder()
                 .subject(principal)

@@ -7,19 +7,12 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    @EntityGraph(attributePaths = "reviews")
-    Slice<Course> findAllCoursesByCreatedAt(Pageable pageable);
 
-    @Query("SELECT c FROM Course c " +
-            "LEFT JOIN c.reviews r " +
-            "GROUP BY c " +
-            "ORDER BY AVG(r.score) DESC")
-    Slice<Course> findAllCoursesSortedByAvgScore(Pageable pageable);
+    Slice<Course> findAllCoursesBy(Pageable pageable);
 
-    @Query("SELECT c FROM Course c " +
-            "LEFT JOIN c.likes l " +
-            "GROUP BY c " +
-            "ORDER BY COUNT(l) DESC")
-    Slice<Course> findAllCoursesSortedByLike(Pageable pageable);
+    @EntityGraph(attributePaths = "places")
+    Optional<Course> findCourseWithPlacesById(Long courseId);
 }
