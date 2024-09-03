@@ -1,6 +1,7 @@
 package com.ku.covigator.controller;
 
 import com.ku.covigator.dto.request.PostCourseRequest;
+import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
 import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.security.jwt.LoggedInMemberId;
 import com.ku.covigator.service.CourseService;
@@ -31,12 +32,17 @@ public class CourseController {
     @Operation(summary = "전체 코스 조회")
     @GetMapping
     public ResponseEntity<GetCourseListResponse> getAllCommunityCourses(
-            @RequestParam(required = false) String filter,
             @PageableDefault(
                     page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC
             ) Pageable pageable) {
-        return ResponseEntity.ok(courseService.findAllCourses(pageable, filter));
+        return ResponseEntity.ok(courseService.findAllCourses(pageable));
     }
 
-
+    @Operation(summary = "상세 코스 조회")
+    @GetMapping("/{course_id}")
+    public ResponseEntity<GetCommunityCourseInfoResponse> getCommunityCourseInfo(
+            @LoggedInMemberId Long memberId,
+            @PathVariable(name = "course_id") Long courseId) {
+        return ResponseEntity.ok(courseService.findCourse(memberId, courseId));
+    }
 }

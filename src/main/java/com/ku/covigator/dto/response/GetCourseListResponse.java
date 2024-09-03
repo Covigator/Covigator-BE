@@ -6,7 +6,6 @@ import com.ku.covigator.domain.Course;
 import lombok.Builder;
 import org.springframework.data.domain.Slice;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Builder
@@ -22,7 +21,7 @@ public record GetCourseListResponse(List<CourseDto> courses, Boolean hasNext) {
                 .map(course -> CourseDto.builder()
                         .name(course.getName())
                         .description(course.getDescription())
-                        .score(course.calculateAvgScore())
+                        .score(course.getAvgScore())
                         .build()
                 ).toList();
         return GetCourseListResponse.builder()

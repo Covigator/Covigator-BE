@@ -1,12 +1,16 @@
 package com.ku.covigator.domain.member;
 
 import com.ku.covigator.domain.BaseTime;
+import com.ku.covigator.domain.Like;
 import com.ku.covigator.domain.travelstyle.TravelStyle;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -44,6 +48,9 @@ public class Member extends BaseTime {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "travel_style_id", referencedColumnName = "id")
     private TravelStyle travelStyle;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    private List<Like> likes = new ArrayList<>();
 
     @Builder
     public Member(String name, String nickname, String email, String password, String imageUrl, Platform platform) {

@@ -7,6 +7,7 @@ import com.ku.covigator.domain.Review;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.request.PostCourseRequest;
+import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
 import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.*;
@@ -36,15 +37,12 @@ class CourseServiceTest {
     @Autowired
     CoursePlaceRepository coursePlaceRepository;
     @Autowired
-    ReviewRepository reviewRepository;
-    @Autowired
     LikeRepository likeRepository;
 
     @BeforeEach()
     void tearDown() {
         coursePlaceRepository.deleteAllInBatch();
         likeRepository.deleteAllInBatch();
-        reviewRepository.deleteAllInBatch();
         courseRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
     }
@@ -160,7 +158,7 @@ class CourseServiceTest {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
 
         //when
-        GetCourseListResponse response = courseService.findAllCourses(pageable, null);
+        GetCourseListResponse response = courseService.findAllCourses(pageable);
 
         //then
         assertAll(
@@ -186,29 +184,23 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트")
                 .member(member)
+                .avgScore(5.0)
                 .build();
         courseRepository.save(course);
-
-        Review review = Review.builder()
-                .course(course)
-                .score(5)
-                .comment("굿")
-                .member(member)
-                .build();
-        reviewRepository.save(review);
 
         Course course2 = Course.builder()
                 .name("건대 풀코스2")
                 .isPublic('Y')
                 .description("건대 핫플 리스트2")
                 .member(member)
+                .avgScore(1.0)
                 .build();
         courseRepository.save(course2);
 
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("avgScore").descending());
 
         //when
-        GetCourseListResponse response = courseService.findAllCourses(pageable, "score");
+        GetCourseListResponse response = courseService.findAllCourses(pageable);
 
         //then
         assertAll(
@@ -221,7 +213,7 @@ class CourseServiceTest {
                         .containsExactly("건대 핫플 리스트", "건대 핫플 리스트2"),
                 () -> assertThat(response.courses())
                         .extracting("score")
-                        .containsExactly(5.0, 0.0)
+                        .containsExactly(5.0, 1.0)
         );
     }
 
@@ -237,27 +229,23 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트")
                 .member(member)
+                .likeCnt(100L)
                 .build();
         courseRepository.save(course);
-
-        Like like = Like.builder()
-                .member(member)
-                .course(course)
-                .build();
-        likeRepository.save(like);
 
         Course course2 = Course.builder()
                 .name("건대 풀코스2")
                 .isPublic('Y')
                 .description("건대 핫플 리스트2")
                 .member(member)
+                .likeCnt(10L)
                 .build();
         courseRepository.save(course2);
 
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("likeCnt").descending());
 
         //when
-        GetCourseListResponse response = courseService.findAllCourses(pageable, "like");
+        GetCourseListResponse response = courseService.findAllCourses(pageable);
 
         //then
         assertAll(
@@ -268,6 +256,66 @@ class CourseServiceTest {
                 () -> assertThat(response.courses())
                         .extracting("description")
                         .containsExactly("건대 핫플 리스트", "건대 핫플 리스트2")
+        );
+    }
+
+    @DisplayName("코스 상세 정보를 조회한다.")
+    @Test
+    void findCourseInfo() {
+        //given
+        Member member = createMember();
+        Member savedMember = memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .likeCnt(100L)
+                .build();
+        Course savedCourse = courseRepository.save(course);
+
+        CoursePlace place = CoursePlace.builder()
+                .course(course)
+                .address("광진구")
+                .name("가츠시")
+                .description("공대생 추천 맛집")
+                .category("식당")
+                .build();
+
+        CoursePlace place2 = CoursePlace.builder()
+                .course(course)
+                .address("광진구")
+                .name("레스티오")
+                .description("공대생 추천 카페")
+                .category("카페")
+                .build();
+        coursePlaceRepository.saveAll(List.of(place, place2));
+
+        Like like = Like.builder()
+                .course(course)
+                .member(member)
+                .build();
+        likeRepository.save(like);
+
+        //when
+        GetCommunityCourseInfoResponse response = courseService.findCourse(savedMember.getId(), savedCourse.getId());
+
+        //then
+        assertAll(
+                () -> assertThat(response.courseName()).isEqualTo("건대 풀코스"),
+                () -> assertThat(response.courseDescription()).isEqualTo("건대 핫플 리스트"),
+                () -> assertThat(response.isLiked()).isTrue(),
+                () -> assertThat(response.likeCnt()).isEqualTo(100L),
+                () -> assertThat(response.places())
+                        .extracting("placeName")
+                        .containsExactlyInAnyOrder("가츠시", "레스티오"),
+                () -> assertThat(response.places())
+                        .extracting("placeDescription")
+                        .containsExactlyInAnyOrder("공대생 추천 맛집", "공대생 추천 카페"),
+                () -> assertThat(response.places())
+                        .extracting("category")
+                        .containsExactlyInAnyOrder("식당", "카페")
         );
     }
 

@@ -29,37 +29,27 @@ public class Course extends BaseTime {
     @Column(name = "is_public")
     private Character isPublic;
 
+    @Column(name = "like_cnt")
+    private Long likeCnt;
+
+    @Column(name = "avg_score")
+    private Double avgScore;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "course")
-    private List<Review> reviews = new ArrayList<>();
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "course")
-    private List<Like> likes = new ArrayList<>();
+    private List<CoursePlace> places = new ArrayList<>();
 
     @Builder
-    public Course(String name, String description, Character isPublic, Member member) {
+    public Course(String name, String description, Character isPublic, Long likeCnt, Double avgScore, Member member) {
         this.name = name;
         this.description = description;
         this.isPublic = isPublic;
+        this.likeCnt = likeCnt;
+        this.avgScore = avgScore;
         this.member = member;
-    }
-
-    public double calculateAvgScore() {
-        return reviews.stream()
-                .mapToInt(Review::getScore)
-                .average()
-                .orElse(0.0);
-    }
-
-    public void addReview(Review review) {
-        this.reviews.add(review);
-    }
-
-    public void addLikes(Like like) {
-        this.likes.add(like);
     }
 
 }

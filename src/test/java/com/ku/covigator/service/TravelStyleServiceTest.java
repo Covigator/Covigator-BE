@@ -32,8 +32,8 @@ class TravelStyleServiceTest {
 
     @BeforeEach
     void tearDown() {
-        travelStyleRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
+        travelStyleRepository.deleteAllInBatch();
     }
 
     @DisplayName("회원의 여행 스타일을 저장한다.")

@@ -45,7 +45,7 @@ class AuthControllerTest {
         String token = "token";
         PostSignInRequest request = new PostSignInRequest("covi@naver.com", "covigator123");
 
-        given(authService.signIn(email,password)).willReturn(token);
+        given(authService.signIn(email, password)).willReturn(token);
 
         //when //then
         mockMvc.perform(post("/accounts/sign-in")
@@ -91,9 +91,11 @@ class AuthControllerTest {
         mockMvc.perform(get("/accounts/oauth/kakao")
                         .param("code", "code")
                 ).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.access_token").value("token"))
-                .andExpect(jsonPath("$.is_new").value("True"));
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.access_token").value("token"),
+                        jsonPath("$.is_new").value("True")
+                );
     }
 
     @DisplayName("기존 회원에 대한 카카오 로그인을 요청한다.")
@@ -107,9 +109,11 @@ class AuthControllerTest {
         mockMvc.perform(get("/accounts/oauth/kakao")
                         .param("code", "code")
                 ).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.access_token").value("token"))
-                .andExpect(jsonPath("$.is_new").value("False"));
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.access_token").value("token"),
+                        jsonPath("$.is_new").value("False")
+                );
     }
 
 }
