@@ -79,7 +79,7 @@ class CourseServiceTest {
         courseService.addCommunityCourse(savedMember.getId(), postCourseRequest);
 
         //then
-        Course course = courseRepository.findAll().getFirst();
+        Course course = courseRepository.findAll().get(0);
         List<CoursePlace> coursePlaces = coursePlaceRepository.findAll();
 
         assertAll(
