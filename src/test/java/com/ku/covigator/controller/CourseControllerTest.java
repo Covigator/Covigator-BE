@@ -146,4 +146,16 @@ class CourseControllerTest {
                         jsonPath("$.places[0].category").value("식당")
                 );
     }
+
+    @DisplayName("코스 삭제 요청한다.")
+    @Test
+    void deleteCommunityCourse() throws Exception {
+        //given
+        Long courseId = 1L;
+
+        //when //then
+        mockMvc.perform(delete("/community/courses/{course_id}", courseId))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
 }

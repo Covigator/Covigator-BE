@@ -22,7 +22,7 @@ public class CourseController {
 
     private final CourseService courseService;
 
-    @Operation(summary = "커뮤니티 코스 등록")
+    @Operation(summary = "코스 등록")
     @PostMapping
     public ResponseEntity<Void> addCommunityCourse(@LoggedInMemberId Long memberId, @RequestBody PostCourseRequest request) {
         courseService.addCommunityCourse(memberId, request);
@@ -44,5 +44,13 @@ public class CourseController {
             @LoggedInMemberId Long memberId,
             @PathVariable(name = "course_id") Long courseId) {
         return ResponseEntity.ok(courseService.findCourse(memberId, courseId));
+    }
+
+    @Operation(summary = "코스 삭제")
+    @DeleteMapping("/{course_id}")
+    public ResponseEntity<Void> deleteCommunityCourse(
+            @PathVariable(name = "course_id") Long courseId) {
+        courseService.deleteCourse(courseId);
+        return ResponseEntity.ok().build();
     }
 }
