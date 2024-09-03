@@ -11,6 +11,7 @@ import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
 import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +40,7 @@ class CourseServiceTest {
     @Autowired
     LikeRepository likeRepository;
 
-    @BeforeEach()
+    @AfterEach
     void tearDown() {
         coursePlaceRepository.deleteAllInBatch();
         likeRepository.deleteAllInBatch();

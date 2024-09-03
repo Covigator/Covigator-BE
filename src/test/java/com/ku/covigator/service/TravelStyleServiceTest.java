@@ -6,10 +6,7 @@ import com.ku.covigator.domain.travelstyle.*;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;
 import com.ku.covigator.repository.TravelStyleRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +27,7 @@ class TravelStyleServiceTest {
     @Autowired
     TravelStyleRepository travelStyleRepository;
 
-    @BeforeEach
+    @AfterEach
     void tearDown() {
         memberRepository.deleteAllInBatch();
         travelStyleRepository.deleteAllInBatch();
