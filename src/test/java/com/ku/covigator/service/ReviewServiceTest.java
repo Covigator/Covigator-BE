@@ -5,6 +5,7 @@ import com.ku.covigator.domain.Review;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.request.PostReviewRequest;
+import com.ku.covigator.dto.response.GetReviewResponse;
 import com.ku.covigator.exception.notfound.NotFoundCourseException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.CourseRepository;
@@ -15,6 +16,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
@@ -139,6 +143,52 @@ class ReviewServiceTest {
         assertThatThrownBy(
                 () -> reviewService.addReview(savedMember.getId(), 1L, request)
         ).isInstanceOf(NotFoundCourseException.class);
+    }
+
+    @DisplayName("리뷰 리스트를 조회한다.")
+    @Test
+    void test() {
+        //given
+        Member member = Member.builder()
+                .name("김코비")
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+        memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .likeCnt(100L)
+                .build();
+        Course savedCourse = courseRepository.save(course);
+
+        Review review = Review.builder()
+                .score(5)
+                .comment("좋아요~~~")
+                .member(member)
+                .course(course)
+                .build();
+        reviewRepository.save(review);
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+
+        //when
+        GetReviewResponse response = reviewService.findReviews(pageable, savedCourse.getId());
+
+        //then
+        assertAll(
+                () -> assertEquals(response.reviews().size(), 1),
+                () -> assertFalse(response.hasNext()),
+                () -> assertThat(response.reviews().get(0).author()).isEqualTo("김코비"),
+                () -> assertThat(response.reviews().get(0).comment()).isEqualTo("좋아요~~~"),
+                () -> assertThat(response.reviews().get(0).score()).isEqualTo(5)
+        );
     }
 
 }
