@@ -133,7 +133,7 @@ class CourseControllerTest {
         given(courseService.findCourse(memberId, courseId)).willReturn(response);
 
         //when //then
-        mockMvc.perform(get("/community/courses/{courseId}", courseId))
+        mockMvc.perform(get("/community/courses/{course_id}", courseId))
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),
