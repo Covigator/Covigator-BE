@@ -30,3 +30,7 @@ security:
 springdoc:
   swagger-ui:
     path: "/api-doc"
+
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
