@@ -27,7 +27,7 @@ def jacocoExcludePatterns = [
 		"**/security/*",
 		"**/support/*",
 		"**/dto/*",
-		"**/*ControllerAdvice*"
+		"com/ku/covigator/controller/ControllerAdvice*"
 ]
 
 
