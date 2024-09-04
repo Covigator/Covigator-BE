@@ -258,6 +258,45 @@ class CourseServiceTest {
         );
     }
 
+    @DisplayName("코스 리스트 조회 시 비공개 코스는 조회되지 않는다.")
+    @Test
+    void findCoursesOnlyIsPublicTrue() {
+        //given
+        Member member = createMember();
+        memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('N')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .likeCnt(100L)
+                .build();
+
+        Course course2 = Course.builder()
+                .name("건대 풀코스2")
+                .isPublic('Y')
+                .description("건대 핫플 리스트2")
+                .member(member)
+                .likeCnt(10L)
+                .build();
+        courseRepository.saveAll(List.of(course, course2));
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //when
+        GetCourseListResponse response = courseService.findAllCourses(pageable);
+
+        //then
+        assertAll(
+                () -> assertEquals(response.courses().size(), 1),
+                () -> assertThat(response.courses().get(0).name())
+                        .isEqualTo("건대 풀코스2"),
+                () -> assertThat(response.courses().get(0).description())
+                        .isEqualTo("건대 핫플 리스트2")
+        );
+    }
+
     @DisplayName("코스 상세 정보를 조회한다.")
     @Test
     void findCourseInfo() {
