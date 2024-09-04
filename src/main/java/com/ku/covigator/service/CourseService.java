@@ -44,7 +44,7 @@ public class CourseService {
     @Transactional(readOnly = true)
     public GetCourseListResponse findAllCourses(Pageable pageable) {
 
-        Slice<Course> courses = courseRepository.findAllCoursesBy(pageable);
+        Slice<Course> courses = courseRepository.findAllCoursesByIsPublic(pageable, 'Y');
         return GetCourseListResponse.fromCourseSlice(courses);
 
     }

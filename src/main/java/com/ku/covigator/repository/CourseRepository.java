@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-    Slice<Course> findAllCoursesBy(Pageable pageable);
+    Slice<Course> findAllCoursesByIsPublic(Pageable pageable, Character isPublic);
 
     @EntityGraph(attributePaths = "places")
     Optional<Course> findCourseWithPlacesById(Long courseId);
