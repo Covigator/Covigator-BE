@@ -24,7 +24,7 @@ public class AuthConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtAuthInterceptor)
                 .addPathPatterns("/members/travel-styles")
-                .addPathPatterns("/community/courses/**");
+                .addPathPatterns("/community/courses");
     }
 
     @Override
