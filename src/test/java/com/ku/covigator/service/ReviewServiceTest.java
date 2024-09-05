@@ -86,6 +86,45 @@ class ReviewServiceTest {
         );
     }
 
+    @DisplayName("리뷰 등록 시 코스의 avg_score 필드와 review_cnt 필드가 정상적으로 업데이트 된다.")
+    @Test
+    void updateCourseWhenReviewAdded() {
+        //given
+        Member member = Member.builder()
+                .name("김코비")
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+        Member savedMember = memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .likeCnt(100L)
+                .build();
+        Course savedCourse = courseRepository.save(course);
+
+        PostReviewRequest request = PostReviewRequest.builder()
+                .score(5)
+                .comment("좋아요~~~")
+                .build();
+
+        //when
+        reviewService.addReview(savedMember.getId(), savedCourse.getId(), request);
+
+        //then
+        Course findCourse = courseRepository.findById(savedCourse.getId()).get();
+        assertAll(
+                () -> assertEquals(findCourse.getReviewCnt(), 1),
+                () -> assertEquals(findCourse.getAvgScore(), 5.0)
+        );
+    }
+
     @DisplayName("존재하지 않는 회원에 대한 리뷰 등록 요청 시 예외가 발생한다.")
     @Test
     void addReviewFailsWhenMemberNotFound() {

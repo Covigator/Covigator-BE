@@ -40,6 +40,10 @@ public class Course extends BaseTime {
     @ColumnDefault("0")
     private Double avgScore;
 
+    @Column(name = "review_cnt")
+    @ColumnDefault("0")
+    private Long reviewCnt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
@@ -48,13 +52,19 @@ public class Course extends BaseTime {
     private List<CoursePlace> places = new ArrayList<>();
 
     @Builder
-    public Course(String name, String description, Character isPublic, Long likeCnt, Double avgScore, Member member) {
+    public Course(String name, String description, Character isPublic, Long likeCnt, Double avgScore, Long reviewCnt, Member member) {
         this.name = name;
         this.description = description;
         this.isPublic = isPublic;
         this.likeCnt = likeCnt;
         this.avgScore = avgScore;
+        this.reviewCnt = reviewCnt;
         this.member = member;
+    }
+
+    public void updateAvgScore(Integer score) {
+        this.reviewCnt += 1;
+        this.avgScore = ((this.avgScore * (this.reviewCnt - 1)) + score) / this.reviewCnt;
     }
 
 }
