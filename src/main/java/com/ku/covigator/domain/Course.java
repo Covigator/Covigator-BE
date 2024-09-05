@@ -6,6 +6,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@DynamicInsert
 public class Course extends BaseTime {
 
     @Id
@@ -30,9 +33,11 @@ public class Course extends BaseTime {
     private Character isPublic;
 
     @Column(name = "like_cnt")
+    @ColumnDefault("0")
     private Long likeCnt;
 
     @Column(name = "avg_score")
+    @ColumnDefault("0")
     private Double avgScore;
 
     @ManyToOne(fetch = FetchType.LAZY)
