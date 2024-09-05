@@ -1,6 +1,5 @@
 package com.ku.covigator.domain;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +20,7 @@ class CourseTest {
         course.updateAvgScore(4);
 
         //then
-        assertEquals(course.getReviewCnt(), 6L);
-        assertEquals(course.getAvgScore(), 4.0);
+        assertEquals(6L, course.getReviewCnt());
+        assertEquals(4.0, course.getAvgScore());
     }
 }
