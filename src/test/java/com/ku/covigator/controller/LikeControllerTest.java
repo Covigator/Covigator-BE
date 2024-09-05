@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,7 +29,7 @@ class LikeControllerTest {
     @MockBean
     JwtAuthArgumentResolver jwtAuthArgumentResolver;
 
-    @DisplayName("좋아요 클릭 요청")
+    @DisplayName("좋아요 등록을 요청")
     @Test
     void likeCourse() throws Exception {
         //given
@@ -36,6 +37,18 @@ class LikeControllerTest {
 
         //when //then
         mockMvc.perform(post("/community/courses/{course_id}/likes", courseId))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("좋아요 등록 해제를 요청한다.")
+    @Test
+    void deleteCourseLiked() throws Exception {
+        //given
+        Long courseId = 1L;
+
+        //when //then
+        mockMvc.perform(delete("/community/courses/{course_id}/likes", courseId))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

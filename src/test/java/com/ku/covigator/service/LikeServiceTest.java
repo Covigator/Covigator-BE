@@ -5,6 +5,7 @@ import com.ku.covigator.domain.Like;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.exception.notfound.NotFoundCourseException;
+import com.ku.covigator.exception.notfound.NotFoundLikeException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.CourseRepository;
 import com.ku.covigator.repository.LikeRepository;
@@ -157,4 +158,89 @@ class LikeServiceTest {
         ).isInstanceOf(NotFoundCourseException.class);
     }
 
+    @DisplayName("좋아요(찜) 등록을 해제 한다. 좋아요를 취소한다.")
+    @Test
+    void deleteLike() {
+        //given
+        Member member = Member.builder()
+                .name("김코비")
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+        Member savedMember = memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .likeCnt(100L)
+                .build();
+        Course savedCourse = courseRepository.save(course);
+
+        Like like = Like.builder()
+                .course(course)
+                .member(member)
+                .build();
+        likeRepository.save(like);
+
+        //when
+        likeService.deleteLike(savedMember.getId(), savedCourse.getId());
+
+        //then
+        List<Like> likes = likeRepository.findAll();
+        assertEquals(0, likes.size());
+    }
+
+    @DisplayName("존재하지 않는 코스 대한 리뷰 등록 해제 요청 시 예외가 발생한다.")
+    @Test
+    void deleteLikeFailsWhenCourseNotFound() {
+        //given
+        Member member = Member.builder()
+                .name("김코비")
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+        Member savedMember = memberRepository.save(member);
+
+        //when //then
+        assertThatThrownBy(
+                () -> likeService.deleteLike(savedMember.getId(), 100L)
+        ).isInstanceOf(NotFoundCourseException.class);
+    }
+
+    @DisplayName("취소한 좋아요 요청에 대한 정보를 찾을 수 없으면 예외가 발생한다.")
+    @Test
+    void deleteLikeFailsWhenLikeNotFound() {
+        //given
+        Member member = Member.builder()
+                .name("김코비")
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+        memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .likeCnt(100L)
+                .build();
+        Course savedCourse = courseRepository.save(course);
+
+        //when //then
+        assertThatThrownBy(
+                () -> likeService.deleteLike(100L, savedCourse.getId())
+        ).isInstanceOf(NotFoundLikeException.class);
+    }
 }

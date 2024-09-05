@@ -24,18 +24,33 @@ class CourseTest {
         assertEquals(4.0, course.getAvgScore());
     }
 
-    @DisplayName("코스의 좋아요 수를 업데이트한다.")
+    @DisplayName("코스의 좋아요 수를 1 증가시킨다.")
     @Test
-    void updateLikeCnt() {
+    void increaseLikeCnt() {
         //given
         Course course = Course.builder()
                 .likeCnt(0L)
                 .build();
 
         //when
-        course.updateLikeCnt();
+        course.increaseLikeCnt();
 
         //then
         assertEquals(1L, course.getLikeCnt());
+    }
+
+    @DisplayName("코스의 좋아요 수를 1 감소시킨다.")
+    @Test
+    void decreaseLikeCnt() {
+        //given
+        Course course = Course.builder()
+                .likeCnt(1L)
+                .build();
+
+        //when
+        course.decreaseLikeCnt();
+
+        //then
+        assertEquals(0L, course.getLikeCnt());
     }
 }
