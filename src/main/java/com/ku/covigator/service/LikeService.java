@@ -4,6 +4,7 @@ import com.ku.covigator.domain.Course;
 import com.ku.covigator.domain.Like;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.exception.notfound.NotFoundCourseException;
+import com.ku.covigator.exception.notfound.NotFoundLikeException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.CourseRepository;
 import com.ku.covigator.repository.LikeRepository;
@@ -33,8 +34,24 @@ public class LikeService {
 
         likeRepository.save(like);
 
-        // 코스의 좋아요 수 업데이트
-        course.updateLikeCnt();
+        // 코스의 좋아요 수 증가
+        course.increaseLikeCnt();
+        courseRepository.save(course);
+    }
+
+    @Transactional
+    public void deleteLike(Long memberId, Long courseId) {
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(NotFoundCourseException::new);
+
+        Like like = likeRepository.findByCourseIdAndMemberId(courseId, memberId)
+                .orElseThrow(NotFoundLikeException::new);
+
+        likeRepository.delete(like);
+
+        // 코스의 좋아요 수 감소
+        course.decreaseLikeCnt();
         courseRepository.save(course);
     }
 
@@ -44,4 +61,5 @@ public class LikeService {
                 .course(course)
                 .build();
     }
+
 }
