@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final CourseRepository courseRepository;
 
+    @Transactional
     public void addReview(Long memberId, Long courseId, PostReviewRequest request) {
 
         Member member = memberRepository.findById(memberId)
@@ -37,6 +39,10 @@ public class ReviewService {
         Review review = request.toEntity(member, course);
 
         reviewRepository.save(review);
+
+        // 코스의 평균 별점 값 update
+        course.updateAvgScore(review.getScore());
+        courseRepository.save(course);
     }
 
     public GetReviewResponse findReviews(Pageable pageable, Long courseId) {

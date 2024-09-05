@@ -120,7 +120,7 @@ class ReviewServiceTest {
         //then
         Course findCourse = courseRepository.findById(savedCourse.getId()).get();
         assertAll(
-                () -> assertEquals(findCourse.getReviewCnt(), 1),
+                () -> assertEquals(findCourse.getReviewCnt(), 1L),
                 () -> assertEquals(findCourse.getAvgScore(), 5.0)
         );
     }
