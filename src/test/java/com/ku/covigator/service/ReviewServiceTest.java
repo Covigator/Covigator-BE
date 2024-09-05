@@ -118,10 +118,10 @@ class ReviewServiceTest {
         reviewService.addReview(savedMember.getId(), savedCourse.getId(), request);
 
         //then
-        Course findCourse = courseRepository.findById(savedCourse.getId()).get();
+        Course foundCourse = courseRepository.findById(savedCourse.getId()).get();
         assertAll(
-                () -> assertEquals(1L, findCourse.getReviewCnt()),
-                () -> assertEquals(5.0, findCourse.getAvgScore())
+                () -> assertEquals(1L, foundCourse.getReviewCnt()),
+                () -> assertEquals(5.0, foundCourse.getAvgScore())
         );
     }
 
@@ -155,7 +155,7 @@ class ReviewServiceTest {
 
         //when //then
         assertThatThrownBy(
-                () -> reviewService.addReview(2L, savedCourse.getId(), request)
+                () -> reviewService.addReview(100L, savedCourse.getId(), request)
         ).isInstanceOf(NotFoundMemberException.class);
     }
 
@@ -180,7 +180,7 @@ class ReviewServiceTest {
 
         //when //then
         assertThatThrownBy(
-                () -> reviewService.addReview(savedMember.getId(), 1L, request)
+                () -> reviewService.addReview(savedMember.getId(), 100L, request)
         ).isInstanceOf(NotFoundCourseException.class);
     }
 

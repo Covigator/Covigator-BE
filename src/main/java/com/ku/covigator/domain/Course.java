@@ -67,4 +67,8 @@ public class Course extends BaseTime {
         this.avgScore = ((this.avgScore * (this.reviewCnt - 1)) + score) / this.reviewCnt;
     }
 
+    public void updateLikeCnt() {
+        this.likeCnt += 1;
+    }
+
 }
