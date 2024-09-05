@@ -9,7 +9,7 @@ class CourseTest {
 
     @DisplayName("코스 별점 평균 값을 업데이트한다.")
     @Test
-    void test() {
+    void updateAvgScore() {
         //given
         Course course = Course.builder()
                 .avgScore(4.0)
@@ -22,5 +22,20 @@ class CourseTest {
         //then
         assertEquals(6L, course.getReviewCnt());
         assertEquals(4.0, course.getAvgScore());
+    }
+
+    @DisplayName("코스의 좋아요 수를 업데이트한다.")
+    @Test
+    void updateLikeCnt() {
+        //given
+        Course course = Course.builder()
+                .likeCnt(0L)
+                .build();
+
+        //when
+        course.updateLikeCnt();
+
+        //then
+        assertEquals(1L, course.getLikeCnt());
     }
 }
