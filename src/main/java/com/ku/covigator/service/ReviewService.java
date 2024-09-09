@@ -11,13 +11,10 @@ import com.ku.covigator.repository.CourseRepository;
 import com.ku.covigator.repository.MemberRepository;
 import com.ku.covigator.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

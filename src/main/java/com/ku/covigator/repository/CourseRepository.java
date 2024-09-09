@@ -15,4 +15,15 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @EntityGraph(attributePaths = "places")
     Optional<Course> findCourseWithPlacesById(Long courseId);
+
+    @Query("""
+    SELECT c
+    FROM Course c, Like l
+    WHERE l.member.id = :memberId AND l.course.id = c.id
+    ORDER BY l.createdAt DESC
+    """)
+    Slice<Course> findLikedCoursesByMemberId(Long memberId, Pageable pageable);
+
+    @EntityGraph(attributePaths = "member")
+    Slice<Course> findMyCoursesByMemberId(Long memberId, Pageable pageable);
 }

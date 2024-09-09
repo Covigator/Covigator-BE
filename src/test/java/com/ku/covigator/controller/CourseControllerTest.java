@@ -160,4 +160,72 @@ class CourseControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
+
+    @DisplayName("찜한 코스 모아보기를 요청한다.")
+    @Test
+    void getLikedCourses() throws Exception {
+        //given
+        Long memberId = 1L;
+
+        GetCourseListResponse.CourseDto courseDto = GetCourseListResponse.CourseDto.builder()
+                .name("건대 풀코스")
+                .description("건대 핫플 요약 코스")
+                .score(5.0)
+                .build();
+
+        GetCourseListResponse response = GetCourseListResponse.builder()
+                .courses(List.of(courseDto))
+                .hasNext(false)
+                .build();
+
+        given(jwtAuthArgumentResolver.resolveArgument(any(), any(), any(), any()))
+                .willReturn(memberId);
+        given(jwtAuthArgumentResolver.supportsParameter(any())).willReturn(true);
+        given(courseService.findLikedCourses(memberId)).willReturn(response);
+
+        //when //then
+        mockMvc.perform(get("/my-page/liked-courses"))
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.courses[0].name").value("건대 풀코스"),
+                        jsonPath("$.courses[0].description").value("건대 핫플 요약 코스"),
+                        jsonPath("$.courses[0].score").value(5.0),
+                        jsonPath("$.has_next").value(false)
+                );
+    }
+
+    @DisplayName("마이 코스 모아보기를 요청한다.")
+    @Test
+    void getMyCourses() throws Exception {
+        //given
+        Long memberId = 1L;
+
+        GetCourseListResponse.CourseDto courseDto = GetCourseListResponse.CourseDto.builder()
+                .name("건대 풀코스")
+                .description("건대 핫플 요약 코스")
+                .score(5.0)
+                .build();
+
+        GetCourseListResponse response = GetCourseListResponse.builder()
+                .courses(List.of(courseDto))
+                .hasNext(false)
+                .build();
+
+        given(jwtAuthArgumentResolver.resolveArgument(any(), any(), any(), any()))
+                .willReturn(memberId);
+        given(jwtAuthArgumentResolver.supportsParameter(any())).willReturn(true);
+        given(courseService.findMyCourses(memberId)).willReturn(response);
+
+        //when //then
+        mockMvc.perform(get("/my-page/my-courses"))
+                .andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.courses[0].name").value("건대 풀코스"),
+                        jsonPath("$.courses[0].description").value("건대 핫플 요약 코스"),
+                        jsonPath("$.courses[0].score").value(5.0),
+                        jsonPath("$.has_next").value(false)
+                );
+    }
 }

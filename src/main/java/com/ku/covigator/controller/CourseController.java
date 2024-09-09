@@ -16,21 +16,20 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "course", description = "커뮤니티 코스")
 @RestController
-@RequestMapping("/community/courses")
 @RequiredArgsConstructor
 public class CourseController {
 
     private final CourseService courseService;
 
     @Operation(summary = "코스 등록")
-    @PostMapping
+    @PostMapping("/community/courses")
     public ResponseEntity<Void> addCommunityCourse(@LoggedInMemberId Long memberId, @RequestBody PostCourseRequest request) {
         courseService.addCommunityCourse(memberId, request);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "전체 코스 조회")
-    @GetMapping
+    @GetMapping("/community/courses")
     public ResponseEntity<GetCourseListResponse> getAllCommunityCourses(
             @PageableDefault(
                     page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC
@@ -39,7 +38,7 @@ public class CourseController {
     }
 
     @Operation(summary = "상세 코스 조회")
-    @GetMapping("/{course_id}")
+    @GetMapping("/community/courses/{course_id}")
     public ResponseEntity<GetCommunityCourseInfoResponse> getCommunityCourseInfo(
             @LoggedInMemberId Long memberId,
             @PathVariable(name = "course_id") Long courseId) {
@@ -47,10 +46,22 @@ public class CourseController {
     }
 
     @Operation(summary = "코스 삭제")
-    @DeleteMapping("/{course_id}")
+    @DeleteMapping("/community/courses/{course_id}")
     public ResponseEntity<Void> deleteCommunityCourse(
             @PathVariable(name = "course_id") Long courseId) {
         courseService.deleteCourse(courseId);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "찜한 코스 모아보기")
+    @GetMapping("/my-page/liked-courses")
+    public ResponseEntity<GetCourseListResponse> getLikedCourses(@LoggedInMemberId Long memberId){
+        return ResponseEntity.ok(courseService.findLikedCourses(memberId));
+    }
+
+    @Operation(summary = "마이 코스 모아보기")
+    @GetMapping("/my-page/my-courses")
+    public ResponseEntity<GetCourseListResponse> getMyCourses(@LoggedInMemberId Long memberId) {
+        return ResponseEntity.ok(courseService.findMyCourses(memberId));
     }
 }

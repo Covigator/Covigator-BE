@@ -9,7 +9,10 @@ import com.ku.covigator.dto.request.PostCourseRequest;
 import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
 import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
-import com.ku.covigator.repository.*;
+import com.ku.covigator.repository.CoursePlaceRepository;
+import com.ku.covigator.repository.CourseRepository;
+import com.ku.covigator.repository.LikeRepository;
+import com.ku.covigator.repository.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -399,6 +402,106 @@ class CourseServiceTest {
         assertAll(
                 () -> assertEquals(courses.size(), 0),
                 () -> assertEquals(places.size(), 0)
+        );
+    }
+
+    @DisplayName("찜한 코스 리스트를 찜 시간 최신순으로 조회한다.")
+    @Test
+    void findLikedCourses() {
+        //given
+        Member member = createMember();
+        Member savedMember = memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .likeCnt(100L)
+                .build();
+        Course savedCourse = courseRepository.save(course);
+
+        Course course2 = Course.builder()
+                .name("건대 풀코스2")
+                .isPublic('Y')
+                .description("건대 핫플 리스트2")
+                .member(member)
+                .likeCnt(10L)
+                .build();
+        Course savedCourse2 = courseRepository.save(course2);
+
+        Course course3 = Course.builder()
+                .name("건대 풀코스3")
+                .isPublic('Y')
+                .description("건대 핫플 리스트3")
+                .member(member)
+                .likeCnt(10L)
+                .build();
+        courseRepository.save(course3);
+
+        Like like = Like.builder()
+                .member(savedMember)
+                .course(savedCourse)
+                .build();
+        Like like2 = Like.builder()
+                .member(savedMember)
+                .course(savedCourse2)
+                .build();
+        likeRepository.saveAll(List.of(like, like2));
+
+        //when
+        GetCourseListResponse response = courseService.findLikedCourses(savedMember.getId());
+
+        //then
+        assertAll(
+                () -> assertEquals(2, response.courses().size()),
+                () -> assertThat(response.courses())
+                        .extracting("name")
+                        .containsExactly("건대 풀코스2", "건대 풀코스"),
+                () -> assertThat(response.courses())
+                        .extracting("description")
+                        .containsExactly("건대 핫플 리스트2", "건대 핫플 리스트"),
+                () -> assertThat(response.hasNext()).isFalse()
+        );
+    }
+
+    @DisplayName("마이 코스 리스트를 생성시간 기준 최신순으로 조회한다.")
+    @Test
+    void findMyCourses() {
+        //given
+        Member member = createMember();
+        Member savedMember = memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .likeCnt(100L)
+                .build();
+
+        Course course2 = Course.builder()
+                .name("건대 풀코스2")
+                .isPublic('Y')
+                .description("건대 핫플 리스트2")
+                .member(member)
+                .likeCnt(10L)
+                .build();
+        courseRepository.saveAll(List.of(course, course2));
+
+        //when
+        GetCourseListResponse response = courseService.findMyCourses(savedMember.getId());
+
+        //then
+        assertAll(
+                () -> assertEquals(2, response.courses().size()),
+                () -> assertThat(response.courses())
+                        .extracting("name")
+                        .containsExactly("건대 풀코스2", "건대 풀코스"),
+                () -> assertThat(response.courses())
+                        .extracting("description")
+                        .containsExactly("건대 핫플 리스트2", "건대 핫플 리스트"),
+                () -> assertThat(response.hasNext()).isFalse()
         );
     }
 
