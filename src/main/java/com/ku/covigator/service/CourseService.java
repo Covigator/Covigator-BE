@@ -12,8 +12,10 @@ import com.ku.covigator.repository.CoursePlaceRepository;
 import com.ku.covigator.repository.CourseRepository;
 import com.ku.covigator.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,20 @@ public class CourseService {
         Slice<Course> courses = courseRepository.findAllCoursesByIsPublic(pageable, 'Y');
         return GetCourseListResponse.fromCourseSlice(courses);
 
+    }
+
+    public GetCourseListResponse findLikedCourses(Long memberId) {
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Slice<Course> courses = courseRepository.findLikedCoursesByMemberId(memberId, pageable);
+        return GetCourseListResponse.fromCourseSlice(courses);
+    }
+
+    public GetCourseListResponse findMyCourses(Long memberId) {
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+        Slice<Course> courses = courseRepository.findMyCoursesByMemberId(memberId, pageable);
+        return GetCourseListResponse.fromCourseSlice(courses);
     }
 
     @Transactional(readOnly = true)

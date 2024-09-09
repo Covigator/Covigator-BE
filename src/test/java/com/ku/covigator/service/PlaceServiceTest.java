@@ -4,7 +4,6 @@ import com.ku.covigator.domain.Place;
 import com.ku.covigator.exception.notfound.NotFoundPlaceException;
 import com.ku.covigator.repository.PlaceRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
