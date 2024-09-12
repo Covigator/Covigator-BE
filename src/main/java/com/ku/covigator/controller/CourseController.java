@@ -6,11 +6,13 @@ import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.security.jwt.LoggedInMemberId;
 import com.ku.covigator.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +33,16 @@ public class CourseController {
     @Operation(summary = "전체 코스 조회")
     @GetMapping("/community/courses")
     public ResponseEntity<GetCourseListResponse> getAllCommunityCourses(
-            @PageableDefault(
-                    page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC
-            ) Pageable pageable) {
+            @Parameter(description = "페이지 번호 (0부터 시작)", schema = @Schema(defaultValue = "0"))
+            @RequestParam(value = "page", defaultValue = "0") int page,
+
+            @Parameter(description = "페이지 당 항목 수", schema = @Schema(defaultValue = "10"))
+            @RequestParam(value = "size", defaultValue = "10") int size,
+
+            @Parameter(description = "정렬 기준 (리뷰순: reviewCnt), (좋아요순: likeCnt)", schema = @Schema(defaultValue = "createdAt"))
+            @RequestParam(value = "sort", defaultValue = "createdAt") String sort) {
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort).descending());
         return ResponseEntity.ok(courseService.findAllCourses(pageable));
     }
 
