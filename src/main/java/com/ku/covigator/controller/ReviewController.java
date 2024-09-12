@@ -5,6 +5,7 @@ import com.ku.covigator.dto.response.GetReviewResponse;
 import com.ku.covigator.security.jwt.LoggedInMemberId;
 import com.ku.covigator.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 조회")
     @GetMapping
     public ResponseEntity<GetReviewResponse> findReviews(
+            @Parameter(hidden = true)
             @PageableDefault(
                     page = 0, size = 10, sort = "createdAt", direction = Sort.Direction.DESC
             ) Pageable pageable,
