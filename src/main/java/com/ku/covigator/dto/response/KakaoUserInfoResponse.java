@@ -16,7 +16,6 @@ public record KakaoUserInfoResponse(KakaoAccount kakaoAccount){
     public Member toEntity() {
         return Member.builder()
                 .email(kakaoAccount.email)
-                .name(kakaoAccount.name)
                 .nickname(kakaoAccount.profile.nickname)
                 .imageUrl(kakaoAccount.profile.thumbnail_image_url)
                 .password(null)

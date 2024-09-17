@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Like extends BaseTime{
+public class Dibs extends BaseTime{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,7 @@ public class Like extends BaseTime{
     private Course course;
 
     @Builder
-    public Like(Member member, Course course) {
+    public Dibs(Member member, Course course) {
         this.member = member;
         this.course = course;
     }

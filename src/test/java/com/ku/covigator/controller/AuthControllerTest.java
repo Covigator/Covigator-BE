@@ -64,7 +64,6 @@ class AuthControllerTest {
         //given
         PostSignUpRequest request = PostSignUpRequest.builder()
                 .email("www.covi.com")
-                .name("김코비")
                 .nickname("covi")
                 .imageUrl("covi@naver.com")
                 .imageUrl("covigator123")

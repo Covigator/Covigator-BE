@@ -1,7 +1,7 @@
 package com.ku.covigator.domain.member;
 
 import com.ku.covigator.domain.BaseTime;
-import com.ku.covigator.domain.Like;
+import com.ku.covigator.domain.Dibs;
 import com.ku.covigator.domain.travelstyle.TravelStyle;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,9 +21,6 @@ public class Member extends BaseTime {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
-
-    @Column(name = "name")
-    private String name;
 
     @Column(name = "nickname")
     private String nickname;
@@ -50,11 +47,10 @@ public class Member extends BaseTime {
     private TravelStyle travelStyle;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
-    private List<Like> likes = new ArrayList<>();
+    private List<Dibs> dibs = new ArrayList<>();
 
     @Builder
-    public Member(String name, String nickname, String email, String password, String imageUrl, Platform platform) {
-        this.name = name;
+    public Member(String nickname, String email, String password, String imageUrl, Platform platform) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;

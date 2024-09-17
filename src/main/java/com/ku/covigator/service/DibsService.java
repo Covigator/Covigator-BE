@@ -1,13 +1,13 @@
 package com.ku.covigator.service;
 
 import com.ku.covigator.domain.Course;
-import com.ku.covigator.domain.Like;
+import com.ku.covigator.domain.Dibs;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.exception.notfound.NotFoundCourseException;
-import com.ku.covigator.exception.notfound.NotFoundLikeException;
+import com.ku.covigator.exception.notfound.NotFoundDibsException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.CourseRepository;
-import com.ku.covigator.repository.LikeRepository;
+import com.ku.covigator.repository.DibsRepository;
 import com.ku.covigator.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,9 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class LikeService {
+public class DibsService {
 
-    private final LikeRepository likeRepository;
+    private final DibsRepository dibsRepository;
     private final CourseRepository courseRepository;
     private final MemberRepository memberRepository;
 
@@ -30,12 +30,12 @@ public class LikeService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(NotFoundCourseException::new);
 
-        Like like = buildLike(member, course);
+        Dibs dibs = buildLike(member, course);
 
-        likeRepository.save(like);
+        dibsRepository.save(dibs);
 
         // 코스의 좋아요 수 증가
-        course.increaseLikeCnt();
+        course.increaseDibsCnt();
         courseRepository.save(course);
     }
 
@@ -45,18 +45,18 @@ public class LikeService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(NotFoundCourseException::new);
 
-        Like like = likeRepository.findByCourseIdAndMemberId(courseId, memberId)
-                .orElseThrow(NotFoundLikeException::new);
+        Dibs dibs = dibsRepository.findByCourseIdAndMemberId(courseId, memberId)
+                .orElseThrow(NotFoundDibsException::new);
 
-        likeRepository.delete(like);
+        dibsRepository.delete(dibs);
 
         // 코스의 좋아요 수 감소
-        course.decreaseLikeCnt();
+        course.decreaseDibsCnt();
         courseRepository.save(course);
     }
 
-    public Like buildLike(Member member, Course course) {
-        return Like.builder()
+    public Dibs buildLike(Member member, Course course) {
+        return Dibs.builder()
                 .member(member)
                 .course(course)
                 .build();

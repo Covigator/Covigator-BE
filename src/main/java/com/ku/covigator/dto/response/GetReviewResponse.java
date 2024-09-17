@@ -19,7 +19,7 @@ public record GetReviewResponse(List<ReviewDto> reviews, Boolean hasNext) {
     public static GetReviewResponse fromEntity(Slice<Review> reviews) {
         List<ReviewDto> reviewDtos = reviews.stream().map(
                 review -> ReviewDto.builder()
-                        .author(review.getMember().getName())
+                        .author(review.getMember().getNickname())
                         .comment(review.getComment())
                         .score(review.getScore())
                         .build()

@@ -49,15 +49,15 @@ public class CourseService {
     @Transactional(readOnly = true)
     public GetCommunityCourseListResponse findAllCourses(Pageable pageable, Long memberId) {
 
-        Member member = memberRepository.findMemberWithLikesById(memberId)
+        Member member = memberRepository.findMemberWithDibsById(memberId)
                 .orElseThrow(NotFoundMemberException::new);
 
         Slice<Course> courses = courseRepository.findAllCoursesByIsPublic(pageable, 'Y');
 
-        // 회원이 좋아요한 코스 리스트 ID 반환
-        Set<Long> likedCourseIds = getLikedCourseIds(member);
+        // 회원의 찜 코스 리스트 ID 반환
+        Set<Long> dibsCourseId = getDibsCourseIds(member);
 
-        return GetCommunityCourseListResponse.from(courses, likedCourseIds);
+        return GetCommunityCourseListResponse.from(courses, dibsCourseId);
     }
 
     public GetCourseListResponse findLikedCourses(Long memberId) {
@@ -77,16 +77,16 @@ public class CourseService {
     @Transactional(readOnly = true)
     public GetCommunityCourseInfoResponse findCourse(Long memberId, Long courseId) {
 
-        Member member = memberRepository.findMemberWithLikesById(memberId)
+        Member member = memberRepository.findMemberWithDibsById(memberId)
                 .orElseThrow(NotFoundMemberException::new);
 
         Course course = courseRepository.findCourseWithPlacesById(courseId)
                 .orElseThrow(NotFoundCourseException::new);
 
-        //좋아요 여부 확인
-        boolean isLiked = checkIfLiked(courseId, member);
+        //찜 여부 확인
+        boolean dibs = checkDibs(courseId, member);
 
-        return GetCommunityCourseInfoResponse.from(course, isLiked);
+        return GetCommunityCourseInfoResponse.from(course, dibs);
     }
 
     public void deleteCourse(Long courseId) {
@@ -95,14 +95,14 @@ public class CourseService {
 
     }
 
-    private boolean checkIfLiked(Long courseId, Member member) {
-        return member.getLikes().stream().anyMatch(
+    private boolean checkDibs(Long courseId, Member member) {
+        return member.getDibs().stream().anyMatch(
                 like -> like.getCourse().getId().equals(courseId)
         );
     }
 
-    private Set<Long> getLikedCourseIds(Member member) {
-        return member.getLikes().stream()
+    private Set<Long> getDibsCourseIds(Member member) {
+        return member.getDibs().stream()
                 .map(like -> like.getCourse().getId())
                 .collect(Collectors.toSet());
     }

@@ -133,7 +133,6 @@ class TravelStyleServiceTest {
 
     private Member createMember() {
         return Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")

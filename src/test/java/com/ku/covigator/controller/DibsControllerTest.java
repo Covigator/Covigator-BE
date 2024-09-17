@@ -2,7 +2,7 @@ package com.ku.covigator.controller;
 
 import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
 import com.ku.covigator.security.jwt.JwtAuthInterceptor;
-import com.ku.covigator.service.LikeService;
+import com.ku.covigator.service.DibsService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ComponentScan("com.ku.covigator.support")
-@WebMvcTest(controllers = LikeController.class)
-class LikeControllerTest {
+@WebMvcTest(controllers = DibsController.class)
+class DibsControllerTest {
 
     @Autowired
     MockMvc mockMvc;
     @MockBean
-    LikeService likeService;
+    DibsService dibsService;
     @MockBean
     JwtAuthInterceptor jwtAuthInterceptor;
     @MockBean
@@ -36,7 +36,7 @@ class LikeControllerTest {
         Long courseId = 1L;
 
         //when //then
-        mockMvc.perform(post("/community/courses/{course_id}/likes", courseId))
+        mockMvc.perform(post("/community/courses/{course_id}/dibs", courseId))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
@@ -48,7 +48,7 @@ class LikeControllerTest {
         Long courseId = 1L;
 
         //when //then
-        mockMvc.perform(delete("/community/courses/{course_id}/likes", courseId))
+        mockMvc.perform(delete("/community/courses/{course_id}/dibs", courseId))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
