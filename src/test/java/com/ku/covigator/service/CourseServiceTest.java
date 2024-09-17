@@ -7,6 +7,7 @@ import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.request.PostCourseRequest;
 import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
+import com.ku.covigator.dto.response.GetCommunityCourseListResponse;
 import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.CoursePlaceRepository;
@@ -139,7 +140,7 @@ class CourseServiceTest {
     void findCoursesSortByCreatedAt() {
         //given
         Member member = createMember();
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
         Course course = Course.builder()
                 .name("건대 풀코스")
@@ -147,7 +148,7 @@ class CourseServiceTest {
                 .description("건대 핫플 리스트")
                 .member(member)
                 .build();
-        courseRepository.save(course);
+        Course savedCourse = courseRepository.save(course);
 
         Course course2 = Course.builder()
                 .name("건대 풀코스2")
@@ -155,16 +156,19 @@ class CourseServiceTest {
                 .description("건대 핫플 리스트2")
                 .member(member)
                 .build();
-        courseRepository.save(course2);
+        Course savedCourse2 = courseRepository.save(course2);
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
 
         //when
-        GetCourseListResponse response = courseService.findAllCourses(pageable);
+        GetCommunityCourseListResponse response = courseService.findAllCourses(pageable, savedMember.getId());
 
         //then
         assertAll(
                 () -> assertThat(response.courses().size()).isEqualTo(2),
+                () -> assertThat(response.courses())
+                        .extracting("courseId")
+                        .containsExactly(savedCourse2.getId(), savedCourse.getId()),
                 () -> assertThat(response.courses())
                         .extracting("name")
                         .containsExactly("건대 풀코스2", "건대 풀코스"),
@@ -174,12 +178,61 @@ class CourseServiceTest {
         );
     }
 
+    @DisplayName("전체 코스 리스트를 조회시 좋아요 여부를 판단한다.")
+    @Test
+    void findCoursesWithLiked() {
+        //given
+        Member member = createMember();
+        Member savedMember = memberRepository.save(member);
+
+        Course course = Course.builder()
+                .name("건대 풀코스")
+                .isPublic('Y')
+                .description("건대 핫플 리스트")
+                .member(member)
+                .build();
+        Course savedCourse = courseRepository.save(course);
+
+        Course course2 = Course.builder()
+                .name("건대 풀코스2")
+                .isPublic('Y')
+                .description("건대 핫플 리스트2")
+                .member(member)
+                .build();
+        courseRepository.save(course2);
+
+        Like like = Like.builder()
+                .course(savedCourse)
+                .member(savedMember)
+                .build();
+        likeRepository.save(like);
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
+
+        //when
+        GetCommunityCourseListResponse response = courseService.findAllCourses(pageable, savedMember.getId());
+
+        //then
+        assertAll(
+                () -> assertThat(response.courses().size()).isEqualTo(2),
+                () -> assertThat(response.courses())
+                        .extracting("name")
+                        .containsExactly("건대 풀코스2", "건대 풀코스"),
+                () -> assertThat(response.courses())
+                        .extracting("description")
+                        .containsExactly("건대 핫플 리스트2", "건대 핫플 리스트"),
+                () -> assertThat(response.courses())
+                        .extracting("isLiked")
+                        .containsExactly(false, true)
+        );
+    }
+
     @DisplayName("전체 코스 리스트를 별점순으로 조회한다.")
     @Test
     void findCoursesSortByReviewScore() {
         //given
         Member member = createMember();
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
         Course course = Course.builder()
                 .name("건대 풀코스")
@@ -202,7 +255,7 @@ class CourseServiceTest {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("avgScore").descending());
 
         //when
-        GetCourseListResponse response = courseService.findAllCourses(pageable);
+        GetCommunityCourseListResponse response = courseService.findAllCourses(pageable, savedMember.getId());
 
         //then
         assertAll(
@@ -224,7 +277,7 @@ class CourseServiceTest {
     void findCoursesSortByLikes() {
         //given
         Member member = createMember();
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
         Course course = Course.builder()
                 .name("건대 풀코스")
@@ -247,7 +300,7 @@ class CourseServiceTest {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("likeCnt").descending());
 
         //when
-        GetCourseListResponse response = courseService.findAllCourses(pageable);
+        GetCommunityCourseListResponse response = courseService.findAllCourses(pageable, savedMember.getId());
 
         //then
         assertAll(
@@ -266,7 +319,7 @@ class CourseServiceTest {
     void findCoursesOnlyIsPublicTrue() {
         //given
         Member member = createMember();
-        memberRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
         Course course = Course.builder()
                 .name("건대 풀코스")
@@ -288,7 +341,7 @@ class CourseServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         //when
-        GetCourseListResponse response = courseService.findAllCourses(pageable);
+        GetCommunityCourseListResponse response = courseService.findAllCourses(pageable, savedMember.getId());
 
         //then
         assertAll(

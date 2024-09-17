@@ -5,6 +5,7 @@ import com.ku.covigator.domain.CoursePlace;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.dto.request.PostCourseRequest;
 import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
+import com.ku.covigator.dto.response.GetCommunityCourseListResponse;
 import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.exception.notfound.NotFoundCourseException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,11 +47,19 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public GetCourseListResponse findAllCourses(Pageable pageable) {
+    public GetCommunityCourseListResponse findAllCourses(Pageable pageable, Long memberId) {
+
+        Member member = memberRepository.findMemberWithLikesById(memberId)
+                .orElseThrow(NotFoundMemberException::new);
 
         Slice<Course> courses = courseRepository.findAllCoursesByIsPublic(pageable, 'Y');
-        return GetCourseListResponse.fromCourseSlice(courses);
 
+        // 회원이 좋아요한 코스 리스트 ID 반환
+        Set<Long> likedCourseIds = member.getLikes().stream()
+                .map(like -> like.getCourse().getId())
+                .collect(Collectors.toSet());
+
+        return GetCommunityCourseListResponse.from(courses, likedCourseIds);
     }
 
     public GetCourseListResponse findLikedCourses(Long memberId) {
