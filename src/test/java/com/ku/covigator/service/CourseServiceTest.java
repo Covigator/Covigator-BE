@@ -397,6 +397,7 @@ class CourseServiceTest {
 
         //then
         assertAll(
+                () -> assertThat(response.courseId()).isEqualTo(savedCourse.getId()),
                 () -> assertThat(response.courseName()).isEqualTo("건대 풀코스"),
                 () -> assertThat(response.courseDescription()).isEqualTo("건대 핫플 리스트"),
                 () -> assertThat(response.isLiked()).isTrue(),
