@@ -165,7 +165,7 @@ class CourseServiceTest {
 
         //then
         assertAll(
-                () -> assertThat(response.courses().size()).isEqualTo(2),
+                () -> assertThat(response.courses()).hasSize(2),
                 () -> assertThat(response.courses())
                         .extracting("courseId")
                         .containsExactly(savedCourse2.getId(), savedCourse.getId()),
