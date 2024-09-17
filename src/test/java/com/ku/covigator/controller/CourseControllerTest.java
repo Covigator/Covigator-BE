@@ -3,6 +3,7 @@ package com.ku.covigator.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ku.covigator.dto.request.PostCourseRequest;
 import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
+import com.ku.covigator.dto.response.GetCommunityCourseListResponse;
 import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
 import com.ku.covigator.security.jwt.JwtAuthInterceptor;
@@ -79,18 +80,34 @@ class CourseControllerTest {
     @Test
     void getAllCommunityCourses() throws Exception {
         //given
-        GetCourseListResponse.CourseDto courseDto = GetCourseListResponse.CourseDto.builder()
+        Long memberId = 1L;
+
+        GetCommunityCourseListResponse.CourseDto courseDto = GetCommunityCourseListResponse.CourseDto.builder()
+                .courseId(1L)
                 .name("건대 풀코스")
                 .description("건대 핫플 요약 코스")
                 .score(5.0)
+                .isLiked(true)
                 .build();
 
-        GetCourseListResponse response = GetCourseListResponse.builder()
-                .courses(List.of(courseDto))
+        GetCommunityCourseListResponse.CourseDto courseDto2 = GetCommunityCourseListResponse.CourseDto.builder()
+                .courseId(2L)
+                .name("건대 풀코스2")
+                .description("건대 핫플 요약 코스2")
+                .score(0.0)
+                .isLiked(false)
+                .build();
+
+        GetCommunityCourseListResponse response = GetCommunityCourseListResponse.builder()
+                .courses(List.of(courseDto, courseDto2))
                 .hasNext(false)
                 .build();
 
-        given(courseService.findAllCourses(any())).willReturn(response);
+        given(jwtAuthArgumentResolver.resolveArgument(any(), any(), any(), any()))
+                .willReturn(memberId);
+        given(jwtAuthArgumentResolver.supportsParameter(any())).willReturn(true);
+
+        given(courseService.findAllCourses(any(), any())).willReturn(response);
         this.mockMvc = MockMvcBuilders.standaloneSetup(
                         new CourseController(this.courseService)
                 )
@@ -102,9 +119,16 @@ class CourseControllerTest {
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),
+                        jsonPath("$.courses[0].course_id").value(1L),
                         jsonPath("$.courses[0].name").value("건대 풀코스"),
                         jsonPath("$.courses[0].description").value("건대 핫플 요약 코스"),
                         jsonPath("$.courses[0].score").value(5.0),
+                        jsonPath("$.courses[0].is_liked").value(true),
+                        jsonPath("$.courses[1].course_id").value(2L),
+                        jsonPath("$.courses[1].name").value("건대 풀코스2"),
+                        jsonPath("$.courses[1].description").value("건대 핫플 요약 코스2"),
+                        jsonPath("$.courses[1].score").value(0.0),
+                        jsonPath("$.courses[1].is_liked").value(false),
                         jsonPath("$.has_next").value(false)
                 );
     }
