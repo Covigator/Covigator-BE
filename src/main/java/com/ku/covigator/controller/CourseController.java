@@ -43,7 +43,7 @@ public class CourseController {
             @Parameter(description = "페이지 당 항목 수", schema = @Schema(defaultValue = "10"))
             @RequestParam(value = "size", defaultValue = "10") int size,
 
-            @Parameter(description = "정렬 기준 (리뷰순: reviewCnt), (좋아요순: likeCnt)", schema = @Schema(defaultValue = "createdAt"))
+            @Parameter(description = "정렬 기준 (별점순: avgScore), (좋아요순: likeCnt)", schema = @Schema(defaultValue = "createdAt"))
             @RequestParam(value = "sort", defaultValue = "createdAt") String sort) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort).descending());
