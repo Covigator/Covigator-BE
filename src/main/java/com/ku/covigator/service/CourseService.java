@@ -13,6 +13,7 @@ import com.ku.covigator.repository.CoursePlaceRepository;
 import com.ku.covigator.repository.CourseRepository;
 import com.ku.covigator.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -55,9 +56,7 @@ public class CourseService {
         Slice<Course> courses = courseRepository.findAllCoursesByIsPublic(pageable, 'Y');
 
         // 회원이 좋아요한 코스 리스트 ID 반환
-        Set<Long> likedCourseIds = member.getLikes().stream()
-                .map(like -> like.getCourse().getId())
-                .collect(Collectors.toSet());
+        Set<Long> likedCourseIds = getLikedCourseIds(member);
 
         return GetCommunityCourseListResponse.from(courses, likedCourseIds);
     }
@@ -103,4 +102,9 @@ public class CourseService {
         );
     }
 
+    private Set<Long> getLikedCourseIds(Member member) {
+        return member.getLikes().stream()
+                .map(like -> like.getCourse().getId())
+                .collect(Collectors.toSet());
+    }
 }

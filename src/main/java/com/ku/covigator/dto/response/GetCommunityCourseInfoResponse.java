@@ -9,23 +9,25 @@ import java.util.List;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record GetCommunityCourseInfoResponse(String courseName, String courseDescription, Long likeCnt, Boolean isLiked,
-                                             List<PlaceDto> places) {
+public record GetCommunityCourseInfoResponse(Long courseId, String courseName, String courseDescription, Long likeCnt,
+                                             Boolean isLiked, List<PlaceDto> places) {
 
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public record PlaceDto(String placeName, String placeDescription, String category) {
+    public record PlaceDto(Long placeId, String placeName, String placeDescription, String category) {
     }
 
     public static GetCommunityCourseInfoResponse from(Course course, boolean isLiked) {
         List<PlaceDto> places = course.getPlaces().stream()
                 .map(place -> PlaceDto.builder()
+                        .placeId(place.getId())
                         .placeDescription(place.getDescription())
                         .placeName(place.getName())
                         .category(place.getCategory())
                         .build()
                 ).toList();
         return GetCommunityCourseInfoResponse.builder()
+                .courseId(course.getId())
                 .courseName(course.getName())
                 .courseDescription(course.getDescription())
                 .likeCnt(course.getLikeCnt())
