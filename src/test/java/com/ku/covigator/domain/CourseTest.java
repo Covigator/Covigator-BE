@@ -29,14 +29,14 @@ class CourseTest {
     void increaseLikeCnt() {
         //given
         Course course = Course.builder()
-                .likeCnt(0L)
+                .dibsCnt(0L)
                 .build();
 
         //when
-        course.increaseLikeCnt();
+        course.increaseDibsCnt();
 
         //then
-        assertEquals(1L, course.getLikeCnt());
+        assertEquals(1L, course.getDibsCnt());
     }
 
     @DisplayName("코스의 좋아요 수를 1 감소시킨다.")
@@ -44,13 +44,13 @@ class CourseTest {
     void decreaseLikeCnt() {
         //given
         Course course = Course.builder()
-                .likeCnt(1L)
+                .dibsCnt(1L)
                 .build();
 
         //when
-        course.decreaseLikeCnt();
+        course.decreaseDibsCnt();
 
         //then
-        assertEquals(0L, course.getLikeCnt());
+        assertEquals(0L, course.getDibsCnt());
     }
 }

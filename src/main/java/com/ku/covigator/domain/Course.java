@@ -32,9 +32,9 @@ public class Course extends BaseTime {
     @Column(name = "is_public")
     private Character isPublic;
 
-    @Column(name = "like_cnt")
+    @Column(name = "dibs_cnt")
     @ColumnDefault("0")
-    private Long likeCnt;
+    private Long dibsCnt;
 
     @Column(name = "avg_score")
     @ColumnDefault("0")
@@ -52,11 +52,11 @@ public class Course extends BaseTime {
     private List<CoursePlace> places = new ArrayList<>();
 
     @Builder
-    public Course(String name, String description, Character isPublic, Long likeCnt, Double avgScore, Long reviewCnt, Member member) {
+    public Course(String name, String description, Character isPublic, Long dibsCnt, Double avgScore, Long reviewCnt, Member member) {
         this.name = name;
         this.description = description;
         this.isPublic = isPublic;
-        this.likeCnt = likeCnt;
+        this.dibsCnt = dibsCnt;
         this.avgScore = avgScore;
         this.reviewCnt = reviewCnt;
         this.member = member;
@@ -67,12 +67,12 @@ public class Course extends BaseTime {
         this.avgScore = ((this.avgScore * (this.reviewCnt - 1)) + score) / this.reviewCnt;
     }
 
-    public void increaseLikeCnt() {
-        this.likeCnt += 1;
+    public void increaseDibsCnt() {
+        this.dibsCnt += 1;
     }
 
-    public void decreaseLikeCnt() {
-        this.likeCnt -= 1;
+    public void decreaseDibsCnt() {
+        this.dibsCnt -= 1;
     }
 
 }

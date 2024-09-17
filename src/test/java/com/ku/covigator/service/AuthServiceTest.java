@@ -49,7 +49,6 @@ class AuthServiceTest {
         String encodedPassword = passwordEncoder.encode(password);
 
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password(encodedPassword)
                 .nickname("covi")
@@ -74,7 +73,6 @@ class AuthServiceTest {
         String unknownEmail = "abc@naver.com";
         String password = "covigator123";
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password(password)
                 .nickname("covi")
@@ -97,7 +95,6 @@ class AuthServiceTest {
         String password = "covigator123";
         String invalidPassword = "invalidPassword";
         Member member = Member.builder()
-                .name("김코비")
                 .email(email)
                 .password(password)
                 .nickname("covi")
@@ -117,7 +114,6 @@ class AuthServiceTest {
     void signUpLocalSuccessIfThereIsNoDuplicateMember() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")
@@ -138,7 +134,6 @@ class AuthServiceTest {
     void signUpLocalFailWhenMemberIsDuplicated() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")
@@ -147,7 +142,6 @@ class AuthServiceTest {
                 .build();
 
         Member newMember = Member.builder()
-                .name("박코비")
                 .email("covi@naver.com")
                 .password("covigator1234")
                 .nickname("covi2")
@@ -168,7 +162,6 @@ class AuthServiceTest {
     void signUpLocalFailWhenMemberIsDuplicatedInDifferentPlatform() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")
@@ -177,7 +170,6 @@ class AuthServiceTest {
                 .build();
 
         Member newMember = Member.builder()
-                .name("박코비")
                 .email("covi@naver.com")
                 .password("covigator1234")
                 .nickname("covi2")
@@ -197,7 +189,6 @@ class AuthServiceTest {
         //given
         String password = "covigator123";
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password(password)
                 .nickname("covi")
@@ -218,7 +209,6 @@ class AuthServiceTest {
         //given
         String email = "covi@naver.com";
         Member member = Member.builder()
-                .name("김코비")
                 .email(email)
                 .password("covigator123")
                 .nickname("covi")
@@ -250,7 +240,6 @@ class AuthServiceTest {
         //given
         String email = "covi@naver.com";
         Member member = Member.builder()
-                .name("김코비")
                 .email(email)
                 .password("covigator123")
                 .nickname("covi")

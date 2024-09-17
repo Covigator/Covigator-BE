@@ -2,7 +2,7 @@ package com.ku.covigator.service;
 
 import com.ku.covigator.domain.Course;
 import com.ku.covigator.domain.CoursePlace;
-import com.ku.covigator.domain.Like;
+import com.ku.covigator.domain.Dibs;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.request.PostCourseRequest;
@@ -12,7 +12,7 @@ import com.ku.covigator.dto.response.GetCourseListResponse;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.CoursePlaceRepository;
 import com.ku.covigator.repository.CourseRepository;
-import com.ku.covigator.repository.LikeRepository;
+import com.ku.covigator.repository.DibsRepository;
 import com.ku.covigator.repository.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,12 +40,12 @@ class CourseServiceTest {
     @Autowired
     CoursePlaceRepository coursePlaceRepository;
     @Autowired
-    LikeRepository likeRepository;
+    DibsRepository dibsRepository;
 
     @AfterEach
     void tearDown() {
         coursePlaceRepository.deleteAllInBatch();
-        likeRepository.deleteAllInBatch();
+        dibsRepository.deleteAllInBatch();
         courseRepository.deleteAllInBatch();
         memberRepository.deleteAllInBatch();
     }
@@ -201,11 +201,11 @@ class CourseServiceTest {
                 .build();
         courseRepository.save(course2);
 
-        Like like = Like.builder()
+        Dibs dibs = Dibs.builder()
                 .course(savedCourse)
                 .member(savedMember)
                 .build();
-        likeRepository.save(like);
+        dibsRepository.save(dibs);
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
 
@@ -222,7 +222,7 @@ class CourseServiceTest {
                         .extracting("description")
                         .containsExactly("건대 핫플 리스트2", "건대 핫플 리스트"),
                 () -> assertThat(response.courses())
-                        .extracting("isLiked")
+                        .extracting("dibs")
                         .containsExactly(false, true)
         );
     }
@@ -284,7 +284,7 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트")
                 .member(member)
-                .likeCnt(100L)
+                .dibsCnt(100L)
                 .build();
         courseRepository.save(course);
 
@@ -293,11 +293,11 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트2")
                 .member(member)
-                .likeCnt(10L)
+                .dibsCnt(10L)
                 .build();
         courseRepository.save(course2);
 
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("likeCnt").descending());
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("DibsCnt").descending());
 
         //when
         GetCommunityCourseListResponse response = courseService.findAllCourses(pageable, savedMember.getId());
@@ -326,7 +326,7 @@ class CourseServiceTest {
                 .isPublic('N')
                 .description("건대 핫플 리스트")
                 .member(member)
-                .likeCnt(100L)
+                .dibsCnt(100L)
                 .build();
 
         Course course2 = Course.builder()
@@ -334,7 +334,7 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트2")
                 .member(member)
-                .likeCnt(10L)
+                .dibsCnt(10L)
                 .build();
         courseRepository.saveAll(List.of(course, course2));
 
@@ -365,7 +365,7 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트")
                 .member(member)
-                .likeCnt(100L)
+                .dibsCnt(100L)
                 .build();
         Course savedCourse = courseRepository.save(course);
 
@@ -386,11 +386,11 @@ class CourseServiceTest {
                 .build();
         coursePlaceRepository.saveAll(List.of(place, place2));
 
-        Like like = Like.builder()
+        Dibs dibs = Dibs.builder()
                 .course(course)
                 .member(member)
                 .build();
-        likeRepository.save(like);
+        dibsRepository.save(dibs);
 
         //when
         GetCommunityCourseInfoResponse response = courseService.findCourse(savedMember.getId(), savedCourse.getId());
@@ -400,8 +400,8 @@ class CourseServiceTest {
                 () -> assertThat(response.courseId()).isEqualTo(savedCourse.getId()),
                 () -> assertThat(response.courseName()).isEqualTo("건대 풀코스"),
                 () -> assertThat(response.courseDescription()).isEqualTo("건대 핫플 리스트"),
-                () -> assertThat(response.isLiked()).isTrue(),
-                () -> assertThat(response.likeCnt()).isEqualTo(100L),
+                () -> assertThat(response.dibs()).isTrue(),
+                () -> assertThat(response.dibsCnt()).isEqualTo(100L),
                 () -> assertThat(response.places())
                         .extracting("placeName")
                         .containsExactlyInAnyOrder("가츠시", "레스티오"),
@@ -426,7 +426,7 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트")
                 .member(member)
-                .likeCnt(100L)
+                .dibsCnt(100L)
                 .build();
         Course savedCourse = courseRepository.save(course);
 
@@ -471,7 +471,7 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트")
                 .member(member)
-                .likeCnt(100L)
+                .dibsCnt(100L)
                 .build();
         Course savedCourse = courseRepository.save(course);
 
@@ -480,7 +480,7 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트2")
                 .member(member)
-                .likeCnt(10L)
+                .dibsCnt(10L)
                 .build();
         Course savedCourse2 = courseRepository.save(course2);
 
@@ -489,19 +489,19 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트3")
                 .member(member)
-                .likeCnt(10L)
+                .dibsCnt(10L)
                 .build();
         courseRepository.save(course3);
 
-        Like like = Like.builder()
+        Dibs dibs = Dibs.builder()
                 .member(savedMember)
                 .course(savedCourse)
                 .build();
-        Like like2 = Like.builder()
+        Dibs dibs2 = Dibs.builder()
                 .member(savedMember)
                 .course(savedCourse2)
                 .build();
-        likeRepository.saveAll(List.of(like, like2));
+        dibsRepository.saveAll(List.of(dibs, dibs2));
 
         //when
         GetCourseListResponse response = courseService.findLikedCourses(savedMember.getId());
@@ -531,7 +531,7 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트")
                 .member(member)
-                .likeCnt(100L)
+                .dibsCnt(100L)
                 .build();
 
         Course course2 = Course.builder()
@@ -539,7 +539,7 @@ class CourseServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트2")
                 .member(member)
-                .likeCnt(10L)
+                .dibsCnt(10L)
                 .build();
         courseRepository.saveAll(List.of(course, course2));
 
@@ -561,7 +561,6 @@ class CourseServiceTest {
 
     private Member createMember() {
         return Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")

@@ -18,9 +18,9 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @Query("""
     SELECT c
-    FROM Course c, Like l
-    WHERE l.member.id = :memberId AND l.course.id = c.id
-    ORDER BY l.createdAt DESC
+    FROM Course c, Dibs d
+    WHERE d.member.id = :memberId AND d.course.id = c.id
+    ORDER BY d.createdAt DESC
     """)
     Slice<Course> findLikedCoursesByMemberId(Long memberId, Pageable pageable);
 

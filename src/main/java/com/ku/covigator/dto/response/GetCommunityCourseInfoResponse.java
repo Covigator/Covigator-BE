@@ -9,15 +9,15 @@ import java.util.List;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record GetCommunityCourseInfoResponse(Long courseId, String courseName, String courseDescription, Long likeCnt,
-                                             Boolean isLiked, List<PlaceDto> places) {
+public record GetCommunityCourseInfoResponse(Long courseId, String courseName, String courseDescription, Long dibsCnt,
+                                             Boolean dibs, List<PlaceDto> places) {
 
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public record PlaceDto(Long placeId, String placeName, String placeDescription, String category) {
     }
 
-    public static GetCommunityCourseInfoResponse from(Course course, boolean isLiked) {
+    public static GetCommunityCourseInfoResponse from(Course course, boolean dibs) {
         List<PlaceDto> places = course.getPlaces().stream()
                 .map(place -> PlaceDto.builder()
                         .placeId(place.getId())
@@ -30,8 +30,8 @@ public record GetCommunityCourseInfoResponse(Long courseId, String courseName, S
                 .courseId(course.getId())
                 .courseName(course.getName())
                 .courseDescription(course.getDescription())
-                .likeCnt(course.getLikeCnt())
-                .isLiked(isLiked)
+                .dibsCnt(course.getDibsCnt())
+                .dibs(dibs)
                 .places(places)
                 .build();
     }

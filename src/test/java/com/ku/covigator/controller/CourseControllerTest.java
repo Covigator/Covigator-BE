@@ -87,7 +87,7 @@ class CourseControllerTest {
                 .name("건대 풀코스")
                 .description("건대 핫플 요약 코스")
                 .score(5.0)
-                .isLiked(true)
+                .dibs(true)
                 .build();
 
         GetCommunityCourseListResponse.CourseDto courseDto2 = GetCommunityCourseListResponse.CourseDto.builder()
@@ -95,7 +95,7 @@ class CourseControllerTest {
                 .name("건대 풀코스2")
                 .description("건대 핫플 요약 코스2")
                 .score(0.0)
-                .isLiked(false)
+                .dibs(false)
                 .build();
 
         GetCommunityCourseListResponse response = GetCommunityCourseListResponse.builder()
@@ -123,12 +123,12 @@ class CourseControllerTest {
                         jsonPath("$.courses[0].name").value("건대 풀코스"),
                         jsonPath("$.courses[0].description").value("건대 핫플 요약 코스"),
                         jsonPath("$.courses[0].score").value(5.0),
-                        jsonPath("$.courses[0].is_liked").value(true),
+                        jsonPath("$.courses[0].dibs").value(true),
                         jsonPath("$.courses[1].course_id").value(2L),
                         jsonPath("$.courses[1].name").value("건대 풀코스2"),
                         jsonPath("$.courses[1].description").value("건대 핫플 요약 코스2"),
                         jsonPath("$.courses[1].score").value(0.0),
-                        jsonPath("$.courses[1].is_liked").value(false),
+                        jsonPath("$.courses[1].dibs").value(false),
                         jsonPath("$.has_next").value(false)
                 );
     }
@@ -148,8 +148,8 @@ class CourseControllerTest {
         GetCommunityCourseInfoResponse response = GetCommunityCourseInfoResponse.builder()
                 .courseName("건대 풀코스")
                 .courseDescription("건대 핫플 요약 코스")
-                .likeCnt(100L)
-                .isLiked(true)
+                .dibsCnt(100L)
+                .dibs(true)
                 .places(List.of(placeDto))
                 .build();
 
@@ -165,8 +165,8 @@ class CourseControllerTest {
                         status().isOk(),
                         jsonPath("$.course_name").value("건대 풀코스"),
                         jsonPath("$.course_description").value("건대 핫플 요약 코스"),
-                        jsonPath("$.like_cnt").value("100"),
-                        jsonPath("$.is_liked").value(true),
+                        jsonPath("$.dibs_cnt").value("100"),
+                        jsonPath("$.dibs").value(true),
                         jsonPath("$.places[0].place_name").value("가츠시"),
                         jsonPath("$.places[0].place_description").value("공대생 추천 맛집"),
                         jsonPath("$.places[0].category").value("식당")
@@ -208,7 +208,7 @@ class CourseControllerTest {
         given(courseService.findLikedCourses(memberId)).willReturn(response);
 
         //when //then
-        mockMvc.perform(get("/my-page/liked-courses"))
+        mockMvc.perform(get("/my-page/dibs-courses"))
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),

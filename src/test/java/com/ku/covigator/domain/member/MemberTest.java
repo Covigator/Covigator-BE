@@ -12,7 +12,6 @@ class MemberTest {
     void memberCreatedInActiveStatus() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")
@@ -29,7 +28,6 @@ class MemberTest {
     void putTravelStyle() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")
@@ -58,7 +56,6 @@ class MemberTest {
     void updateTravelStyle() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")

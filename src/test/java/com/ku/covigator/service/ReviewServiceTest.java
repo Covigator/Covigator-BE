@@ -49,7 +49,6 @@ class ReviewServiceTest {
     void addReview() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")
@@ -63,7 +62,7 @@ class ReviewServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트")
                 .member(member)
-                .likeCnt(100L)
+                .dibsCnt(100L)
                 .build();
         Course savedCourse = courseRepository.save(course);
 
@@ -91,7 +90,6 @@ class ReviewServiceTest {
     void updateCourseWhenReviewAdded() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")
@@ -105,7 +103,7 @@ class ReviewServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트")
                 .member(member)
-                .likeCnt(100L)
+                .dibsCnt(100L)
                 .build();
         Course savedCourse = courseRepository.save(course);
 
@@ -130,7 +128,6 @@ class ReviewServiceTest {
     void addReviewFailsWhenMemberNotFound() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")
@@ -144,7 +141,7 @@ class ReviewServiceTest {
                 .isPublic('Y')
                 .member(member)
                 .description("건대 핫플 리스트")
-                .likeCnt(100L)
+                .dibsCnt(100L)
                 .build();
         Course savedCourse = courseRepository.save(course);
 
@@ -164,7 +161,6 @@ class ReviewServiceTest {
     void addReviewFailsWhenCourseNotFound() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")
@@ -189,7 +185,6 @@ class ReviewServiceTest {
     void test() {
         //given
         Member member = Member.builder()
-                .name("김코비")
                 .email("covi@naver.com")
                 .password("covigator123")
                 .nickname("covi")
@@ -203,7 +198,7 @@ class ReviewServiceTest {
                 .isPublic('Y')
                 .description("건대 핫플 리스트")
                 .member(member)
-                .likeCnt(100L)
+                .dibsCnt(100L)
                 .build();
         Course savedCourse = courseRepository.save(course);
 
@@ -224,7 +219,6 @@ class ReviewServiceTest {
         assertAll(
                 () -> assertEquals(response.reviews().size(), 1),
                 () -> assertFalse(response.hasNext()),
-                () -> assertThat(response.reviews().get(0).author()).isEqualTo("김코비"),
                 () -> assertThat(response.reviews().get(0).comment()).isEqualTo("좋아요~~~"),
                 () -> assertThat(response.reviews().get(0).score()).isEqualTo(5)
         );
