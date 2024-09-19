@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.Optional;
 
 
@@ -26,6 +28,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
     private final KakaoOauthProvider kakaoOauthProvider;
+    private final S3Service s3Service;
 
     @Transactional(readOnly = true)
     public String signIn(String email, String password) {
@@ -36,7 +39,7 @@ public class AuthService {
     }
 
     // 로컬 회원가입
-    public String signUp(Member member) {
+    public String signUp(Member member, MultipartFile image) {
 
         // 회원 가입 중복 검증
         validateDuplicateMemberByEmailAndPlatform(member.getEmail(), Platform.LOCAL);
@@ -44,6 +47,12 @@ public class AuthService {
         // 패스워드 인코딩
         String encodedPassword = passwordEncoder.encode(member.getPassword());
         member.encodePassword(encodedPassword);
+
+        // S3에 프로필 이미지 업로드
+        if(image != null && !image.isEmpty()) {
+            String uploadedImageUrl = s3Service.uploadImage(image);
+            member.addImageUrl(uploadedImageUrl);
+        }
 
         // 회원 저장
         Member savedMember = memberRepository.save(member);

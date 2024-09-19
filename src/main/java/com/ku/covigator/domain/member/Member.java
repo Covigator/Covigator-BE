@@ -70,4 +70,8 @@ public class Member extends BaseTime {
     public void updateTravelStyle(TravelStyle newTravelStyle) {
         this.travelStyle.patchTravelStyle(newTravelStyle);
     }
+
+    public void addImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
