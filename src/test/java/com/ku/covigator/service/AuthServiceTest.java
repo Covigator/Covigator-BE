@@ -13,10 +13,13 @@ import com.ku.covigator.security.kakao.KakaoOauthProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -35,6 +38,8 @@ class AuthServiceTest {
     JwtProvider jwtProvider;
     @MockBean
     KakaoOauthProvider kakaoOauthProvider;
+    @MockBean
+    S3Service s3Service;
 
     @AfterEach
     void tearDown() {
@@ -121,8 +126,14 @@ class AuthServiceTest {
                 .platform(Platform.LOCAL)
                 .build();
 
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
+        );
+        Mockito.when(s3Service.uploadImage(any(MultipartFile.class)))
+                .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
+
         //when
-        String accessToken = authService.signUp(member);
+        String accessToken = authService.signUp(member, imageFile);
         Long savedMemberId = Long.parseLong(jwtProvider.getPrincipal(accessToken));
 
         //then
@@ -151,8 +162,14 @@ class AuthServiceTest {
 
         memberRepository.save(member);
 
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
+        );
+        Mockito.when(s3Service.uploadImage(any(MultipartFile.class)))
+                .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
+
         //when //then
-        assertThatThrownBy(() -> authService.signUp(newMember))
+        assertThatThrownBy(() -> authService.signUp(newMember, imageFile))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("이미 가입된 사용자입니다.");
     }
@@ -179,8 +196,14 @@ class AuthServiceTest {
 
         memberRepository.save(member);
 
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
+        );
+        Mockito.when(s3Service.uploadImage(any(MultipartFile.class)))
+                .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
+
         //when // then
-        assertDoesNotThrow(() -> authService.signUp(newMember));
+        assertDoesNotThrow(() -> authService.signUp(newMember, imageFile));
     }
 
     @DisplayName("로컬 회원 가입 시 비밀번호는 암호화되어 저장된다.")
@@ -196,8 +219,14 @@ class AuthServiceTest {
                 .platform(Platform.LOCAL)
                 .build();
 
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
+        );
+        Mockito.when(s3Service.uploadImage(any(MultipartFile.class)))
+                .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
+
         //when
-        authService.signUp(member);
+        authService.signUp(member, imageFile);
 
         // then
         assertThat(member.getPassword()).isNotEqualTo(password);

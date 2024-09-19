@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "Auth", description = "인증/인가")
 @RestController
@@ -28,8 +29,9 @@ public class AuthController {
 
     @Operation(summary = "회원가입")
     @PostMapping("/sign-up")
-    public ResponseEntity<AccessTokenResponse> signUp(@RequestBody PostSignUpRequest request) {
-        String accessToken = authService.signUp(request.toEntity());
+    public ResponseEntity<AccessTokenResponse> signUp(@RequestPart(value = "postSignUpRequest") PostSignUpRequest request,
+                                                      @RequestPart(value = "image") MultipartFile image) {
+        String accessToken = authService.signUp(request.toEntity(), image);
         return ResponseEntity.ok(AccessTokenResponse.from(accessToken));
     }
 

@@ -14,11 +14,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.BDDMockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -69,12 +69,24 @@ class AuthControllerTest {
                 .imageUrl("covigator123")
                 .build();
 
-        given(authService.signUp(any())).willReturn("token");
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
+        );
+
+        MockMultipartFile jsonRequest = new MockMultipartFile(
+                "postSignUpRequest",
+                null,
+                "application/json",
+                objectMapper.writeValueAsBytes(request)
+        );
+
+        given(authService.signUp(any(), any())).willReturn("token");
 
         //when //then
-        mockMvc.perform(post("/accounts/sign-up")
-                        .content(objectMapper.writeValueAsString(request))
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(multipart("/accounts/sign-up")
+                        .file(imageFile)
+                        .file(jsonRequest)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())

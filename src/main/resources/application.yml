@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:~/covigator;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;NON_KEYWORDS=LIKE
+    url: jdbc:h2:~/covigator;MODE=MYSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;
     username: sa
     driver-class-name: org.h2.Driver
   jpa:
@@ -11,10 +11,13 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-
   h2:
     console:
       enabled: true
+  servlet:
+    multipart:
+      max-request-size: 5MB
+      max-file-size: 10MB
 
 security:
   jwt:
@@ -34,3 +37,10 @@ springdoc:
 slack:
   webhook:
     url: ${SLACK_WEBHOOK_URL}
+
+aws:
+  access-key: ${AWS_ACCESS_KEY}
+  secret-key: ${AWS_SECRET_KEY}
+  region: us-east-1
+  s3:
+    bucket: ${S3_BUCKET_NAME}

@@ -91,4 +91,21 @@ class MemberTest {
         assertThat(member.getTravelStyle().getActivityType()).isEqualTo(ActivityType.ACTIVITY);
     }
 
+    @DisplayName("프로필 이미지를 추가한다.")
+    @Test
+    void addImageUrl() {
+        //given
+        Member member = Member.builder()
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .platform(Platform.LOCAL)
+                .build();
+
+        //when
+        member.addImageUrl("www.covi.com");
+
+        //then
+        assertThat(member.getImageUrl()).isEqualTo("www.covi.com");
+    }
 }
