@@ -30,7 +30,7 @@ public class SlackAlarmGenerator {
     @Async
     public void sendSlackAlertErrorLog(Exception e, HttpServletRequest request) {
         try {
-            slack.send(slackProperties.getSlackWebhookUrl(), payload(p -> p
+            slack.send(slackProperties.getUrl(), payload(p -> p
                     .text("[서버 에러 발생]")
                     .attachments(
                             List.of(generateSlackAttachment(e, request))

@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @Getter
 @RequiredArgsConstructor
-@ConfigurationProperties("slack.webhook.url")
+@ConfigurationProperties("slack.webhook")
 public final class SlackProperties {
-    private final String slackWebhookUrl;
+    private final String url;
 }
