@@ -23,7 +23,7 @@ public class S3Service {
 
     private final AmazonS3Client s3Client;
     private final S3Properties s3Properties;
-    private final static String PROFILE_IMAGE_BASE_DIRECTORY = "profile-image/";
+    private static final String PROFILE_IMAGE_BASE_DIRECTORY = "profile-image/";
 
     public String uploadImage(MultipartFile multipartFile) {
 

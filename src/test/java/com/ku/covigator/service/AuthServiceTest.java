@@ -118,7 +118,7 @@ class AuthServiceTest {
 
     @DisplayName("로컬 회원 가입 시 같은 플랫폼에 대한 중복 회원이 아닌 경우 정상적으로 회원 가입 되어 토큰을 반환한다.")
     @Test
-    void signUpLocalSuccessIfThereIsNoDuplicateMember() throws IOException {
+    void signUpLocalSuccessIfThereIsNoDuplicateMember() {
         //given
         Member member = Member.builder()
                 .email("covi@naver.com")
