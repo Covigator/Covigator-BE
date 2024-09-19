@@ -149,9 +149,3 @@ jacocoTestCoverageVerification {
 		}
 	}
 }
-
-test {
-	testLogging {
-		exceptionFormat = 'full'
-	}
-}
