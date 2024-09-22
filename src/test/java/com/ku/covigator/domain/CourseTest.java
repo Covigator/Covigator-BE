@@ -3,6 +3,7 @@ package com.ku.covigator.domain;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CourseTest {
@@ -52,6 +53,41 @@ class CourseTest {
 
         //then
         assertEquals(0L, course.getDibsCnt());
+    }
+
+    @DisplayName("썸네일 이미지가 존재하지 않는 경우 null을 반환한다.")
+    @Test
+    void getNullThumbnailImage() {
+        //given
+        Course course = Course.builder().build();
+
+        //when
+        String thumbnailImage = course.getThumbnailImage();
+
+        //then
+        assertNull(thumbnailImage);
+    }
+
+    @DisplayName("썸네일 이미지가 존재하면 url을 반환한다.")
+    @Test
+    void getThumbnailImage() {
+        //given
+        Course course = Course.builder().build();
+        CoursePlace place = CoursePlace.builder()
+                .course(course)
+                .address("광진구")
+                .name("가츠시")
+                .description("공대생 추천 맛집")
+                .category("식당")
+                .imageUrl("www.image.com")
+                .build();
+        course.addPlace(place);
+
+        //when //then
+        String thumbnailImage = course.getThumbnailImage();
+
+        //then
+        assertThat(thumbnailImage).isEqualTo("www.image.com");
     }
 
 }
