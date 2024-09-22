@@ -53,4 +53,5 @@ class CourseTest {
         //then
         assertEquals(0L, course.getDibsCnt());
     }
+
 }
