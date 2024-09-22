@@ -71,6 +71,7 @@ public class CourseService {
         return GetCommunityCourseListResponse.from(courses, dibsCourseId);
     }
 
+    @Transactional(readOnly = true)
     public GetCourseListResponse findLikedCourses(Long memberId) {
 
         Pageable pageable = PageRequest.of(0, 10);
@@ -78,6 +79,7 @@ public class CourseService {
         return GetCourseListResponse.fromCourseSlice(courses);
     }
 
+    @Transactional(readOnly = true)
     public GetCourseListResponse findMyCourses(Long memberId) {
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());

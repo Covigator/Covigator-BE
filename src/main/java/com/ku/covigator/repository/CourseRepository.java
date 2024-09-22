@@ -20,11 +20,12 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("""
     SELECT c
     FROM Course c, Dibs d
+    LEFT JOIN FETCH c.places p
     WHERE d.member.id = :memberId AND d.course.id = c.id
     ORDER BY d.createdAt DESC
     """)
     Slice<Course> findLikedCoursesByMemberId(Long memberId, Pageable pageable);
 
-    @EntityGraph(attributePaths = "member")
+    @EntityGraph(attributePaths = {"member", "places"})
     Slice<Course> findMyCoursesByMemberId(Long memberId, Pageable pageable);
 }
