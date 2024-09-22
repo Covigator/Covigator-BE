@@ -13,6 +13,7 @@ import java.util.List;
 public record GetCourseListResponse(List<CourseDto> courses, Boolean hasNext) {
 
     @Builder
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
     public record CourseDto(Long courseId, String name, String description, Double score, String imageUrl) {
     }
 

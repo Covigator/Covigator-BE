@@ -129,7 +129,7 @@ class AuthServiceTest {
         MockMultipartFile imageFile = new MockMultipartFile(
                 "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
         );
-        Mockito.when(s3Service.uploadImage(any(MultipartFile.class)))
+        Mockito.when(s3Service.uploadImage(any(MultipartFile.class), any()))
                 .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
 
         //when
@@ -165,7 +165,7 @@ class AuthServiceTest {
         MockMultipartFile imageFile = new MockMultipartFile(
                 "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
         );
-        Mockito.when(s3Service.uploadImage(any(MultipartFile.class)))
+        Mockito.when(s3Service.uploadImage(any(MultipartFile.class), any()))
                 .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
 
         //when //then
@@ -199,7 +199,7 @@ class AuthServiceTest {
         MockMultipartFile imageFile = new MockMultipartFile(
                 "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
         );
-        Mockito.when(s3Service.uploadImage(any(MultipartFile.class)))
+        Mockito.when(s3Service.uploadImage(any(MultipartFile.class), any()))
                 .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
 
         //when // then
@@ -222,7 +222,7 @@ class AuthServiceTest {
         MockMultipartFile imageFile = new MockMultipartFile(
                 "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
         );
-        Mockito.when(s3Service.uploadImage(any(MultipartFile.class)))
+        Mockito.when(s3Service.uploadImage(any(MultipartFile.class), any()))
                 .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
 
         //when

@@ -35,7 +35,7 @@ class S3ServiceTest {
         );
 
         //when
-        String uploadedImageUrl = s3Service.uploadImage(imageFile);
+        String uploadedImageUrl = s3Service.uploadImage(imageFile, "profile");
 
         //then
         assertThat(uploadedImageUrl).contains("test-image.jpg");

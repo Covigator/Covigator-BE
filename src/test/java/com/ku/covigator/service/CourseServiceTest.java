@@ -17,16 +17,22 @@ import com.ku.covigator.repository.MemberRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 @SpringBootTest
 class CourseServiceTest {
@@ -41,6 +47,8 @@ class CourseServiceTest {
     CoursePlaceRepository coursePlaceRepository;
     @Autowired
     DibsRepository dibsRepository;
+    @MockBean
+    S3Service s3Service;
 
     @AfterEach
     void tearDown() {
@@ -78,8 +86,17 @@ class CourseServiceTest {
                 .places(List.of(placeDto, placeDto2))
                 .build();
 
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
+        );
+        MockMultipartFile imageFile2 = new MockMultipartFile(
+                "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
+        );
+        Mockito.when(s3Service.uploadImage(any(MultipartFile.class), any()))
+                .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
+
         //when
-        courseService.addCommunityCourse(savedMember.getId(), postCourseRequest);
+        courseService.addCommunityCourse(savedMember.getId(), postCourseRequest, List.of(imageFile, imageFile2));
 
         //then
         Course course = courseRepository.findAll().get(0);
@@ -101,7 +118,10 @@ class CourseServiceTest {
                         .containsExactlyInAnyOrder("공대생 추천 맛집", "공대생 추천 카페"),
                 () -> assertThat(coursePlaces)
                         .extracting("address")
-                        .containsExactlyInAnyOrder("광진구", "광진구")
+                        .containsExactlyInAnyOrder("광진구", "광진구"),
+                () -> assertThat(coursePlaces)
+                        .extracting("imageUrl")
+                        .containsExactlyInAnyOrder("https://s3.amazonaws.com/bucket/test-image.jpg", "https://s3.amazonaws.com/bucket/test-image.jpg")
         );
     }
 
@@ -131,7 +151,7 @@ class CourseServiceTest {
                 .build();
 
         //when //then
-        assertThatThrownBy(() -> courseService.addCommunityCourse(1L, postCourseRequest))
+        assertThatThrownBy(() -> courseService.addCommunityCourse(1L, postCourseRequest, new ArrayList<>()))
                         .isInstanceOf(NotFoundMemberException.class);
     }
 

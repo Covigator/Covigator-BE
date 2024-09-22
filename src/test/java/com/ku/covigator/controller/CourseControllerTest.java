@@ -16,6 +16,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -68,10 +69,26 @@ class CourseControllerTest {
                 .places(List.of(placeDto, placeDto2))
                 .build();
 
+        MockMultipartFile imageFile = new MockMultipartFile(
+                "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
+        );
+        MockMultipartFile imageFile2 = new MockMultipartFile(
+                "image", "test-image.jpg", "image/jpeg", "dummy-image-content".getBytes()
+        );
+
+        MockMultipartFile jsonRequest = new MockMultipartFile(
+                "postCourseRequest",
+                null,
+                "application/json",
+                objectMapper.writeValueAsBytes(postCourseRequest)
+        );
+
         //when //then
-        mockMvc.perform(post("/community/courses")
-                        .content(objectMapper.writeValueAsString(postCourseRequest))
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(multipart("/community/courses")
+                        .file(imageFile)
+                        .file(imageFile2)
+                        .file(jsonRequest)
+                        .contentType(MediaType.MULTIPART_FORM_DATA)
                 ).andDo(print())
                 .andExpect(status().isOk());
     }
@@ -88,6 +105,7 @@ class CourseControllerTest {
                 .description("건대 핫플 요약 코스")
                 .score(5.0)
                 .dibs(true)
+                .imageUrl("www.imageUrl.com")
                 .build();
 
         GetCommunityCourseListResponse.CourseDto courseDto2 = GetCommunityCourseListResponse.CourseDto.builder()
@@ -96,6 +114,7 @@ class CourseControllerTest {
                 .description("건대 핫플 요약 코스2")
                 .score(0.0)
                 .dibs(false)
+                .imageUrl("www.imageUrl2.com")
                 .build();
 
         GetCommunityCourseListResponse response = GetCommunityCourseListResponse.builder()
@@ -124,11 +143,13 @@ class CourseControllerTest {
                         jsonPath("$.courses[0].description").value("건대 핫플 요약 코스"),
                         jsonPath("$.courses[0].score").value(5.0),
                         jsonPath("$.courses[0].dibs").value(true),
+                        jsonPath("$.courses[0].image_url").value("www.imageUrl.com"),
                         jsonPath("$.courses[1].course_id").value(2L),
                         jsonPath("$.courses[1].name").value("건대 풀코스2"),
                         jsonPath("$.courses[1].description").value("건대 핫플 요약 코스2"),
                         jsonPath("$.courses[1].score").value(0.0),
                         jsonPath("$.courses[1].dibs").value(false),
+                        jsonPath("$.courses[1].image_url").value("www.imageUrl2.com"),
                         jsonPath("$.has_next").value(false)
                 );
     }
@@ -143,7 +164,9 @@ class CourseControllerTest {
         GetCommunityCourseInfoResponse.PlaceDto placeDto = GetCommunityCourseInfoResponse.PlaceDto.builder()
                 .placeName("가츠시")
                 .placeDescription("공대생 추천 맛집")
-                .category("식당").build();
+                .imageUrl("www.image.com")
+                .category("식당")
+                .build();
 
         GetCommunityCourseInfoResponse response = GetCommunityCourseInfoResponse.builder()
                 .courseName("건대 풀코스")
@@ -169,7 +192,8 @@ class CourseControllerTest {
                         jsonPath("$.dibs").value(true),
                         jsonPath("$.places[0].place_name").value("가츠시"),
                         jsonPath("$.places[0].place_description").value("공대생 추천 맛집"),
-                        jsonPath("$.places[0].category").value("식당")
+                        jsonPath("$.places[0].category").value("식당"),
+                        jsonPath("$.places[0].image_url").value("www.image.com")
                 );
     }
 
@@ -195,6 +219,7 @@ class CourseControllerTest {
                 .name("건대 풀코스")
                 .description("건대 핫플 요약 코스")
                 .score(5.0)
+                .imageUrl("www.image.com")
                 .build();
 
         GetCourseListResponse response = GetCourseListResponse.builder()
@@ -215,6 +240,7 @@ class CourseControllerTest {
                         jsonPath("$.courses[0].name").value("건대 풀코스"),
                         jsonPath("$.courses[0].description").value("건대 핫플 요약 코스"),
                         jsonPath("$.courses[0].score").value(5.0),
+                        jsonPath("$.courses[0].image_url").value("www.image.com"),
                         jsonPath("$.has_next").value(false)
                 );
     }
@@ -229,6 +255,7 @@ class CourseControllerTest {
                 .name("건대 풀코스")
                 .description("건대 핫플 요약 코스")
                 .score(5.0)
+                .imageUrl("www.image.com")
                 .build();
 
         GetCourseListResponse response = GetCourseListResponse.builder()
@@ -249,6 +276,7 @@ class CourseControllerTest {
                         jsonPath("$.courses[0].name").value("건대 풀코스"),
                         jsonPath("$.courses[0].description").value("건대 핫플 요약 코스"),
                         jsonPath("$.courses[0].score").value(5.0),
+                        jsonPath("$.courses[0].image_url").value("www.image.com"),
                         jsonPath("$.has_next").value(false)
                 );
     }
