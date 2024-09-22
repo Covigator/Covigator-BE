@@ -9,6 +9,8 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
+
 @RestController
 @RequiredArgsConstructor
 public class WebSocketController {
@@ -21,7 +23,7 @@ public class WebSocketController {
     public void sendMessage(@DestinationVariable(value = "course_id") Long courseId,
                             SimpMessageHeaderAccessor accessor,
                             @Payload ChatMessageRequest request) {
-        Long memberId = Long.parseLong(accessor.getSessionAttributes().get("memberId").toString());
+        Long memberId = Long.parseLong(Objects.requireNonNull(accessor.getSessionAttributes()).get("memberId").toString());
         SaveMessageResponse saveMessageResponse = chatService.saveMessage(memberId, courseId, request.message());
         simpleMessageSendingOperations.convertAndSend("/topic/chat/" + courseId, saveMessageResponse);
     }

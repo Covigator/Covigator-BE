@@ -25,8 +25,8 @@ public class ChatService {
 
     public List<Chat> getChatHistory(Long courseId) {
 
-        courseRepository.findById(courseId).orElseThrow(NotFoundCourseException::new);
-        return chatRepository.findChatByCourseIdOrderByTimestampAsc(courseId);
+        Course course = courseRepository.findById(courseId).orElseThrow(NotFoundCourseException::new);
+        return chatRepository.findChatByCourseIdOrderByTimestampAsc(course.getId());
     }
 
     public SaveMessageResponse saveMessage(Long memberId, Long courseId, String message) {
