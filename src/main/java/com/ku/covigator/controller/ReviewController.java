@@ -25,7 +25,7 @@ public class ReviewController {
     @Operation(summary = "리뷰 등록")
     @PostMapping
     public ResponseEntity<Void> addReview(
-            @LoggedInMemberId Long memberId,
+            @Parameter(hidden = true) @LoggedInMemberId Long memberId,
             @PathVariable(name = "course_id") Long courseId,
             @RequestBody PostReviewRequest request) {
         reviewService.addReview(memberId, courseId, request);

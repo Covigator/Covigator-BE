@@ -5,6 +5,7 @@ import com.ku.covigator.dto.request.PostTravelStyleRequest;
 import com.ku.covigator.security.jwt.LoggedInMemberId;
 import com.ku.covigator.service.TravelStyleService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class TravelStyleController {
 
     @Operation(summary = "여행 스타일 저장")
     @PostMapping
-    public ResponseEntity<Void> saveTravelStyle(@LoggedInMemberId Long memberId,
+    public ResponseEntity<Void> saveTravelStyle(@Parameter(hidden = true) @LoggedInMemberId Long memberId,
                                                 @RequestBody PostTravelStyleRequest request) {
         travelStyleService.saveTravelStyle(memberId, request.toEntity());
         return ResponseEntity.ok().build();
@@ -28,7 +29,7 @@ public class TravelStyleController {
 
     @Operation(summary = "여행 스타일 수정")
     @PatchMapping
-    public ResponseEntity<Void> patchTravelStyle(@LoggedInMemberId Long memberId,
+    public ResponseEntity<Void> patchTravelStyle(@Parameter(hidden = true) @LoggedInMemberId Long memberId,
                                                  @RequestBody PatchTravelStyleRequest request) {
         travelStyleService.updateTravelStyle(memberId, request.toEntity());
         return ResponseEntity.ok().build();
