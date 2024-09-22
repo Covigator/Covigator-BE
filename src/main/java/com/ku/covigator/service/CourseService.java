@@ -19,6 +19,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Set;
@@ -31,9 +32,10 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final CoursePlaceRepository coursePlaceRepository;
     private final MemberRepository memberRepository;
+    private final S3Service s3Service;
 
     @Transactional
-    public void addCommunityCourse(Long memberId, PostCourseRequest request) {
+    public void addCommunityCourse(Long memberId, PostCourseRequest request, List<MultipartFile> images) {
         //회원 조회
         Member member = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
 
@@ -43,6 +45,15 @@ public class CourseService {
 
         //코스_장소 등록
         List<CoursePlace> coursePlaces = request.toCoursePlaceEntity(course);
+
+        // S3에 프로필 이미지 업로드
+        if (!images.isEmpty()) {
+            for (int iter = 0; iter < images.size(); iter++) {
+                String uploadedImageUrl = s3Service.uploadImage(images.get(iter), "place");
+                coursePlaces.get(iter).addImageUrl(uploadedImageUrl);
+            }
+        }
+
         coursePlaceRepository.saveAll(coursePlaces);
     }
 

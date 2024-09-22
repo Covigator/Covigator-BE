@@ -75,4 +75,10 @@ public class Course extends BaseTime {
         this.dibsCnt -= 1;
     }
 
+    public String getThumbnailImage() {
+
+        if(this.places.isEmpty()) return null;
+        return this.places.get(0).getImageUrl();
+    }
+
 }

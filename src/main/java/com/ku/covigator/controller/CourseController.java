@@ -16,6 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Tag(name = "course", description = "커뮤니티 코스")
 @RestController
@@ -26,8 +29,10 @@ public class CourseController {
 
     @Operation(summary = "코스 등록")
     @PostMapping("/community/courses")
-    public ResponseEntity<Void> addCommunityCourse(@LoggedInMemberId Long memberId, @RequestBody PostCourseRequest request) {
-        courseService.addCommunityCourse(memberId, request);
+    public ResponseEntity<Void> addCommunityCourse(@Parameter(hidden = true) @LoggedInMemberId Long memberId,
+                                                   @RequestPart(value = "postCourseRequest") PostCourseRequest request,
+                                                   @RequestPart(value = "image") List<MultipartFile> images) {
+        courseService.addCommunityCourse(memberId, request, images);
         return ResponseEntity.ok().build();
     }
 
@@ -35,7 +40,7 @@ public class CourseController {
     @GetMapping("/community/courses")
     public ResponseEntity<GetCommunityCourseListResponse> getAllCommunityCourses(
 
-            @LoggedInMemberId Long memberId,
+            @Parameter(hidden = true) @LoggedInMemberId Long memberId,
 
             @Parameter(description = "페이지 번호 (0부터 시작)", schema = @Schema(defaultValue = "0"))
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -53,7 +58,7 @@ public class CourseController {
     @Operation(summary = "상세 코스 조회")
     @GetMapping("/community/courses/{course_id}")
     public ResponseEntity<GetCommunityCourseInfoResponse> getCommunityCourseInfo(
-            @LoggedInMemberId Long memberId,
+            @Parameter(hidden = true) @LoggedInMemberId Long memberId,
             @PathVariable(name = "course_id") Long courseId) {
         return ResponseEntity.ok(courseService.findCourse(memberId, courseId));
     }
@@ -68,13 +73,13 @@ public class CourseController {
 
     @Operation(summary = "찜한 코스 모아보기")
     @GetMapping("/my-page/dibs-courses")
-    public ResponseEntity<GetCourseListResponse> getLikedCourses(@LoggedInMemberId Long memberId){
+    public ResponseEntity<GetCourseListResponse> getLikedCourses(@Parameter(hidden = true) @LoggedInMemberId Long memberId){
         return ResponseEntity.ok(courseService.findLikedCourses(memberId));
     }
 
     @Operation(summary = "마이 코스 모아보기")
     @GetMapping("/my-page/my-courses")
-    public ResponseEntity<GetCourseListResponse> getMyCourses(@LoggedInMemberId Long memberId) {
+    public ResponseEntity<GetCourseListResponse> getMyCourses(@Parameter(hidden = true) @LoggedInMemberId Long memberId) {
         return ResponseEntity.ok(courseService.findMyCourses(memberId));
     }
 }
