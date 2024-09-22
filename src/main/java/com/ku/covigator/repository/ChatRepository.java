@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ChatRepository extends MongoRepository<Chat, Long> {
 
-    public List<Chat> findChatByCourseIdOrderByTimestampAsc(Long courseId);
+    List<Chat> findChatByCourseIdOrderByTimestampAsc(Long courseId);
 }
