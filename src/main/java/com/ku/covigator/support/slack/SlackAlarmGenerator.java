@@ -1,4 +1,4 @@
-package com.ku.covigator.support;
+package com.ku.covigator.support.slack;
 
 import com.ku.covigator.config.properties.SlackProperties;
 import com.slack.api.Slack;
@@ -29,11 +29,14 @@ public class SlackAlarmGenerator {
 
     @Async
     public void sendSlackAlertErrorLog(Exception e, HttpServletRequest request) {
+
+        RequestInfo requestInfo = RequestInfo.from(request);
+
         try {
             slack.send(slackProperties.getUrl(), payload(p -> p
                     .text("[서버 에러 발생]")
                     .attachments(
-                            List.of(generateSlackAttachment(e, request))
+                            List.of(generateSlackAttachment(e, requestInfo))
                     )
             ));
         } catch (IOException slackError) {
@@ -41,9 +44,9 @@ public class SlackAlarmGenerator {
         }
     }
 
-    private Attachment generateSlackAttachment(Exception e, HttpServletRequest request) {
+    private Attachment generateSlackAttachment(Exception e, RequestInfo request) {
         String requestTime = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS").format(LocalDateTime.now());
-        String xffHeader = request.getHeader("X-FORWARDED-FOR");
+        String xffHeader = request.getHeader();
         return Attachment.builder()
                 .color("ff0000")
                 .title(requestTime + " 발생 에러 로그")

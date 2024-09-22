@@ -2,7 +2,7 @@ package com.ku.covigator.controller;
 
 import com.ku.covigator.dto.response.ErrorResponse;
 import com.ku.covigator.exception.CovigatorException;
-import com.ku.covigator.support.SlackAlarmGenerator;
+import com.ku.covigator.support.slack.SlackAlarmGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
