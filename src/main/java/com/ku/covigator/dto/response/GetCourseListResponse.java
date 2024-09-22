@@ -13,7 +13,7 @@ import java.util.List;
 public record GetCourseListResponse(List<CourseDto> courses, Boolean hasNext) {
 
     @Builder
-    public record CourseDto(String name, String description, Double score) {
+    public record CourseDto(Long courseId, String name, String description, Double score, String imageUrl) {
     }
 
     public static GetCourseListResponse fromCourseSlice(Slice<Course> courseSlice) {
@@ -22,6 +22,8 @@ public record GetCourseListResponse(List<CourseDto> courses, Boolean hasNext) {
                         .name(course.getName())
                         .description(course.getDescription())
                         .score(course.getAvgScore())
+                        .courseId(course.getId())
+                        .imageUrl(course.getThumbnailImage())
                         .build()
                 ).toList();
         return GetCourseListResponse.builder()
