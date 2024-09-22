@@ -35,10 +35,12 @@ class S3ServiceTest {
         );
 
         //when
-        String uploadedImageUrl = s3Service.uploadImage(imageFile, "profile");
+        String uploadedProfileImageUrl = s3Service.uploadImage(imageFile, "profile");
+        String uploadedPlaceImageUrl = s3Service.uploadImage(imageFile, "place");
 
         //then
-        assertThat(uploadedImageUrl).contains("test-image.jpg");
+        assertThat(uploadedProfileImageUrl).contains("test-image.jpg");
+        assertThat(uploadedPlaceImageUrl).contains("test-image.jpg");
     }
 
 }

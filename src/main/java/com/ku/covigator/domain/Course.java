@@ -81,4 +81,8 @@ public class Course extends BaseTime {
         return this.places.get(0).getImageUrl();
     }
 
+    public void addPlace(CoursePlace place) {
+        this.places.add(place);
+    }
+
 }
