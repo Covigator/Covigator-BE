@@ -50,7 +50,7 @@ public class AuthService {
 
         // S3에 프로필 이미지 업로드
         if(image != null && !image.isEmpty()) {
-            String uploadedImageUrl = s3Service.uploadImage(image);
+            String uploadedImageUrl = s3Service.uploadImage(image, "profile");
             member.addImageUrl(uploadedImageUrl);
         }
 

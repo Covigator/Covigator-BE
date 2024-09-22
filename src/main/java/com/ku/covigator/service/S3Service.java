@@ -24,13 +24,15 @@ public class S3Service {
     private final AmazonS3Client s3Client;
     private final S3Properties s3Properties;
     private static final String PROFILE_IMAGE_BASE_DIRECTORY = "profile-image/";
+    private static final String PLACE_IMAGE_BASE_DIRECTORY = "place-image/";
+    private static final String PROFILE = "profile";
 
-    public String uploadImage(MultipartFile multipartFile) {
+    public String uploadImage(MultipartFile multipartFile, String imageType) {
 
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentLength(multipartFile.getSize());
         objectMetadata.setContentType(multipartFile.getContentType());
-        String fileName = createFileName(multipartFile.getOriginalFilename());
+        String fileName = createFileName(multipartFile.getOriginalFilename(), imageType);
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
             s3Client.putObject(
@@ -50,10 +52,16 @@ public class S3Service {
 //        );
 //    }
 
-    private String createFileName(String fileName) {
+    private String createFileName(String fileName, String imageType) {
 
         String uniqueID = '$' + UUID.randomUUID().toString();
-        return PROFILE_IMAGE_BASE_DIRECTORY + fileName.concat(uniqueID);
+
+        if(imageType.equals(PROFILE)){
+            return PROFILE_IMAGE_BASE_DIRECTORY + fileName.concat(uniqueID);
+        }
+
+        return PLACE_IMAGE_BASE_DIRECTORY + fileName.concat(uniqueID);
+
     }
 
 }
