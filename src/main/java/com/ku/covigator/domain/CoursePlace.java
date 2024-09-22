@@ -1,6 +1,5 @@
 package com.ku.covigator.domain;
 
-import com.ku.covigator.domain.Course;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,17 +30,25 @@ public class CoursePlace {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id", referencedColumnName = "id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Course course;
 
     @Builder
-    public CoursePlace(String name, String description, String category, String address, Course course) {
+    public CoursePlace(String name, String description, String category, String address, Course course, String imageUrl) {
         this.name = name;
         this.description = description;
         this.category = category;
         this.address = address;
         this.course = course;
+        this.imageUrl = imageUrl;
+    }
+
+    public void addImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }

@@ -16,7 +16,7 @@ public record GetCommunityCourseListResponse(List<CourseDto> courses, Boolean ha
 
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public record CourseDto(Long courseId, String name, String description, Double score, Boolean dibs) {
+    public record CourseDto(Long courseId, String name, String description, Double score, Boolean dibs, String imageUrl) {
     }
 
     public static GetCommunityCourseListResponse from(Slice<Course> courseSlice, Set<Long> dibsCourseId) {
@@ -27,6 +27,7 @@ public record GetCommunityCourseListResponse(List<CourseDto> courses, Boolean ha
                         .description(course.getDescription())
                         .score(course.getAvgScore())
                         .dibs(dibsCourseId.contains(course.getId())) // 좋아요 여부 판단
+                        .imageUrl(course.getThumbnailImage())
                         .build()
                 ).collect(Collectors.toList());
 

@@ -12,7 +12,8 @@ import java.util.List;
 public record GetReviewResponse(List<ReviewDto> reviews, Boolean hasNext) {
 
     @Builder
-    public record ReviewDto(String author, Integer score, String comment) {
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+    public record ReviewDto(String author, Integer score, String comment, String profileImageUrl) {
 
     }
 
@@ -22,6 +23,7 @@ public record GetReviewResponse(List<ReviewDto> reviews, Boolean hasNext) {
                         .author(review.getMember().getNickname())
                         .comment(review.getComment())
                         .score(review.getScore())
+                        .profileImageUrl(review.getMember().getImageUrl())
                         .build()
         ).toList();
         return new GetReviewResponse(reviewDtos, reviews.hasNext());
