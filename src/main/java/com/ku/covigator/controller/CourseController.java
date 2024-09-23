@@ -31,7 +31,7 @@ public class CourseController {
     @PostMapping("/community/courses")
     public ResponseEntity<Void> addCommunityCourse(@Parameter(hidden = true) @LoggedInMemberId Long memberId,
                                                    @RequestPart(value = "postCourseRequest") PostCourseRequest request,
-                                                   @RequestPart(value = "image") List<MultipartFile> images) {
+                                                   @RequestPart(value = "image", required = false) List<MultipartFile> images) {
         courseService.addCommunityCourse(memberId, request, images);
         return ResponseEntity.ok().build();
     }
