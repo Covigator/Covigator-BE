@@ -30,12 +30,12 @@ public class AuthController {
     @Operation(summary = "회원가입")
     @PostMapping("/sign-up")
     public ResponseEntity<AccessTokenResponse> signUp(@RequestPart(value = "postSignUpRequest") PostSignUpRequest request,
-                                                      @RequestPart(value = "image") MultipartFile image) {
+                                                      @RequestPart(value = "image", required = false) MultipartFile image) {
         String accessToken = authService.signUp(request.toEntity(), image);
         return ResponseEntity.ok(AccessTokenResponse.from(accessToken));
     }
 
-    @Operation(summary = "카카오 로그인")
+    @Operation(summary = "카카오 로그인 (카카오 서버 Redirect 용, 프론트에서 호출하지 않음)")
     @GetMapping("/oauth/kakao")
     public ResponseEntity<KakaoSignInResponse> signInKakao(@RequestParam String code) {
         return ResponseEntity.ok(authService.signInKakao(code));
