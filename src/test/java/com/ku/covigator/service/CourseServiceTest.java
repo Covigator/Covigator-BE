@@ -8,7 +8,8 @@ import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.request.PostCourseRequest;
 import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
 import com.ku.covigator.dto.response.GetCommunityCourseListResponse;
-import com.ku.covigator.dto.response.GetCourseListResponse;
+import com.ku.covigator.dto.response.GetDibsCourseListResponse;
+import com.ku.covigator.dto.response.GetMyCourseListResponse;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.CoursePlaceRepository;
 import com.ku.covigator.repository.CourseRepository;
@@ -524,7 +525,7 @@ class CourseServiceTest {
         dibsRepository.saveAll(List.of(dibs, dibs2));
 
         //when
-        GetCourseListResponse response = courseService.findLikedCourses(savedMember.getId());
+        GetDibsCourseListResponse response = courseService.findLikedCourses(savedMember.getId());
 
         //then
         assertAll(
@@ -552,6 +553,7 @@ class CourseServiceTest {
                 .description("건대 핫플 리스트")
                 .member(member)
                 .dibsCnt(100L)
+                .isPublic('Y')
                 .build();
 
         Course course2 = Course.builder()
@@ -560,11 +562,12 @@ class CourseServiceTest {
                 .description("건대 핫플 리스트2")
                 .member(member)
                 .dibsCnt(10L)
+                .isPublic('N')
                 .build();
         courseRepository.saveAll(List.of(course, course2));
 
         //when
-        GetCourseListResponse response = courseService.findMyCourses(savedMember.getId());
+        GetMyCourseListResponse response = courseService.findMyCourses(savedMember.getId());
 
         //then
         assertAll(
@@ -575,6 +578,9 @@ class CourseServiceTest {
                 () -> assertThat(response.courses())
                         .extracting("description")
                         .containsExactly("건대 핫플 리스트2", "건대 핫플 리스트"),
+                () -> assertThat(response.courses())
+                        .extracting("isPublic")
+                        .containsExactly('N', 'Y'),
                 () -> assertThat(response.hasNext()).isFalse()
         );
     }

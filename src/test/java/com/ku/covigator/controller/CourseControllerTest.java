@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ku.covigator.dto.request.PostCourseRequest;
 import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
 import com.ku.covigator.dto.response.GetCommunityCourseListResponse;
-import com.ku.covigator.dto.response.GetCourseListResponse;
+import com.ku.covigator.dto.response.GetDibsCourseListResponse;
+import com.ku.covigator.dto.response.GetMyCourseListResponse;
 import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
 import com.ku.covigator.security.jwt.JwtAuthInterceptor;
 import com.ku.covigator.service.CourseService;
@@ -215,14 +216,14 @@ class CourseControllerTest {
         //given
         Long memberId = 1L;
 
-        GetCourseListResponse.CourseDto courseDto = GetCourseListResponse.CourseDto.builder()
+        GetDibsCourseListResponse.CourseDto courseDto = GetDibsCourseListResponse.CourseDto.builder()
                 .name("건대 풀코스")
                 .description("건대 핫플 요약 코스")
                 .score(5.0)
                 .imageUrl("www.image.com")
                 .build();
 
-        GetCourseListResponse response = GetCourseListResponse.builder()
+        GetDibsCourseListResponse response = GetDibsCourseListResponse.builder()
                 .courses(List.of(courseDto))
                 .hasNext(false)
                 .build();
@@ -251,14 +252,15 @@ class CourseControllerTest {
         //given
         Long memberId = 1L;
 
-        GetCourseListResponse.CourseDto courseDto = GetCourseListResponse.CourseDto.builder()
+        GetMyCourseListResponse.CourseDto courseDto = GetMyCourseListResponse.CourseDto.builder()
                 .name("건대 풀코스")
                 .description("건대 핫플 요약 코스")
                 .score(5.0)
                 .imageUrl("www.image.com")
+                .isPublic('Y')
                 .build();
 
-        GetCourseListResponse response = GetCourseListResponse.builder()
+        GetMyCourseListResponse response = GetMyCourseListResponse.builder()
                 .courses(List.of(courseDto))
                 .hasNext(false)
                 .build();
@@ -277,6 +279,7 @@ class CourseControllerTest {
                         jsonPath("$.courses[0].description").value("건대 핫플 요약 코스"),
                         jsonPath("$.courses[0].score").value(5.0),
                         jsonPath("$.courses[0].image_url").value("www.image.com"),
+                        jsonPath("$.courses[0].is_public").value("Y"),
                         jsonPath("$.has_next").value(false)
                 );
     }
