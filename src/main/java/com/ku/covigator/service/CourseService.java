@@ -6,7 +6,8 @@ import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.dto.request.PostCourseRequest;
 import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
 import com.ku.covigator.dto.response.GetCommunityCourseListResponse;
-import com.ku.covigator.dto.response.GetCourseListResponse;
+import com.ku.covigator.dto.response.GetDibsCourseListResponse;
+import com.ku.covigator.dto.response.GetMyCourseListResponse;
 import com.ku.covigator.exception.notfound.NotFoundCourseException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.CoursePlaceRepository;
@@ -72,19 +73,21 @@ public class CourseService {
     }
 
     @Transactional(readOnly = true)
-    public GetCourseListResponse findLikedCourses(Long memberId) {
+    public GetDibsCourseListResponse findLikedCourses(Long memberId) {
 
         Pageable pageable = PageRequest.of(0, 10);
         Slice<Course> courses = courseRepository.findLikedCoursesByMemberId(memberId, pageable);
-        return GetCourseListResponse.fromCourseSlice(courses);
+
+        return GetDibsCourseListResponse.from(courses);
     }
 
     @Transactional(readOnly = true)
-    public GetCourseListResponse findMyCourses(Long memberId) {
+    public GetMyCourseListResponse findMyCourses(Long memberId) {
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("createdAt").descending());
         Slice<Course> courses = courseRepository.findMyCoursesByMemberId(memberId, pageable);
-        return GetCourseListResponse.fromCourseSlice(courses);
+
+        return GetMyCourseListResponse.from(courses);
     }
 
     @Transactional(readOnly = true)
