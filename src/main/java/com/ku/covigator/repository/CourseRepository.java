@@ -21,7 +21,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     SELECT c
     FROM Course c, Dibs d
     LEFT JOIN FETCH c.places p
-    WHERE d.member.id = :memberId AND d.course.id = c.id
+    WHERE d.member.id = :memberId AND d.course.id = c.id AND c.isPublic = "Y"
     ORDER BY d.createdAt DESC
     """)
     Slice<Course> findLikedCoursesByMemberId(Long memberId, Pageable pageable);
