@@ -12,16 +12,16 @@ import java.util.stream.Collectors;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record GetCommunityCourseListResponse(List<CourseDto> courses, Boolean hasNext) {
+public record GetCommunityCourseListResponse(List<CourseList> courses, Boolean hasNext) {
 
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public record CourseDto(Long courseId, String name, String description, Double score, Boolean dibs, String imageUrl) {
+    public record CourseList(Long courseId, String name, String description, Double score, Boolean dibs, String imageUrl) {
     }
 
     public static GetCommunityCourseListResponse from(Slice<Course> courseSlice, Set<Long> dibsCourseId) {
-        List<CourseDto> courseDtos = courseSlice.getContent().stream()
-                .map(course -> CourseDto.builder()
+        List<CourseList> courseDtos = courseSlice.getContent().stream()
+                .map(course -> CourseList.builder()
                         .courseId(course.getId())
                         .name(course.getName())
                         .description(course.getDescription())

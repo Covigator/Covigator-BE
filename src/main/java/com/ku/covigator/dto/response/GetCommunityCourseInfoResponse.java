@@ -10,16 +10,16 @@ import java.util.List;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record GetCommunityCourseInfoResponse(Long courseId, String courseName, String courseDescription, Long dibsCnt,
-                                             Boolean dibs, List<PlaceDto> places) {
+                                             Boolean dibs, List<PlaceList> places) {
 
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public record PlaceDto(Long placeId, String placeName, String placeDescription, String category, String imageUrl) {
+    public record PlaceList(Long placeId, String placeName, String placeDescription, String category, String imageUrl) {
     }
 
     public static GetCommunityCourseInfoResponse from(Course course, boolean dibs) {
-        List<PlaceDto> places = course.getPlaces().stream()
-                .map(place -> PlaceDto.builder()
+        List<PlaceList> places = course.getPlaces().stream()
+                .map(place -> PlaceList.builder()
                         .placeId(place.getId())
                         .placeDescription(place.getDescription())
                         .placeName(place.getName())
