@@ -3,7 +3,8 @@ package com.ku.covigator.controller;
 import com.ku.covigator.dto.request.PostCourseRequest;
 import com.ku.covigator.dto.response.GetCommunityCourseInfoResponse;
 import com.ku.covigator.dto.response.GetCommunityCourseListResponse;
-import com.ku.covigator.dto.response.GetCourseListResponse;
+import com.ku.covigator.dto.response.GetDibsCourseListResponse;
+import com.ku.covigator.dto.response.GetMyCourseListResponse;
 import com.ku.covigator.security.jwt.LoggedInMemberId;
 import com.ku.covigator.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -73,13 +74,13 @@ public class CourseController {
 
     @Operation(summary = "찜한 코스 모아보기")
     @GetMapping("/my-page/dibs-courses")
-    public ResponseEntity<GetCourseListResponse> getLikedCourses(@Parameter(hidden = true) @LoggedInMemberId Long memberId){
+    public ResponseEntity<GetDibsCourseListResponse> getLikedCourses(@Parameter(hidden = true) @LoggedInMemberId Long memberId){
         return ResponseEntity.ok(courseService.findLikedCourses(memberId));
     }
 
     @Operation(summary = "마이 코스 모아보기")
     @GetMapping("/my-page/my-courses")
-    public ResponseEntity<GetCourseListResponse> getMyCourses(@Parameter(hidden = true) @LoggedInMemberId Long memberId) {
+    public ResponseEntity<GetMyCourseListResponse> getMyCourses(@Parameter(hidden = true) @LoggedInMemberId Long memberId) {
         return ResponseEntity.ok(courseService.findMyCourses(memberId));
     }
 }
