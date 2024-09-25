@@ -100,7 +100,7 @@ class CourseControllerTest {
         //given
         Long memberId = 1L;
 
-        GetCommunityCourseListResponse.CourseDto courseDto = GetCommunityCourseListResponse.CourseDto.builder()
+        GetCommunityCourseListResponse.CourseList courseDto = GetCommunityCourseListResponse.CourseList.builder()
                 .courseId(1L)
                 .name("건대 풀코스")
                 .description("건대 핫플 요약 코스")
@@ -109,7 +109,7 @@ class CourseControllerTest {
                 .imageUrl("www.imageUrl.com")
                 .build();
 
-        GetCommunityCourseListResponse.CourseDto courseDto2 = GetCommunityCourseListResponse.CourseDto.builder()
+        GetCommunityCourseListResponse.CourseList courseDto2 = GetCommunityCourseListResponse.CourseList.builder()
                 .courseId(2L)
                 .name("건대 풀코스2")
                 .description("건대 핫플 요약 코스2")
@@ -162,7 +162,7 @@ class CourseControllerTest {
         Long memberId = 1L;
         Long courseId = 1L;
 
-        GetCommunityCourseInfoResponse.PlaceDto placeDto = GetCommunityCourseInfoResponse.PlaceDto.builder()
+        GetCommunityCourseInfoResponse.PlaceList placeDto = GetCommunityCourseInfoResponse.PlaceList.builder()
                 .placeName("가츠시")
                 .placeDescription("공대생 추천 맛집")
                 .imageUrl("www.image.com")
@@ -216,7 +216,7 @@ class CourseControllerTest {
         //given
         Long memberId = 1L;
 
-        GetDibsCourseListResponse.CourseDto courseDto = GetDibsCourseListResponse.CourseDto.builder()
+        GetDibsCourseListResponse.DibsCourseList courseDto = GetDibsCourseListResponse.DibsCourseList.builder()
                 .name("건대 풀코스")
                 .description("건대 핫플 요약 코스")
                 .score(5.0)
@@ -252,7 +252,7 @@ class CourseControllerTest {
         //given
         Long memberId = 1L;
 
-        GetMyCourseListResponse.CourseDto courseDto = GetMyCourseListResponse.CourseDto.builder()
+        GetMyCourseListResponse.MyCourseList courseDto = GetMyCourseListResponse.MyCourseList.builder()
                 .name("건대 풀코스")
                 .description("건대 핫플 요약 코스")
                 .score(5.0)

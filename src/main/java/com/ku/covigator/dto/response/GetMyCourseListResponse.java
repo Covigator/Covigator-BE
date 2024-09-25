@@ -7,20 +7,19 @@ import lombok.Builder;
 import org.springframework.data.domain.Slice;
 
 import java.util.List;
-import java.util.Set;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record GetMyCourseListResponse(List<CourseDto> courses, Boolean hasNext) {
+public record GetMyCourseListResponse(List<MyCourseList> courses, Boolean hasNext) {
 
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public record CourseDto(Long courseId, String name, String description, Double score, String imageUrl, Character isPublic) {
+    public record MyCourseList(Long courseId, String name, String description, Double score, String imageUrl, Character isPublic) {
     }
 
     public static GetMyCourseListResponse from(Slice<Course> courseSlice) {
-        List<CourseDto> courseDtos = courseSlice.getContent().stream()
-                .map(course -> CourseDto.builder()
+        List<MyCourseList> courseDtos = courseSlice.getContent().stream()
+                .map(course -> MyCourseList.builder()
                         .name(course.getName())
                         .description(course.getDescription())
                         .score(course.getAvgScore())

@@ -10,16 +10,16 @@ import java.util.List;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record GetDibsCourseListResponse(List<CourseDto> courses, Boolean hasNext) {
+public record GetDibsCourseListResponse(List<DibsCourseList> courses, Boolean hasNext) {
 
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public record CourseDto(Long courseId, String name, String description, Double score, String imageUrl) {
+    public record DibsCourseList(Long courseId, String name, String description, Double score, String imageUrl) {
     }
 
     public static GetDibsCourseListResponse from(Slice<Course> courseSlice) {
-        List<CourseDto> courseDtos = courseSlice.getContent().stream()
-                .map(course -> CourseDto.builder()
+        List<DibsCourseList> courseDtos = courseSlice.getContent().stream()
+                .map(course -> DibsCourseList.builder()
                         .name(course.getName())
                         .description(course.getDescription())
                         .score(course.getAvgScore())
