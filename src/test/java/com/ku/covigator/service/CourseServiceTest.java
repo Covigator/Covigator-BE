@@ -15,6 +15,7 @@ import com.ku.covigator.repository.CoursePlaceRepository;
 import com.ku.covigator.repository.CourseRepository;
 import com.ku.covigator.repository.DibsRepository;
 import com.ku.covigator.repository.MemberRepository;
+import com.ku.covigator.support.GeometryUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -400,6 +401,7 @@ class CourseServiceTest {
                 .name("가츠시")
                 .description("공대생 추천 맛집")
                 .category("식당")
+                .coordinate(GeometryUtils.generatePoint(1.1,2.2))
                 .build();
 
         CoursePlace place2 = CoursePlace.builder()
@@ -408,6 +410,7 @@ class CourseServiceTest {
                 .name("레스티오")
                 .description("공대생 추천 카페")
                 .category("카페")
+                .coordinate(GeometryUtils.generatePoint(3.3,4.4))
                 .build();
         coursePlaceRepository.saveAll(List.of(place, place2));
 
@@ -435,7 +438,13 @@ class CourseServiceTest {
                         .containsExactlyInAnyOrder("공대생 추천 맛집", "공대생 추천 카페"),
                 () -> assertThat(response.places())
                         .extracting("category")
-                        .containsExactlyInAnyOrder("식당", "카페")
+                        .containsExactlyInAnyOrder("식당", "카페"),
+                () -> assertThat(response.places())
+                        .extracting("latitude")
+                        .containsExactlyInAnyOrder(1.1, 3.3),
+                () -> assertThat(response.places())
+                        .extracting("longitude")
+                        .containsExactlyInAnyOrder(2.2, 4.4)
         );
     }
 
