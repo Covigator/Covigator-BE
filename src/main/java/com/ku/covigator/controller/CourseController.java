@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,7 @@ public class CourseController {
     @Operation(summary = "코스 등록")
     @PostMapping("/community/courses")
     public ResponseEntity<Void> addCommunityCourse(@Parameter(hidden = true) @LoggedInMemberId Long memberId,
-                                                   @RequestPart(value = "postCourseRequest") PostCourseRequest request,
+                                                   @RequestPart(value = "postCourseRequest") @Valid PostCourseRequest request,
                                                    @RequestPart(value = "image", required = false) List<MultipartFile> images) {
         courseService.addCommunityCourse(memberId, request, images);
         return ResponseEntity.ok().build();
