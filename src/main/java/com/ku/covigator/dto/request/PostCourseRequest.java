@@ -6,6 +6,8 @@ import com.ku.covigator.domain.Course;
 import com.ku.covigator.domain.CoursePlace;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.support.GeometryUtils;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 import java.util.List;
@@ -13,11 +15,22 @@ import java.util.stream.Collectors;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record PostCourseRequest(String courseName, String courseDescription, List<PlaceDto> places, Character isPublic) {
+public record PostCourseRequest(
+        @NotBlank(message = "공백일 수 없습니다.") String courseName,
+        String courseDescription,
+        List<PlaceDto> places,
+        @NotNull(message = "NULL일 수 없습니다.") Character isPublic
+) {
 
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public record PlaceDto(String placeName, String address, String category, String description, Double latitude, Double longitude) {
+    public record PlaceDto(
+            @NotBlank(message = "공백일 수 없습니다.") String placeName,
+            String address,
+            @NotBlank(message = "공백일 수 없습니다.") String category,
+            String description,
+            @NotNull(message = "NULL일 수 없습니다.") Double latitude,
+            @NotNull(message = "NULL일 수 없습니다.") Double longitude) {
     }
 
     public Course toCourseEntity(Member member) {
