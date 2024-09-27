@@ -71,6 +71,8 @@ class CourseServiceTest {
                 .category("식당")
                 .description("공대생 추천 맛집")
                 .address("광진구")
+                .latitude(123.123123123)
+                .longitude(1.111111)
                 .build();
 
         PostCourseRequest.PlaceDto placeDto2 = PostCourseRequest.PlaceDto.builder()
@@ -78,6 +80,8 @@ class CourseServiceTest {
                 .category("카페")
                 .description("공대생 추천 카페")
                 .address("광진구")
+                .latitude(123.123123123)
+                .longitude(1.111111)
                 .build();
 
         PostCourseRequest postCourseRequest = PostCourseRequest.builder()
