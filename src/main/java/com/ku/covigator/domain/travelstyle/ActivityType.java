@@ -5,6 +5,6 @@ import lombok.Getter;
 @Getter
 public enum ActivityType {
 
-    REST, ACTIVITY
+    REST, ACTIVITY, NEUTRALITY
 
 }

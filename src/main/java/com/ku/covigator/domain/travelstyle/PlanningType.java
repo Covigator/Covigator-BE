@@ -5,6 +5,6 @@ import lombok.Getter;
 @Getter
 public enum PlanningType {
 
-    PLANNED, SITUATIONAL
+    PLANNED, SITUATIONAL, NEUTRALITY
 
 }

@@ -5,6 +5,6 @@ import lombok.Getter;
 @Getter
 public enum Popularity {
 
-    WELL_KNOWN, NOT_WIDELY_KNOWN
+    WELL_KNOWN, NOT_WIDELY_KNOWN, NEUTRALITY
 
 }
