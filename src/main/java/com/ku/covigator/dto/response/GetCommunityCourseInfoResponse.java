@@ -14,7 +14,8 @@ public record GetCommunityCourseInfoResponse(Long courseId, String courseName, S
 
     @Builder
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-    public record PlaceList(Long placeId, String placeName, String placeDescription, String category, String imageUrl) {
+    public record PlaceList(Long placeId, String placeName, String placeDescription, String category,
+                            String imageUrl, Double latitude, Double longitude) {
     }
 
     public static GetCommunityCourseInfoResponse from(Course course, boolean dibs) {
@@ -25,6 +26,8 @@ public record GetCommunityCourseInfoResponse(Long courseId, String courseName, S
                         .placeName(place.getName())
                         .category(place.getCategory())
                         .imageUrl(place.getImageUrl())
+                        .latitude(place.getCoordinate().getY())
+                        .longitude(place.getCoordinate().getX())
                         .build()
                 ).toList();
         return GetCommunityCourseInfoResponse.builder()
