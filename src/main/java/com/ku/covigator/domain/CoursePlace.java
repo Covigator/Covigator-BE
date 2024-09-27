@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 
 @Entity
