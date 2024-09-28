@@ -7,6 +7,7 @@ import com.ku.covigator.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,7 +28,7 @@ public class ReviewController {
     public ResponseEntity<Void> addReview(
             @Parameter(hidden = true) @LoggedInMemberId Long memberId,
             @PathVariable(name = "course_id") Long courseId,
-            @RequestBody PostReviewRequest request) {
+            @RequestBody @Valid PostReviewRequest request) {
         reviewService.addReview(memberId, courseId, request);
         return ResponseEntity.ok().build();
     }
