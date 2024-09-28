@@ -63,10 +63,9 @@ class AuthControllerTest {
     void signUp() throws Exception {
         //given
         PostSignUpRequest request = PostSignUpRequest.builder()
-                .email("www.covi.com")
+                .email("covi123@naver.com")
                 .nickname("covi")
-                .imageUrl("covi@naver.com")
-                .imageUrl("covigator123")
+                .password("covi123!@#")
                 .build();
 
         MockMultipartFile imageFile = new MockMultipartFile(
