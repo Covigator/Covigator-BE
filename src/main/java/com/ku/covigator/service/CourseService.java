@@ -47,8 +47,8 @@ public class CourseService {
         //코스_장소 등록
         List<CoursePlace> coursePlaces = request.toCoursePlaceEntity(course);
 
-        // S3에 프로필 이미지 업로드
-        if (!images.isEmpty()) {
+        // S3에 장소 이미지 업로드
+        if (images != null && !images.isEmpty()) {
             for (int iter = 0; iter < images.size(); iter++) {
                 String uploadedImageUrl = s3Service.uploadImage(images.get(iter), "place");
                 coursePlaces.get(iter).addImageUrl(uploadedImageUrl);
