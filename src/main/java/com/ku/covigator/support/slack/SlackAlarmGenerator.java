@@ -28,9 +28,7 @@ public class SlackAlarmGenerator {
     private final Slack slack = Slack.getInstance();
 
     @Async
-    public void sendSlackAlertErrorLog(Exception e, HttpServletRequest request) {
-
-        RequestInfo requestInfo = RequestInfo.from(request);
+    public void sendSlackAlertErrorLog(Exception e, RequestInfo requestInfo) {
 
         try {
             slack.send(slackProperties.getUrl(), payload(p -> p
