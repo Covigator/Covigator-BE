@@ -2,6 +2,7 @@ package com.ku.covigator.controller;
 
 import com.ku.covigator.dto.response.ErrorResponse;
 import com.ku.covigator.exception.CovigatorException;
+import com.ku.covigator.support.slack.RequestInfo;
 import com.ku.covigator.support.slack.SlackAlarmGenerator;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -80,7 +81,8 @@ public class ControllerAdvice {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleInternalException(Exception e, HttpServletRequest request) {
-        slackAlarmGenerator.sendSlackAlertErrorLog(e, request);
+        RequestInfo requestInfo = RequestInfo.from(request);
+        slackAlarmGenerator.sendSlackAlertErrorLog(e, requestInfo);
         return ResponseEntity.internalServerError()
                 .body(new ErrorResponse(9999, "서버 복구중입니다. 잠시만 기다려주세요."));
     }
