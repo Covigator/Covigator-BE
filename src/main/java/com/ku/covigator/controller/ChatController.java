@@ -2,8 +2,10 @@ package com.ku.covigator.controller;
 
 import com.ku.covigator.domain.Chat;
 import com.ku.covigator.dto.response.GetChatHistoryResponse;
+import com.ku.covigator.security.jwt.LoggedInMemberId;
 import com.ku.covigator.service.ChatService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,11 @@ public class ChatController {
 
     @Operation(summary = "채팅 기록 조회")
     @GetMapping("/chat/{course_id}")
-    public ResponseEntity<GetChatHistoryResponse> getChatHistory(@PathVariable(value = "course_id") Long courseId) {
+    public ResponseEntity<GetChatHistoryResponse> getChatHistory(
+            @Parameter(hidden = true) @LoggedInMemberId Long memberId,
+            @PathVariable(value = "course_id") Long courseId) {
         List<Chat> chatList = chatService.getChatHistory(courseId);
-        return ResponseEntity.ok(GetChatHistoryResponse.from(chatList));
+        return ResponseEntity.ok(GetChatHistoryResponse.from(memberId, chatList));
     }
 
 }
