@@ -11,7 +11,6 @@ import java.util.Optional;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
-    @EntityGraph(attributePaths = "places")
     Slice<Course> findAllCoursesByIsPublic(Pageable pageable, Character isPublic);
 
     @EntityGraph(attributePaths = "places")
@@ -20,12 +19,11 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     @Query("""
     SELECT c
     FROM Course c, Dibs d
-    LEFT JOIN FETCH c.places p
     WHERE d.member.id = :memberId AND d.course.id = c.id AND c.isPublic = "Y"
     ORDER BY d.createdAt DESC
     """)
     Slice<Course> findLikedCoursesByMemberId(Long memberId, Pageable pageable);
 
-    @EntityGraph(attributePaths = {"member", "places"})
+    @EntityGraph(attributePaths = "member")
     Slice<Course> findMyCoursesByMemberId(Long memberId, Pageable pageable);
 }

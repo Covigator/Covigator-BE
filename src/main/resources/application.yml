@@ -11,6 +11,9 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
+        query:
+          fail_on_pagination_over_collection_fetch: true
+        default_batch_fetch_size: 10
   h2:
     console:
       enabled: true
