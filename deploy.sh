@@ -17,4 +17,4 @@ else
 fi
 
 echo "> $JAR_PATH 배포"
-nohup java -jar -Dspring.profiles.active=prod $JAR_PATH >> $REPOSITORY/log/deploy.log 2>> $REPOSITORY/log/deploy_err.log &
+nohup java -jar -Dspring.profiles.active=prod $JAR_PATH >> $REPOSITORY/log/deploy.log 2 > $REPOSITORY/log/deploy_err.log &
