@@ -50,6 +50,8 @@ public class ChatService {
                 .nickname(member.getNickname())
                 .timestamp(String.valueOf(new Timestamp(System.currentTimeMillis())))
                 .courseId(courseId)
+                .memberId(member.getId())
+                .profileImageUrl(member.getImageUrl())
                 .build();
     }
 

@@ -119,7 +119,9 @@ class ChatServiceTest {
         //then
         Assertions.assertAll(
                 () -> assertThat(response.message()).isEqualTo("여기 좋아요"),
-                () -> assertThat(response.sender()).isEqualTo("김코비")
+                () -> assertThat(response.nickname()).isEqualTo("김코비"),
+                () -> assertThat(response.memberId()).isEqualTo(savedMember.getId()),
+                () -> assertThat(response.profileImageUrl()).isEqualTo(savedMember.getImageUrl())
         );
     }
 
