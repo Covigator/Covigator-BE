@@ -17,13 +17,17 @@ public class Chat {
     private Long courseId;
     private String timestamp;
     private String nickname;
+    private String profileImageUrl;
+    private Long memberId;
     private String message;
 
     @Builder
-    public Chat(Long courseId, String timestamp, String nickname, String message) {
+    public Chat(Long courseId, String timestamp, String nickname, String message, String profileImageUrl, Long memberId) {
         this.courseId = courseId;
         this.timestamp = timestamp;
         this.nickname = nickname;
         this.message = message;
+        this.profileImageUrl = profileImageUrl;
+        this.memberId = memberId;
     }
 }

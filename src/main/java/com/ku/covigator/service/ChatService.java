@@ -41,7 +41,7 @@ public class ChatService {
 
         chatRepository.save(chat);
 
-        return SaveMessageResponse.of(member.getNickname(), message);
+        return SaveMessageResponse.from(member, message);
     }
 
     private Chat buildChat(Long courseId, String message, Member member) {
