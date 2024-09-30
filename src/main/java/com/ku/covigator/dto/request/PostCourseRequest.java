@@ -6,6 +6,7 @@ import com.ku.covigator.domain.Course;
 import com.ku.covigator.domain.CoursePlace;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.support.GeometryUtils;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -23,7 +24,7 @@ public record PostCourseRequest(
 
         @NotBlank(message = "공백일 수 없습니다.")
         @Size(min = 1, max = 20, message = "글자 길이는 1~20자여야 합니다.") String courseDescription,
-        List<PlaceDto> places,
+        @Valid List<PlaceDto> places,
         @NotNull(message = "NULL일 수 없습니다.") Character isPublic
 ) {
 
