@@ -1,6 +1,5 @@
 package com.ku.covigator.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ku.covigator.dto.request.PatchMemberRequest;
 import com.ku.covigator.dto.request.PostVerifyNicknameRequest;
