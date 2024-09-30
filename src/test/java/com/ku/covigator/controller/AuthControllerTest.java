@@ -2,8 +2,6 @@ package com.ku.covigator.controller;
 
 import com.ku.covigator.dto.request.PostSignUpRequest;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
-import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
-import com.ku.covigator.security.jwt.JwtAuthInterceptor;
 import com.ku.covigator.dto.request.PostSignInRequest;
 import com.ku.covigator.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ComponentScan("com.ku.covigator.support")
+@ComponentScan({"com.ku.covigator.support", "com.ku.covigator.security.jwt"})
 @WebMvcTest(controllers = AuthController.class)
 class AuthControllerTest {
 
@@ -33,10 +31,6 @@ class AuthControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private AuthService authService;
-    @MockBean
-    JwtAuthInterceptor jwtAuthInterceptor;
-    @MockBean
-    JwtAuthArgumentResolver jwtAuthArgumentResolver;
 
     @DisplayName("로그인을 요청한다.")
     @Test
