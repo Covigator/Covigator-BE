@@ -1,8 +1,6 @@
 package com.ku.covigator.controller;
 
 import com.ku.covigator.domain.Place;
-import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
-import com.ku.covigator.security.jwt.JwtAuthInterceptor;
 import com.ku.covigator.service.PlaceService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ComponentScan("com.ku.covigator.support")
+@ComponentScan({"com.ku.covigator.support", "com.ku.covigator.security.jwt"})
 @WebMvcTest(controllers = PlaceController.class)
 class PlaceControllerTest {
 
@@ -29,10 +27,6 @@ class PlaceControllerTest {
     private MockMvc mockMvc;
     @MockBean
     private PlaceService placeService;
-    @MockBean
-    JwtAuthInterceptor jwtAuthInterceptor;
-    @MockBean
-    JwtAuthArgumentResolver jwtAuthArgumentResolver;
 
     @DisplayName("장소 세부 정보를 조회한다.")
     @Test
