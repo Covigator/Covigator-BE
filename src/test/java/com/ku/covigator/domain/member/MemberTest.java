@@ -108,4 +108,23 @@ class MemberTest {
         //then
         assertThat(member.getImageUrl()).isEqualTo("www.covi.com");
     }
+
+    @DisplayName("회원 정보를 수정한다.")
+    @Test
+    void updateMemberInfo() {
+        //given
+        Member member = Member.builder()
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .platform(Platform.LOCAL)
+                .build();
+
+        //when
+        member.updateMemberInfo("covi2", "covigator123!");
+
+        //then
+        assertThat(member.getNickname()).isEqualTo("covi2");
+        assertThat(member.getPassword()).isEqualTo("covigator123!");
+    }
 }

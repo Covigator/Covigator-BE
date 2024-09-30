@@ -18,5 +18,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     WHERE m.id=:memberId
     """)
     Optional<Member> findMemberWithDibsById(Long memberId);
+
+    Optional<Member> findByNickname(String nickname);
 }
 
