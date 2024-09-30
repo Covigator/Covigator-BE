@@ -9,7 +9,7 @@ import lombok.Builder;
 @Builder
 public record PostReviewRequest(
         @NotNull(message = "NULL일 수 없습니다.")
-        @Min(value = 1, message = "값이 1보다 작을 수 없습니다.")
+        @Min(value = 0, message = "값이 0보다 작을 수 없습니다.")
         @Max(value = 5, message = "값이 5보다 클 수 없습니다.") Integer score,
 
         @NotBlank(message = "공백일 수 없습니다.")
