@@ -74,4 +74,9 @@ public class Member extends BaseTime {
     public void addImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
+
+    public void updateMemberInfo(String nickname, String password) {
+        this.nickname = nickname;
+        this.password = password;
+    }
 }
