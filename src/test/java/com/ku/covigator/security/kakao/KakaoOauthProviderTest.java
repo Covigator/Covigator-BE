@@ -49,8 +49,8 @@ class KakaoOauthProviderTest {
 
         KakaoUserInfoResponse response =
                 new KakaoUserInfoResponse(
-                        new KakaoUserInfoResponse.KakaoAccount("name", kakaoEmail,
-                                new KakaoUserInfoResponse.KakaoAccount.Profile("nickname", "image")));
+                        new KakaoUserInfoResponse.KakaoAccount(kakaoEmail,
+                                new KakaoUserInfoResponse.KakaoAccount.Profile("image")));
 
         server.expect(requestTo(KAKAO_USER_INFO_URL))
                 .andExpect(content().contentType("application/x-www-form-urlencoded"))
