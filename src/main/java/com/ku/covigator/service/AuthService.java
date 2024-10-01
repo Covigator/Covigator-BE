@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.SecureRandom;
 import java.util.Optional;
 
 
@@ -124,9 +125,10 @@ public class AuthService {
 
     // 신규 닉네임 생성
     private String createRandomNickname() {
+        SecureRandom secureRandom = new SecureRandom();
         String nickname;
         do {
-            nickname = BASE_NICKNAME + (int) (Math.random() * MAX_UID + 1);
+            nickname = BASE_NICKNAME + (secureRandom.nextInt(MAX_UID) + 1);
         } while (isNicknameDuplicated(nickname));
         return nickname;
     }
