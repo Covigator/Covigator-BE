@@ -127,4 +127,19 @@ class MemberTest {
         assertThat(member.getNickname()).isEqualTo("covi2");
         assertThat(member.getPassword()).isEqualTo("covigator123!");
     }
+
+    @DisplayName("회원 닉네임을 변경한다.")
+    @Test
+    void updateNickname() {
+        //given
+        Member member = Member.builder()
+                .nickname("covi")
+                .build();
+
+        //when
+        member.updateNickname("covi2");
+
+        //then
+        assertThat(member.getNickname()).isEqualTo("covi2");
+    }
 }

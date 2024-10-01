@@ -252,8 +252,8 @@ class AuthServiceTest {
 
         KakaoUserInfoResponse userInfoResponse =
                 new KakaoUserInfoResponse(
-                        new KakaoUserInfoResponse.KakaoAccount("name", email,
-                                new KakaoUserInfoResponse.KakaoAccount.Profile("nickname", "image")));
+                        new KakaoUserInfoResponse.KakaoAccount(email,
+                                new KakaoUserInfoResponse.KakaoAccount.Profile("image")));
         given(kakaoOauthProvider.getKakaoUserInfo(any())).willReturn(userInfoResponse);
 
         //when
@@ -283,8 +283,8 @@ class AuthServiceTest {
 
         KakaoUserInfoResponse userInfoResponse =
                 new KakaoUserInfoResponse(
-                        new KakaoUserInfoResponse.KakaoAccount("name", email,
-                                new KakaoUserInfoResponse.KakaoAccount.Profile("nickname", "image")));
+                        new KakaoUserInfoResponse.KakaoAccount(email,
+                                new KakaoUserInfoResponse.KakaoAccount.Profile("image")));
         given(kakaoOauthProvider.getKakaoUserInfo(any())).willReturn(userInfoResponse);
 
         //when
@@ -303,8 +303,8 @@ class AuthServiceTest {
 
         KakaoUserInfoResponse userInfoResponse =
                 new KakaoUserInfoResponse(
-                        new KakaoUserInfoResponse.KakaoAccount("name", "email",
-                                new KakaoUserInfoResponse.KakaoAccount.Profile("nickname", "image")));
+                        new KakaoUserInfoResponse.KakaoAccount("email",
+                                new KakaoUserInfoResponse.KakaoAccount.Profile("image")));
         given(kakaoOauthProvider.getKakaoUserInfo(any())).willReturn(userInfoResponse);
 
         //when
@@ -313,4 +313,5 @@ class AuthServiceTest {
         //then
         assertThat(response.isNew()).isEqualTo("True");
     }
+
 }

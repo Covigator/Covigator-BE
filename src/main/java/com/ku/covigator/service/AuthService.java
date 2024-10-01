@@ -6,6 +6,7 @@ import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.dto.response.KakaoTokenResponse;
 import com.ku.covigator.dto.response.KakaoUserInfoResponse;
 import com.ku.covigator.exception.badrequest.DuplicateMemberException;
+import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
 import com.ku.covigator.exception.badrequest.PasswordMismatchException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;
@@ -30,6 +31,9 @@ public class AuthService {
     private final KakaoOauthProvider kakaoOauthProvider;
     private final S3Service s3Service;
 
+    private static final String BASE_NICKNAME = "코비게이터";
+    private static final int MAX_UID = 99999;
+
     @Transactional(readOnly = true)
     public String signIn(String email, String password) {
         Member member = memberRepository.findByEmailAndPlatform(email, Platform.LOCAL)
@@ -41,15 +45,18 @@ public class AuthService {
     // 로컬 회원가입
     public String signUp(Member member, MultipartFile image) {
 
-        // 회원 가입 중복 검증
-        validateDuplicateMemberByEmailAndPlatform(member.getEmail(), Platform.LOCAL);
+        // 닉네임 중복 검증
+        validateNicknameDuplication(member.getNickname());
+
+        // 이메일 중복 검증
+        validateEmailDuplication(member.getEmail());
 
         // 패스워드 인코딩
         String encodedPassword = passwordEncoder.encode(member.getPassword());
         member.encodePassword(encodedPassword);
 
         // S3에 프로필 이미지 업로드
-        if(image != null && !image.isEmpty()) {
+        if (image != null && !image.isEmpty()) {
             String uploadedImageUrl = s3Service.uploadImage(image, "profile");
             member.addImageUrl(uploadedImageUrl);
         }
@@ -72,34 +79,61 @@ public class AuthService {
 
         // 회원 가입 여부 확인
         String email = kakaoUserInfoResponse.kakaoAccount().email();
-        Optional<Member> member = memberRepository.findByEmailAndPlatform(email, Platform.KAKAO);
+        Optional<Member> savedMember = memberRepository.findByEmailAndPlatform(email, Platform.KAKAO);
 
         // 가입된 회원 반환
-        if(member.isPresent()) {
-            String token = jwtProvider.createToken(member.get().getId().toString());
+        if (savedMember.isPresent()) {
+            String token = jwtProvider.createToken(savedMember.get().getId().toString());
             return KakaoSignInResponse.fromOldMember(token);
         }
 
+        // 신규 닉네임 생성
+        String nickname = createRandomNickname();
+        Member member = kakaoUserInfoResponse.toEntity();
+        member.updateNickname(nickname);
+
         // 신규 회원 저장
-        Member savedMember = memberRepository.save(kakaoUserInfoResponse.toEntity());
-        String token = jwtProvider.createToken(savedMember.getId().toString());
+        Member newMember = memberRepository.save(member);
+        String token = jwtProvider.createToken(newMember.getId().toString());
         return KakaoSignInResponse.fromNewMember(token);
 
     }
 
-    // 회원 가입 중복 검증
-    private void validateDuplicateMemberByEmailAndPlatform(String email, Platform platform) {
-        Optional<Member> savedMember = memberRepository.findByEmailAndPlatform(email, platform);
-        if (savedMember.isPresent()) {
+    // 닉네임 중복 검증
+    private void validateNicknameDuplication(String nickname) {
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+        if (member.isPresent()) {
+            throw new DuplicateMemberNicknameException();
+        }
+    }
+
+    // 이메일 중복 검증 (로컬)
+    private void validateEmailDuplication(String email) {
+        Optional<Member> member = memberRepository.findByEmailAndPlatform(email, Platform.LOCAL);
+        if (member.isPresent()) {
             throw new DuplicateMemberException();
         }
     }
 
     // 비밀 번호 검증
     private void validatePassword(String password, String encodedPassword) {
-        if(!passwordEncoder.matches(password, encodedPassword)) {
+        if (!passwordEncoder.matches(password, encodedPassword)) {
             throw new PasswordMismatchException();
         }
+    }
+
+    // 신규 닉네임 생성
+    private String createRandomNickname() {
+        String nickname;
+        do {
+            nickname = BASE_NICKNAME + (int) (Math.random() * MAX_UID + 1);
+        } while (isNicknameDuplicated(nickname));
+        return nickname;
+    }
+
+    // 닉네임 중복 여부 확인
+    private Boolean isNicknameDuplicated(String nickname) {
+        return memberRepository.findByNickname(nickname).isPresent();
     }
 
 }
