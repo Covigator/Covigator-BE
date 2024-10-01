@@ -5,6 +5,7 @@ import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.dto.response.KakaoTokenResponse;
 import com.ku.covigator.dto.response.KakaoUserInfoResponse;
+import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
 import com.ku.covigator.exception.badrequest.PasswordMismatchException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;
@@ -116,7 +117,7 @@ class AuthServiceTest {
 
     @DisplayName("로컬 회원 가입 시 같은 플랫폼에 대한 중복 회원이 아닌 경우 정상적으로 회원 가입 되어 토큰을 반환한다.")
     @Test
-    void signUpLocalSuccessIfThereIsNoDuplicateMember() {
+    void signUpLocalSuccessIfThereIsNoDuplicatedMember() {
         //given
         Member member = Member.builder()
                 .email("covi@naver.com")
@@ -138,6 +139,36 @@ class AuthServiceTest {
 
         //then
         assertThat(savedMemberId).isEqualTo(member.getId());
+    }
+
+    @DisplayName("중복된 닉네임에 대한 로컬 회원 가입 요청 시 예외가 발생한다.")
+    @Test
+    void signUpLocalFailIfThereIsDuplicatedNickname() {
+        //given
+        String nickname = "covi";
+
+        Member member = Member.builder()
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname(nickname)
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+
+        memberRepository.save(member);
+
+        Member newMember = Member.builder()
+                .email("covi2@naver.com")
+                .password("covi123!")
+                .nickname(nickname)
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+
+        //when //then
+        assertThatThrownBy(
+                () -> authService.signUp(newMember, null)
+        ).isInstanceOf(DuplicateMemberNicknameException.class);
     }
 
     @DisplayName("로컬 회원 가입 시 같은 플랫폼에 대한 중복 회원은 등록될 수 없다.")
