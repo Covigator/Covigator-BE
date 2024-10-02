@@ -378,4 +378,35 @@ class AuthServiceTest {
         assertThat(redisUtil.existData(email)).isTrue();
     }
 
+    @DisplayName("등록되지 않은 사용자에 대한 비밀번호 변경 요청시 예외가 발생한다.")
+    @Test
+    void changePasswordFailsWhenMemberIsNotFound() {
+        //when //then
+        assertThatThrownBy(
+                () -> authService.changePassword(1L, "covi123!")
+        );
+    }
+
+    @DisplayName("비밀번호를 변경한다.")
+    @Test
+    void changePassword() {
+        //given
+        String oldPassword = "covigator1!";
+        Member member = Member.builder()
+                .email("covi@naver.com")
+                .password(oldPassword)
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+        Member savedMember = memberRepository.save(member);
+
+        //when
+        authService.changePassword(savedMember.getId(), "covi123!");
+
+        //then
+        String newPassword = memberRepository.findById(savedMember.getId()).get().getPassword();
+        assertThat(oldPassword).isNotEqualTo(newPassword);
+    }
+
 }

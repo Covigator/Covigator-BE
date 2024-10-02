@@ -60,7 +60,7 @@ public class AuthService {
 
         // 패스워드 인코딩
         String encodedPassword = passwordEncoder.encode(member.getPassword());
-        member.encodePassword(encodedPassword);
+        member.savePassword(encodedPassword);
 
         // S3에 프로필 이미지 업로드
         if (image != null && !image.isEmpty()) {
@@ -124,6 +124,18 @@ public class AuthService {
         // Redis에 인증번호 저장
         redisUtil.setDataExpire(email, verificationNumber, 60 * 5L);
 
+    }
+
+    // 비밀번호 변경
+    public void changePassword(Long memberId, String password) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(NotFoundMemberException::new);
+
+        String encodedPassword = passwordEncoder.encode(password);
+        member.savePassword(encodedPassword);
+
+        memberRepository.save(member);
     }
 
     // 닉네임 중복 검증

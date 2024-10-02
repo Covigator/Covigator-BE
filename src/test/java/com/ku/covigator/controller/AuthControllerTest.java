@@ -1,13 +1,15 @@
 package com.ku.covigator.controller;
 
-import com.ku.covigator.dto.request.FindPasswordRequest;
-import com.ku.covigator.dto.request.PostSignUpRequest;
+import com.ku.covigator.dto.request.*;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
-import com.ku.covigator.dto.request.PostSignInRequest;
+import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
+import com.ku.covigator.security.jwt.JwtAuthInterceptor;
 import com.ku.covigator.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ku.covigator.service.RedisUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ComponentScan({"com.ku.covigator.support", "com.ku.covigator.security.jwt"})
+@ComponentScan("com.ku.covigator.support")
 @WebMvcTest(controllers = AuthController.class)
 class AuthControllerTest {
 
@@ -32,6 +34,12 @@ class AuthControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private AuthService authService;
+    @MockBean
+    private RedisUtil redisUtil;
+    @MockBean
+    private JwtAuthInterceptor jwtAuthInterceptor;
+    @MockBean
+    private JwtAuthArgumentResolver jwtAuthArgumentResolver;
 
     @DisplayName("로그인을 요청한다.")
     @Test
@@ -137,6 +145,68 @@ class AuthControllerTest {
                 .andExpectAll(
                         status().isOk()
                 );
+    }
+
+    @DisplayName(" 이메일 인증번호 입력을 잘못하는 경우 상태코드 400을 반환한다..")
+    @Test
+    void writeWrongVerificationCode() throws Exception {
+        //given
+        VerifyCodeRequest request = new VerifyCodeRequest("covi@naver.com", "abcd");
+        BDDMockito.given(redisUtil.getData(any())).willReturn("");
+
+        //when //then
+        mockMvc.perform(post("/accounts/verify-code")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                ).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest()
+                );
+    }
+
+    @DisplayName("이메일 인증번호 입력에 성공한다.")
+    @Test
+    void writeRightVerificationCode() throws Exception {
+        //given
+        VerifyCodeRequest request = new VerifyCodeRequest("covi@naver.com", "abcd");
+        BDDMockito.given(redisUtil.getData(any())).willReturn("abcd");
+
+        //when //then
+        mockMvc.perform(post("/accounts/verify-code")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                ).andDo(print())
+                .andExpectAll(
+                        status().isOk()
+                );
+    }
+
+    @DisplayName("비밀번호 변경 시 비밀번호와 비밀번호 확인이 일치하지 않는 경우 상태코드 400을 반환한다.")
+    @Test
+    void passwordVerificationFailsInChangingPasswordRequest() throws Exception {
+        //given
+        ChangePasswordRequest request = new ChangePasswordRequest("covigator123!", "covi12!");
+
+        //when //then
+        mockMvc.perform(post("/accounts/change-password")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @DisplayName("비밀번호 변경을 요청한다.")
+    @Test
+    void changePassword() throws Exception{
+        //given
+        ChangePasswordRequest request = new ChangePasswordRequest("covigator123!", "covigator123!");
+
+        //when //then
+        mockMvc.perform(post("/accounts/change-password")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
     }
 
 }
