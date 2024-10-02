@@ -13,14 +13,13 @@ import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;
 import com.ku.covigator.security.jwt.JwtProvider;
 import com.ku.covigator.security.kakao.KakaoOauthProvider;
-import com.ku.covigator.support.RandomUtils;
+import com.ku.covigator.support.RandomUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.security.SecureRandom;
 import java.util.Optional;
 
 import static com.ku.covigator.common.EmailVerificationTemplate.*;
@@ -36,6 +35,7 @@ public class AuthService {
     private final KakaoOauthProvider kakaoOauthProvider;
     private final S3Service s3Service;
     private final SESService sesService;
+    private final RedisUtil redisUtil;
 
     private static final String BASE_NICKNAME = "코비게이터";
     private static final int MAX_UID = 99999;
@@ -109,15 +109,21 @@ public class AuthService {
     // 인증번호 생성
     public void createVerificationNumber(String email) {
 
+        // 등록된 이메일인지 확인
         memberRepository.findByEmailAndPlatform(email, Platform.LOCAL)
                 .orElseThrow(NotFoundEmailException::new);
 
-        String verificationNumber = RandomUtils.generateRandomMixStr(VERIFICATION_LENGTH);
-        sesService.sendEmail(
-                SUBJECT.getText(),
+        // 인증번호 생성
+        String verificationNumber = RandomUtil.generateRandomMixStr(VERIFICATION_LENGTH);
+
+        // 이메일 전송
+        sesService.sendEmail(SUBJECT.getText(),
                 CONTENT_PREFIX.getText() + verificationNumber + CONTENT_SUFFIX.getText(),
-                email
-                );
+                email);
+
+        // Redis에 인증번호 저장
+        redisUtil.setDataExpire(email, verificationNumber, 60 * 5L);
+
     }
 
     // 닉네임 중복 검증
@@ -147,7 +153,7 @@ public class AuthService {
     private String createRandomNickname() {
         String nickname;
         do {
-            nickname = BASE_NICKNAME + RandomUtils.generateRandomNumber(MAX_UID);
+            nickname = BASE_NICKNAME + RandomUtil.generateRandomNumber(MAX_UID);
         } while (isNicknameDuplicated(nickname));
         return nickname;
     }
