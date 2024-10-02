@@ -38,6 +38,8 @@ class AuthServiceTest {
     PasswordEncoder passwordEncoder;
     @Autowired
     JwtProvider jwtProvider;
+    @Autowired
+    RedisUtil redisUtil;
     @MockBean
     KakaoOauthProvider kakaoOauthProvider;
     @MockBean
@@ -353,6 +355,27 @@ class AuthServiceTest {
         assertThatThrownBy(
                 () -> authService.createVerificationNumber("covi@naver.com")
         ).isInstanceOf(NotFoundEmailException.class);
+    }
+
+    @DisplayName("인증번호 생성시 Redis에 인증번호가 정상적으로 저장된다.")
+    @Test
+    void verificationCodeSavedInRedis() {
+        //given
+        String email = "covi@naver.com";
+        Member member = Member.builder()
+                .email(email)
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+        memberRepository.save(member);
+
+        //when
+        authService.createVerificationNumber(email);
+
+        //then
+        assertThat(redisUtil.existData(email)).isTrue();
     }
 
 }

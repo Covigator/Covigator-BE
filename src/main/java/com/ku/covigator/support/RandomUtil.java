@@ -2,7 +2,7 @@ package com.ku.covigator.support;
 
 import java.security.SecureRandom;
 
-public class RandomUtils {
+public class RandomUtil {
 
     private static final SecureRandom random = new SecureRandom();
 

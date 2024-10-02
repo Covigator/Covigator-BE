@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ku.covigator.domain.Course;
 import com.ku.covigator.domain.CoursePlace;
 import com.ku.covigator.domain.member.Member;
-import com.ku.covigator.support.GeometryUtils;
+import com.ku.covigator.support.GeometryUtil;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -58,7 +58,7 @@ public record PostCourseRequest(
                         .description(placeDto.description)
                         .address(placeDto.address)
                         .course(course)
-                        .coordinate(GeometryUtils.generatePoint(placeDto.latitude, placeDto.longitude))
+                        .coordinate(GeometryUtil.generatePoint(placeDto.latitude, placeDto.longitude))
                         .build())
                 .collect(Collectors.toList());
     }
