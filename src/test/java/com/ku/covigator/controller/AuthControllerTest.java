@@ -1,5 +1,6 @@
 package com.ku.covigator.controller;
 
+import com.ku.covigator.dto.request.FindPasswordRequest;
 import com.ku.covigator.dto.request.PostSignUpRequest;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.dto.request.PostSignInRequest;
@@ -119,6 +120,22 @@ class AuthControllerTest {
                         status().isOk(),
                         jsonPath("$.access_token").value("token"),
                         jsonPath("$.is_new").value("False")
+                );
+    }
+
+    @DisplayName("비밀번호 찾기를 요청한다.")
+    @Test
+    void findPassword() throws Exception {
+        //given
+        FindPasswordRequest request = new FindPasswordRequest("covi@naver.com");
+
+        //when //then
+        mockMvc.perform(post("/accounts/find-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                ).andDo(print())
+                .andExpectAll(
+                        status().isOk()
                 );
     }
 

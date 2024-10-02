@@ -1,5 +1,6 @@
 package com.ku.covigator.controller;
 
+import com.ku.covigator.dto.request.FindPasswordRequest;
 import com.ku.covigator.dto.request.PostSignInRequest;
 import com.ku.covigator.dto.request.PostSignUpRequest;
 import com.ku.covigator.dto.response.AccessTokenResponse;
@@ -34,6 +35,13 @@ public class AuthController {
                                                       @RequestPart(value = "image", required = false) MultipartFile image) {
         String accessToken = authService.signUp(request.toEntity(), image);
         return ResponseEntity.ok(AccessTokenResponse.from(accessToken));
+    }
+
+    @Operation(summary = "비밀번호 찾기 (임시 비밀번호 설정)")
+    @PostMapping("/find-password")
+    public ResponseEntity<Void> findPassword(@Valid @RequestBody FindPasswordRequest request) {
+        authService.createVerificationNumber(request.email());
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "카카오 로그인 (카카오 서버 Redirect 용, 프론트에서 호출하지 않음)")
