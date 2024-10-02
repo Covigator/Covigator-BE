@@ -59,8 +59,8 @@ public class Member extends BaseTime {
         this.platform = platform;
     }
 
-    public void encodePassword(String encodedPassword) {
-        this.password = encodedPassword;
+    public void savePassword(String password) {
+        this.password = password;
     }
 
     public void putTravelStyle(TravelStyle travelStyle) {

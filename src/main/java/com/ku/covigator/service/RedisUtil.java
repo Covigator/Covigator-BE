@@ -19,6 +19,11 @@ public class RedisUtil {
         valueOperations.set(key, value, expireDuration);
     }
 
+    public String getData(String key) {
+        ValueOperations<String, String> valueOperations = template.opsForValue();
+        return valueOperations.get(key);
+    }
+
     public boolean existData(String key) {
         return Boolean.TRUE.equals(template.hasKey(key));
     }

@@ -1,16 +1,15 @@
 package com.ku.covigator.controller;
 
-import com.ku.covigator.dto.request.ChangePasswordRequest;
-import com.ku.covigator.dto.request.FindPasswordRequest;
-import com.ku.covigator.dto.request.PostSignInRequest;
-import com.ku.covigator.dto.request.PostSignUpRequest;
+import com.ku.covigator.dto.request.*;
 import com.ku.covigator.dto.response.AccessTokenResponse;
-import com.ku.covigator.dto.response.ErrorResponse;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
+import com.ku.covigator.exception.badrequest.PasswordVerificationException;
 import com.ku.covigator.exception.badrequest.WrongVerificationCodeException;
+import com.ku.covigator.security.jwt.LoggedInMemberId;
 import com.ku.covigator.service.AuthService;
 import com.ku.covigator.service.RedisUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -57,11 +56,22 @@ public class AuthController {
 
     @Operation(summary = "이메일 인증번호 인증")
     @PostMapping("/verify-code")
-    public ResponseEntity<Void> verifyNumber(@RequestParam String code) {
-        if(!redisUtil.existData(code)) {
+    public ResponseEntity<Void> verifyNumber(@Valid @RequestBody VerifyCodeRequest request) {
+        String key = redisUtil.getData(request.email());
+        if(!key.equals(request.code())) {
             throw new WrongVerificationCodeException();
-        };
+        }
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "비밀번호 변경")
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@Parameter(hidden = true) @LoggedInMemberId Long memberId,
+                                               @Valid @RequestBody ChangePasswordRequest request) {
+        if (!request.password().equals(request.passwordVerification())) {
+            throw new PasswordVerificationException();
+        }
+        authService.changePassword(memberId, request.password());
+        return ResponseEntity.ok().build();
+    }
 }
