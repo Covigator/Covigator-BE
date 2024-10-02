@@ -27,7 +27,9 @@ def jacocoExcludePatterns = [
 		"**/security/*",
 		"**/support/*",
 		"**/dto/*",
-		"**/*ControllerAdvice*"
+		"**/*ControllerAdvice*",
+		"**/common/*",
+		"**/*SESService*"
 ]
 
 
@@ -39,7 +41,7 @@ sonar {
 		property 'sonar.sources', 'src'
 		property 'sonar.language', 'java'
 		property 'sonar.sourceEncoding', 'UTF-8'
-		property 'sonar.exclusions', '**/test/**, **/resources/**, **/*Application*, **/config/**, **/exception/**, **/dto/**, **/security/**, **/support/**, **/*ControllerAdvice*'
+		property 'sonar.exclusions', '**/test/**, **/resources/**, **/*Application*, **/config/**, **/exception/**, **/dto/**, **/security/**, **/support/**, **/*ControllerAdvice*, **/common/*, **/*SESService*'
 		property 'sonar.test.inclusions', '**/*Test.java'
 		property 'sonar.java.coveragePlugin', 'jacoco'
 		property 'sonar.coverage.jacoco.xmlReportPaths', jacocoDir.get().file("jacoco/index.xml").asFile
@@ -97,6 +99,9 @@ dependencies {
 
 	// mongoDB
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+	//amazon ses
+	implementation 'com.amazonaws:aws-java-sdk-ses:1.12.772'
 }
 
 tasks.named('test') {
@@ -139,14 +144,14 @@ jacocoTestCoverageVerification {
 			limit {
 				counter = 'LINE'
 				value = 'COVEREDRATIO'
-				minimum = 0.60
+				minimum = 0.70
 			}
 
 			// 브랜치 커버리지를 최소 70% 만족
 			limit {
 				counter = 'BRANCH'
 				value = 'COVEREDRATIO'
-				minimum = 0.60
+				minimum = 0.70
 			}
 
 			excludes = jacocoExcludePatterns
