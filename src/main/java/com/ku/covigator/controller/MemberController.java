@@ -36,7 +36,7 @@ public class MemberController {
     }
 
     @Operation(summary = "닉네임 중복 확인")
-    @PostMapping("/nickname")
+    @PostMapping("/check-for-duplicate/nickname")
     public ResponseEntity<Void> verifyNickname(
             @Valid @RequestBody PostVerifyNicknameRequest request
     ) {

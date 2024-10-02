@@ -72,7 +72,7 @@ class MemberControllerTest {
         PostVerifyNicknameRequest request = new PostVerifyNicknameRequest("covi");
 
         //when //then
-        mockMvc.perform(post("/members/nickname")
+        mockMvc.perform(post("/members/check-for-duplicate/nickname")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
