@@ -7,6 +7,7 @@ import com.ku.covigator.dto.response.KakaoTokenResponse;
 import com.ku.covigator.dto.response.KakaoUserInfoResponse;
 import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
 import com.ku.covigator.exception.badrequest.PasswordMismatchException;
+import com.ku.covigator.exception.notfound.NotFoundEmailException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;
 import com.ku.covigator.security.jwt.JwtProvider;
@@ -343,6 +344,15 @@ class AuthServiceTest {
 
         //then
         assertThat(response.isNew()).isEqualTo("True");
+    }
+
+    @DisplayName("등록되지 않은 이메일에 대한 인증번호 발송 요청시 예외가 발생한다.")
+    @Test
+    void notFoundEmailExceptionOccursWhenMemberIsNotRegistered() {
+        //when //then
+        assertThatThrownBy(
+                () -> authService.createVerificationNumber("covi@naver.com")
+        ).isInstanceOf(NotFoundEmailException.class);
     }
 
 }

@@ -8,10 +8,12 @@ import com.ku.covigator.dto.response.KakaoUserInfoResponse;
 import com.ku.covigator.exception.badrequest.DuplicateMemberException;
 import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
 import com.ku.covigator.exception.badrequest.PasswordMismatchException;
+import com.ku.covigator.exception.notfound.NotFoundEmailException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;
 import com.ku.covigator.security.jwt.JwtProvider;
 import com.ku.covigator.security.kakao.KakaoOauthProvider;
+import com.ku.covigator.support.RandomUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
 import java.util.Optional;
+
+import static com.ku.covigator.common.EmailVerificationTemplate.*;
 
 
 @Service
@@ -31,9 +35,11 @@ public class AuthService {
     private final JwtProvider jwtProvider;
     private final KakaoOauthProvider kakaoOauthProvider;
     private final S3Service s3Service;
+    private final SESService sesService;
 
     private static final String BASE_NICKNAME = "코비게이터";
     private static final int MAX_UID = 99999;
+    private static final int VERIFICATION_LENGTH = 8;
 
     @Transactional(readOnly = true)
     public String signIn(String email, String password) {
@@ -100,6 +106,20 @@ public class AuthService {
 
     }
 
+    // 인증번호 생성
+    public void createVerificationNumber(String email) {
+
+        memberRepository.findByEmailAndPlatform(email, Platform.LOCAL)
+                .orElseThrow(NotFoundEmailException::new);
+
+        String verificationNumber = RandomUtils.generateRandomMixStr(VERIFICATION_LENGTH);
+        sesService.sendEmail(
+                SUBJECT.getText(),
+                CONTENT_PREFIX.getText() + verificationNumber + CONTENT_SUFFIX.getText(),
+                email
+                );
+    }
+
     // 닉네임 중복 검증
     private void validateNicknameDuplication(String nickname) {
         Optional<Member> member = memberRepository.findByNickname(nickname);
@@ -125,16 +145,15 @@ public class AuthService {
 
     // 신규 닉네임 생성
     private String createRandomNickname() {
-        SecureRandom secureRandom = new SecureRandom();
         String nickname;
         do {
-            nickname = BASE_NICKNAME + (secureRandom.nextInt(MAX_UID) + 1);
+            nickname = BASE_NICKNAME + RandomUtils.generateRandomNumber(MAX_UID);
         } while (isNicknameDuplicated(nickname));
         return nickname;
     }
 
     // 닉네임 중복 여부 확인
-    private Boolean isNicknameDuplicated(String nickname) {
+    private boolean isNicknameDuplicated(String nickname) {
         return memberRepository.findByNickname(nickname).isPresent();
     }
 
