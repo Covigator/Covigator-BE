@@ -57,8 +57,8 @@ public class AuthController {
     @Operation(summary = "이메일 인증번호 인증")
     @PostMapping("/verify-code")
     public ResponseEntity<Void> verifyNumber(@Valid @RequestBody VerifyCodeRequest request) {
-        String key = redisUtil.getData(request.email());
-        if(!key.equals(request.code())) {
+        String code = redisUtil.getData(request.email());
+        if(!code.equals(request.code())) {
             throw new WrongVerificationCodeException();
         }
         return ResponseEntity.ok().build();
