@@ -110,7 +110,7 @@ public class AuthService {
     public void createVerificationNumber(String email) {
 
         // 등록된 이메일인지 확인
-        memberRepository.findByEmailAndPlatform(email, Platform.LOCAL)
+        Member member = memberRepository.findByEmailAndPlatform(email, Platform.LOCAL)
                 .orElseThrow(NotFoundEmailException::new);
 
         // 인증번호 생성
@@ -119,10 +119,10 @@ public class AuthService {
         // 이메일 전송
         sesService.sendEmail(SUBJECT.getText(),
                 CONTENT_PREFIX.getText() + verificationNumber + CONTENT_SUFFIX.getText(),
-                email);
+                member.getEmail());
 
         // Redis에 인증번호 저장
-        redisUtil.setDataExpire(email, verificationNumber, 60 * 5L);
+        redisUtil.setDataExpire(member.getEmail(), verificationNumber, 60 * 5L);
 
     }
 
