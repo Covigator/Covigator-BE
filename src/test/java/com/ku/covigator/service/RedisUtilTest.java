@@ -26,6 +26,19 @@ class RedisUtilTest {
         assertThat(redisUtil.existData("key")).isTrue();
     }
 
+    @DisplayName("Redis에 저장된 데이터를 조회할 수 있다.")
+    @Test
+    void getDataFromRedis() {
+        //given
+        redisUtil.setDataExpire("key","value", 60);
+
+        //when
+        String data = redisUtil.getData("key");
+
+        //then
+        assertThat(data).isEqualTo("value");
+    }
+
     @DisplayName("Redis에 저장된 데이터를 삭제할 수 있다.")
     @Test
     void test() {
