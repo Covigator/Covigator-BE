@@ -29,6 +29,7 @@ public class WeatherForecastService {
     private final WeatherForecastUriBuilder uriBuilder;
     private final RestClient weatherRestClient;
     private final WeatherForecastAnalyzer analyzer;
+    private final WeatherCoordinateConverter converter;
     private final static String CODE_SKY = "SKY";
     private final static String CODE_PRECIPITATION = "PTY";
 
@@ -41,7 +42,7 @@ public class WeatherForecastService {
     public WeatherForecastResponse getWeatherForecastInfo(String date, float latitude, float longitude) {
 
         // GPS -> 격자 변환
-        Grid grid = WeatherCoordinateConverter.convertToGrid(longitude, latitude);
+        Grid grid = converter.convertToGrid(longitude, latitude);
 
         URI uri = uriBuilder.buildWeatherForecastRequestUri(grid.getNx(), grid.getNy());
         ShortTermWeatherForecastResponse forecastResponse = requestWeatherForecast(uri);

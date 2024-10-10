@@ -1,7 +1,10 @@
 package com.ku.covigator.support.weather;
 
+import org.springframework.stereotype.Component;
+
 import static java.lang.Math.*;
 
+@Component
 public class WeatherCoordinateConverter {
 
     private static final float Re = 6371.00877f; // 사용할 지구반경 [km]
@@ -15,7 +18,7 @@ public class WeatherCoordinateConverter {
 
 
     // 위경도를 X,Y 좌표로 변환하는 메서드
-    public static Grid convertToGrid(float longitude, float latitude) {
+    public Grid convertToGrid(float longitude, float latitude) {
 
         double re = Re / grid;
         double slat1Rad = slat1 * (PI / 180.0);
