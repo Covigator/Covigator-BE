@@ -18,7 +18,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class KakaoOauthProvider {
 
-    private final RestClient restClient;
+    private final RestClient kakaoRestClient;
 
     private final KakaoUriBuilder uriBuilder;
 
@@ -27,13 +27,13 @@ public class KakaoOauthProvider {
     // 카카오 토큰 반환
     public KakaoTokenResponse getKakaoToken(String code) {
         URI uri = uriBuilder.buildKakaoTokenRequestUri(code);
-        return requestTokenToKakaoServer(restClient, uri);
+        return requestTokenToKakaoServer(kakaoRestClient, uri);
     }
 
     // 카카오 사용자 정보 반환
     public KakaoUserInfoResponse getKakaoUserInfo(String token) {
         URI uri = uriBuilder.buildKakaoUserInfoRequestUri();
-        return requestUserInfoToKakaoServer(token, restClient, uri);
+        return requestUserInfoToKakaoServer(token, kakaoRestClient, uri);
     }
 
     private KakaoTokenResponse requestTokenToKakaoServer(RestClient restClient, URI uri) {

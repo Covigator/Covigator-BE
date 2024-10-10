@@ -54,3 +54,6 @@ aws:
   region: us-east-1
   s3:
     bucket: ${S3_BUCKET_NAME}
+
+weather:
+  service-key: ${WEATHER_SERVICE_KEY}
