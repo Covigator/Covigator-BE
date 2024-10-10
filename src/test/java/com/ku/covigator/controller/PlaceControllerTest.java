@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ComponentScan({"com.ku.covigator.support", "com.ku.covigator.security.jwt"})
+@ComponentScan({"com.ku.covigator.support.slack", "com.ku.covigator.security.jwt"})
 @WebMvcTest(controllers = PlaceController.class)
 class PlaceControllerTest {
 

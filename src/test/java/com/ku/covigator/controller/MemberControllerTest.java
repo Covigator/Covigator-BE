@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ComponentScan({"com.ku.covigator.support", "com.ku.covigator.security.jwt"})
+@ComponentScan({"com.ku.covigator.support.slack", "com.ku.covigator.security.jwt"})
 @WebMvcTest(controllers = MemberController.class)
 class MemberControllerTest {
 

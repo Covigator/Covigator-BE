@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ComponentScan("com.ku.covigator.support")
+@ComponentScan("com.ku.covigator.support.slack")
 @WebMvcTest(controllers = DibsController.class)
 class DibsControllerTest {
 
