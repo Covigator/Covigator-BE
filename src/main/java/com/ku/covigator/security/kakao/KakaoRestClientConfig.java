@@ -8,7 +8,7 @@ import org.springframework.web.client.RestClient;
 public class KakaoRestClientConfig {
 
     @Bean
-    public RestClient restClient(RestClient.Builder builder) {
+    public RestClient kakaoRestClient(RestClient.Builder builder) {
         return builder.build();
     }
 
