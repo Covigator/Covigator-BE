@@ -30,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ComponentScan("com.ku.covigator.support")
+@ComponentScan("com.ku.covigator.support.slack")
 @WebMvcTest(controllers = CourseController.class)
 class CourseControllerTest {
 
