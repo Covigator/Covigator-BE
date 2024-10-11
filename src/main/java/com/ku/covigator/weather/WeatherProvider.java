@@ -15,8 +15,10 @@ import java.net.URI;
 public class WeatherProvider {
 
     private final RestClient weatherRestClient;
+    private final WeatherForecastUriBuilder uriBuilder;
 
-    public ShortTermWeatherForecastResponse requestWeatherForecast(URI uri) {
+    public ShortTermWeatherForecastResponse requestWeatherForecast(int nx, int ny) {
+        URI uri = uriBuilder.buildWeatherForecastRequestUri(nx, ny);
         return weatherRestClient.get()
                 .uri(uri)
                 .retrieve()

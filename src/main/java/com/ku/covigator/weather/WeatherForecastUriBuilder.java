@@ -17,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 public class WeatherForecastUriBuilder {
 
     private final WeatherForecastProperties weatherForecastProperties;
-    private static final String weatherForecastUri = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
+    private static final String WEATHER_FORECAST_URI = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
     private static final int PAGE_NO = 1;
     private static final int NUM_OF_ROWS = 1000;
     private static final String DATA_TYPE = "JSON";
@@ -29,7 +29,7 @@ public class WeatherForecastUriBuilder {
         String baseDate = now.toLocalDate().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String baseTime = BaseTimeMapper.mapToBaseTime(now.toLocalTime());
 
-        return UriComponentsBuilder.fromUriString(weatherForecastUri)
+        return UriComponentsBuilder.fromUriString(WEATHER_FORECAST_URI)
                 .queryParam("ServiceKey", weatherForecastProperties.getServiceKey())
                 .queryParam("pageNo", PAGE_NO)
                 .queryParam("numOfRows", NUM_OF_ROWS)

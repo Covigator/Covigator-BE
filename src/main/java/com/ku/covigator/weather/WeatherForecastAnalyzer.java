@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.ku.covigator.dto.response.ShortTermWeatherForecastResponse.Response.Body.Items.*;
 import static com.ku.covigator.weather.WeatherCondition.*;
 
 @Component
@@ -24,7 +25,7 @@ public class WeatherForecastAnalyzer {
      * 하늘 상태는 해당 날짜에 가장 많이 발견되는 하늘 상태 결과를 리턴합니다.<br>
      * ex) 하루 중 "맑음"이 15번, "구름 많음"이 5번, "흐림"이 4번인 경우 "맑음" 리턴
      */
-    public String analyzeWeatherForecastResult(List<ShortTermWeatherForecastResponse.Response.Body.Items.Item> items) {
+    public String analyzeWeatherForecastResult(List<Item> items) {
         // 1. 강수 유형 분석
         String precipitation = analyzePrecipitation(items);
 
@@ -32,7 +33,7 @@ public class WeatherForecastAnalyzer {
         return !precipitation.equals(NO_PRECIPITATION.getDescription()) ? precipitation : analyzeSkyCondition(items);
     }
 
-    private String analyzePrecipitation(List<ShortTermWeatherForecastResponse.Response.Body.Items.Item> items) {
+    private String analyzePrecipitation(List<Item> items) {
         return items.stream()
                 .filter(item -> PRECIPITATION.equals(item.getCategory()) && !item.getFcstValue().equals("0"))
                 .map(this::getPrecipitationDescription)
@@ -41,10 +42,10 @@ public class WeatherForecastAnalyzer {
                 .getDescription();
     }
 
-    private String analyzeSkyCondition(List<ShortTermWeatherForecastResponse.Response.Body.Items.Item> items) {
+    private String analyzeSkyCondition(List<Item> items) {
         Map<String, Long> fcstValueCountMap = items.stream()
                 .filter(item -> SKY.equals(item.getCategory()))
-                .collect(Collectors.groupingBy(ShortTermWeatherForecastResponse.Response.Body.Items.Item::getFcstValue, Collectors.counting()));
+                .collect(Collectors.groupingBy(Item::getFcstValue, Collectors.counting()));
 
         return fcstValueCountMap.entrySet().stream()
                 .max(Map.Entry.comparingByValue())
@@ -53,7 +54,7 @@ public class WeatherForecastAnalyzer {
                 .getDescription();
     }
 
-    private WeatherCondition getPrecipitationDescription(ShortTermWeatherForecastResponse.Response.Body.Items.Item item) {
+    private WeatherCondition getPrecipitationDescription(Item item) {
         return switch (item.getFcstValue()) {
             case "1", "4" -> RAIN;
             case "2" -> RAIN_SNOW;
