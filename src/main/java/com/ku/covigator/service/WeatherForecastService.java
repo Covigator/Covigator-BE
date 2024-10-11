@@ -2,32 +2,23 @@ package com.ku.covigator.service;
 
 import com.ku.covigator.dto.response.ShortTermWeatherForecastResponse;
 import com.ku.covigator.dto.response.WeatherForecastResponse;
-import com.ku.covigator.exception.weatherforecast.WeatherAPI4xxError;
-import com.ku.covigator.exception.weatherforecast.WeatherAPI5xxError;
-import com.ku.covigator.support.weather.Grid;
-import com.ku.covigator.support.weather.WeatherCoordinateConverter;
-import com.ku.covigator.support.weather.WeatherForecastAnalyzer;
-import com.ku.covigator.support.weather.WeatherForecastUriBuilder;
+import com.ku.covigator.weather.*;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import java.net.URI;
 import java.util.List;
 
-import static com.ku.covigator.support.weather.WeatherCondition.*;
+import static com.ku.covigator.weather.WeatherCondition.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WeatherForecastService {
 
     private final WeatherForecastUriBuilder uriBuilder;
-    private final RestClient weatherRestClient;
+    private final WeatherProvider provider;
     private final WeatherForecastAnalyzer analyzer;
     private final WeatherCoordinateConverter converter;
     private final static String CODE_SKY = "SKY";
@@ -45,7 +36,7 @@ public class WeatherForecastService {
         Grid grid = converter.convertToGrid(longitude, latitude);
 
         URI uri = uriBuilder.buildWeatherForecastRequestUri(grid.getNx(), grid.getNy());
-        ShortTermWeatherForecastResponse forecastResponse = requestWeatherForecast(uri);
+        ShortTermWeatherForecastResponse forecastResponse = provider.requestWeatherForecast(uri);
 
         if (forecastResponse == null) {
             return WeatherForecastResponse.of(NO_WEATHER_INFO.getDescription());
@@ -55,19 +46,6 @@ public class WeatherForecastService {
 
         String result = analyzer.analyzeWeatherForecastResult(items);
         return WeatherForecastResponse.of(result);
-    }
-
-    private ShortTermWeatherForecastResponse requestWeatherForecast(URI uri) {
-        return weatherRestClient.get()
-                .uri(uri)
-                .retrieve()
-                .onStatus(HttpStatusCode::is4xxClientError, (request, response) -> {
-                    throw new WeatherAPI4xxError();
-                })
-                .onStatus(HttpStatusCode::is5xxServerError, (request, response) -> {
-                    throw new WeatherAPI5xxError();
-                })
-                .body(ShortTermWeatherForecastResponse.class);
     }
 
     private List<ShortTermWeatherForecastResponse.Response.Body.Items.Item> filterItemsWithDateAndCategory(String date, ShortTermWeatherForecastResponse forecastResponse) {
