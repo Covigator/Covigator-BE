@@ -1,4 +1,4 @@
-package com.ku.covigator.support.weather;
+package com.ku.covigator.weather;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

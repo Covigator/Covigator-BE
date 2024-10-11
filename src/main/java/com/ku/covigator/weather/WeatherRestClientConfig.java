@@ -1,4 +1,4 @@
-package com.ku.covigator.support.weather;
+package com.ku.covigator.weather;
 
 import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.boot.web.client.ClientHttpRequestFactorySettings;

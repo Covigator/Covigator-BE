@@ -1,4 +1,4 @@
-package com.ku.covigator.support.weather;
+package com.ku.covigator.weather;
 
 import com.ku.covigator.dto.response.ShortTermWeatherForecastResponse;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.ku.covigator.support.weather.WeatherCondition.*;
+import static com.ku.covigator.weather.WeatherCondition.*;
 
 @Component
 public class WeatherForecastAnalyzer {
