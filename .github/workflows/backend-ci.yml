@@ -50,6 +50,7 @@ jobs:
           AWS_SECRET_KEY: ${{ secrets.ACCESS_KEY_SECRET }}
           MONGO_DB_URI: ${{ secrets.MONGO_DB_URI }}
           MONGO_DB_DATABASE: ${{ secrets.MONGO_DB_DATABASE }}
+          WEATHER_SERVICE_KEY: ${{ secrets.WEATHER_SERVICE_KEY }}
         with:
           arguments: check
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
