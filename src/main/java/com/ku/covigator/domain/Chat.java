@@ -15,16 +15,16 @@ public class Chat {
     @Id
     private String id;
     private Long courseId;
-    private String timestamp;
+    private String time;
     private String nickname;
     private String profileImageUrl;
     private Long memberId;
     private String message;
 
     @Builder
-    public Chat(Long courseId, String timestamp, String nickname, String message, String profileImageUrl, Long memberId) {
+    public Chat(Long courseId, String time, String nickname, String message, String profileImageUrl, Long memberId) {
         this.courseId = courseId;
-        this.timestamp = timestamp;
+        this.time = time;
         this.nickname = nickname;
         this.message = message;
         this.profileImageUrl = profileImageUrl;

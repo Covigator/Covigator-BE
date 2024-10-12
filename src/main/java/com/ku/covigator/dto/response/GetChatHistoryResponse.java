@@ -17,7 +17,7 @@ public record GetChatHistoryResponse(Long myId, List<ChatDto> chat) {
                 .map(chat -> ChatDto.builder()
                         .nickname(chat.getNickname())
                         .message(chat.getMessage())
-                        .timestamp(chat.getTimestamp())
+                        .timestamp(chat.getTime())
                         .profileImageUrl(chat.getProfileImageUrl())
                         .memberId(chat.getMemberId())
                         .build()
