@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -53,18 +53,18 @@ class ChatServiceTest {
                 .build();
         Course savedCourse = courseRepository.save(course);
 
-        String time = new Timestamp(System.currentTimeMillis()).toString();
+        String time = LocalDateTime.now().toString();
         Chat chat = Chat.builder()
                 .courseId(savedCourse.getId())
-                .timestamp(time)
+                .time(time)
                 .nickname("김코비")
                 .message("여기 좋아요")
                 .build();
 
-        String time2 = new Timestamp(System.currentTimeMillis()).toString();
+        String time2 = LocalDateTime.now().toString();
         Chat chat2 = Chat.builder()
                 .courseId(savedCourse.getId())
-                .timestamp(time2)
+                .time(time2)
                 .nickname("박코비")
                 .message("저는 별로,,")
                 .build();
