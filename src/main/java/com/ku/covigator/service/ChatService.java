@@ -42,7 +42,7 @@ public class ChatService {
 
         chatRepository.save(chat);
 
-        return SaveMessageResponse.from(member, message);
+        return SaveMessageResponse.from(member, message, chat.getTime());
     }
 
     private Chat buildChat(Long courseId, String message, Member member) {
