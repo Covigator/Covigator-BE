@@ -3,6 +3,8 @@ package com.ku.covigator.weather;
 import com.ku.covigator.dto.response.ShortTermWeatherForecastResponse.Response.Body.Items.Item;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -67,53 +69,24 @@ class WeatherForecastAnalyzerTest {
         assertThat(result).isEqualTo("눈");
     }
 
-    @DisplayName("단기 예보 조회 (4) - 맑음")
-    @Test
-    void returnSunny() {
+    @DisplayName("단기 예보 조회 - 날씨 상태")
+    @ParameterizedTest(name = "{index} => SKY={1}, Expected Result={2}")
+    @CsvSource({
+            "1, 맑음",      // case for 맑음
+            "3, 구름 많음",  // case for 구름 많음
+            "4, 흐림"       // case for 흐림
+    })
+    void analyzeWeatherForecastResult(String skyValue, String expectedResult) {
         //given
         List<Item> item = List.of(
                 new Item("PTY", "20241011", "1300", "0"),
-                new Item("SKY", "20241011", "1300", "1")
+                new Item("SKY", "20241011", "1300", skyValue)
         );
-
         //when
         String result = analyzer.analyzeWeatherForecastResult(item);
 
         //then
-        assertThat(result).isEqualTo("맑음");
+        assertThat(result).isEqualTo(expectedResult);
     }
-
-    @DisplayName("단기 예보 조회 (5) - 구름 많음")
-    @Test
-    void returnPartlyCloudy() {
-        //given
-        List<Item> item = List.of(
-                new Item("PTY", "20241011", "1300", "0"),
-                new Item("SKY", "20241011", "1300", "3")
-        );
-
-        //when
-        String result = analyzer.analyzeWeatherForecastResult(item);
-
-        //then
-        assertThat(result).isEqualTo("구름 많음");
-    }
-
-    @DisplayName("단기 예보 조회 (5) - 흐림")
-    @Test
-    void returnCloudy() {
-        //given
-        List<Item> item = List.of(
-                new Item("PTY", "20241011", "1300", "0"),
-                new Item("SKY", "20241011", "1300", "4")
-        );
-
-        //when
-        String result = analyzer.analyzeWeatherForecastResult(item);
-
-        //then
-        assertThat(result).isEqualTo("흐림");
-    }
-
 
 }
