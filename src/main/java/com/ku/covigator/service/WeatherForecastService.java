@@ -20,8 +20,8 @@ public class WeatherForecastService {
     private final WeatherProvider provider;
     private final WeatherForecastAnalyzer analyzer;
     private final WeatherCoordinateConverter converter;
-    private final static String CODE_SKY = "SKY";
-    private final static String CODE_PRECIPITATION = "PTY";
+    private static final String CODE_SKY = "SKY";
+    private static final String CODE_PRECIPITATION = "PTY";
 
     @Retryable(
             retryFor = RuntimeException.class,

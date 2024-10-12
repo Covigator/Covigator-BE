@@ -26,7 +26,7 @@ public class WeatherRestClientConfig {
                 .withConnectTimeout(Duration.ofSeconds(5));
         ClientHttpRequestFactory requestFactory = ClientHttpRequestFactories.get(clientHttpRequestFactorySettings);
 
-        return (restClientBuilder) -> restClientBuilder
+        return restClientBuilder -> restClientBuilder
                 .requestFactory(requestFactory)
                 .build();
     }
