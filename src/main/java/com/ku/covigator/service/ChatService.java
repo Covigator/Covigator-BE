@@ -13,6 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Service
@@ -48,7 +51,7 @@ public class ChatService {
         return Chat.builder()
                 .message(message)
                 .nickname(member.getNickname())
-                .timestamp(String.valueOf(new Timestamp(System.currentTimeMillis())))
+                .time(String.valueOf(LocalDateTime.now(ZoneId.of("Asia/Seoul"))))
                 .courseId(courseId)
                 .memberId(member.getId())
                 .profileImageUrl(member.getImageUrl())
