@@ -12,9 +12,7 @@ import com.ku.covigator.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
 
@@ -29,7 +27,7 @@ public class ChatService {
     public List<Chat> getChatHistory(Long courseId) {
 
         Course course = courseRepository.findById(courseId).orElseThrow(NotFoundCourseException::new);
-        return chatRepository.findChatByCourseIdOrderByTimestampAsc(course.getId());
+        return chatRepository.findChatByCourseIdOrderByTimeAsc(course.getId());
     }
 
     public SaveMessageResponse saveMessage(Long memberId, Long courseId, String message) {
