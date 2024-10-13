@@ -72,4 +72,10 @@ public class AuthController {
         authService.changePassword(memberId, request.password());
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "액세스/리프레시 토큰 재발급")
+    @PostMapping("/reissue-token")
+    public ResponseEntity<TokenResponse> reissueToken(@Valid @RequestBody PostReissueTokenRequest request) {
+        return ResponseEntity.ok(authService.reissueToken(request.refreshToken()));
+    }
 }
