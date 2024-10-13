@@ -1,7 +1,7 @@
 package com.ku.covigator.controller;
 
 import com.ku.covigator.dto.request.*;
-import com.ku.covigator.dto.response.AccessTokenResponse;
+import com.ku.covigator.dto.response.TokenResponse;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.exception.badrequest.PasswordVerificationException;
 import com.ku.covigator.exception.badrequest.WrongVerificationCodeException;
@@ -28,20 +28,18 @@ public class AuthController {
 
     @Operation(summary = "로컬 로그인")
     @PostMapping("/sign-in")
-    public ResponseEntity<AccessTokenResponse> signIn(@RequestBody @Valid PostSignInRequest request) {
-        String accessToken = authService.signIn(request.email(), request.password());
-        return ResponseEntity.ok(AccessTokenResponse.from(accessToken));
+    public ResponseEntity<TokenResponse> signIn(@RequestBody @Valid PostSignInRequest request) {
+        return ResponseEntity.ok(authService.signIn(request.email(), request.password()));
     }
 
     @Operation(summary = "회원가입")
     @PostMapping("/sign-up")
-    public ResponseEntity<AccessTokenResponse> signUp(@RequestPart(value = "postSignUpRequest") @Valid PostSignUpRequest request,
-                                                      @RequestPart(value = "image", required = false) MultipartFile image) {
-        String accessToken = authService.signUp(request.toEntity(), image);
-        return ResponseEntity.ok(AccessTokenResponse.from(accessToken));
+    public ResponseEntity<TokenResponse> signUp(@RequestPart(value = "postSignUpRequest") @Valid PostSignUpRequest request,
+                                                @RequestPart(value = "image", required = false) MultipartFile image) {
+        return ResponseEntity.ok(authService.signUp(request.toEntity(), image));
     }
 
-    @Operation(summary = "카카오 로그인 (카카오 서버 Redirect 용, 프론트에서 호출하지 않음)")
+    @Operation(summary = "카카오 로그인 (인가 코드 확인)")
     @GetMapping("/oauth/kakao")
     public ResponseEntity<KakaoSignInResponse> signInKakao(@RequestParam String code) {
         return ResponseEntity.ok(authService.signInKakao(code));

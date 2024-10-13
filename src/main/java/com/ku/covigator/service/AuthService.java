@@ -1,10 +1,12 @@
 package com.ku.covigator.service;
 
+import com.ku.covigator.config.properties.RtrProperties;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.dto.response.KakaoTokenResponse;
 import com.ku.covigator.dto.response.KakaoUserInfoResponse;
+import com.ku.covigator.dto.response.TokenResponse;
 import com.ku.covigator.exception.badrequest.DuplicateMemberException;
 import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
 import com.ku.covigator.exception.badrequest.PasswordMismatchException;
@@ -15,18 +17,21 @@ import com.ku.covigator.security.jwt.JwtProvider;
 import com.ku.covigator.security.kakao.KakaoOauthProvider;
 import com.ku.covigator.support.RandomUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.ku.covigator.common.EmailVerificationTemplate.*;
 
 
 @Service
 @RequiredArgsConstructor
+@EnableConfigurationProperties(RtrProperties.class)
 public class AuthService {
 
     private final MemberRepository memberRepository;
@@ -36,21 +41,31 @@ public class AuthService {
     private final S3Service s3Service;
     private final SESService sesService;
     private final RedisUtil redisUtil;
+    private final RtrProperties rtrProperties;
 
     private static final String BASE_NICKNAME = "코비게이터";
     private static final int MAX_UID = 99999;
     private static final int VERIFICATION_LENGTH = 8;
 
     @Transactional(readOnly = true)
-    public String signIn(String email, String password) {
+    public TokenResponse signIn(String email, String password) {
+
         Member member = memberRepository.findByEmailAndPlatform(email, Platform.LOCAL)
                 .orElseThrow(NotFoundMemberException::new);
+
         validatePassword(password, member.getPassword());
-        return jwtProvider.createToken(member.getId().toString());
+
+        String accessToken = jwtProvider.createToken(member.getId().toString());
+
+        // RTR
+        String refreshToken = UUID.randomUUID().toString();
+        redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
+
+        return TokenResponse.from(accessToken, refreshToken);
     }
 
     // 로컬 회원가입
-    public String signUp(Member member, MultipartFile image) {
+    public TokenResponse signUp(Member member, MultipartFile image) {
 
         // 닉네임 중복 검증
         validateNicknameDuplication(member.getNickname());
@@ -72,7 +87,11 @@ public class AuthService {
         Member savedMember = memberRepository.save(member);
 
         // 토큰 반환
-        return jwtProvider.createToken(savedMember.getId().toString());
+        String accessToken = jwtProvider.createToken(savedMember.getId().toString());
+        String refreshToken = UUID.randomUUID().toString();
+        redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
+
+        return TokenResponse.from(accessToken, refreshToken);
     }
 
     // 카카오 회원가입
@@ -90,8 +109,10 @@ public class AuthService {
 
         // 가입된 회원 반환
         if (savedMember.isPresent()) {
-            String token = jwtProvider.createToken(savedMember.get().getId().toString());
-            return KakaoSignInResponse.fromOldMember(token);
+            String accessToken = jwtProvider.createToken(savedMember.get().getId().toString());
+            String refreshToken = UUID.randomUUID().toString();
+            redisUtil.setDataExpire(refreshToken, String.valueOf(savedMember.get().getId()), rtrProperties.getExpirationLength());
+            return KakaoSignInResponse.fromOldMember(accessToken, refreshToken);
         }
 
         // 신규 닉네임 생성
@@ -101,8 +122,10 @@ public class AuthService {
 
         // 신규 회원 저장
         Member newMember = memberRepository.save(member);
-        String token = jwtProvider.createToken(newMember.getId().toString());
-        return KakaoSignInResponse.fromNewMember(token);
+        String accessToken = jwtProvider.createToken(newMember.getId().toString());
+        String refreshToken = UUID.randomUUID().toString();
+        redisUtil.setDataExpire(refreshToken, String.valueOf(newMember.getId()), rtrProperties.getExpirationLength());
+        return KakaoSignInResponse.fromNewMember(accessToken, refreshToken);
 
     }
 
