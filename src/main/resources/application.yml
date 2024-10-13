@@ -39,6 +39,8 @@ security:
       redirect-uri: ${REDIRECT_URI}
       user-info-url: https://kapi.kakao.com/v2/user/me
       token-url: https://kauth.kakao.com/oauth/token
+  rtr:
+    expiration-length: ${RTK_EXPIRATION_LENGTH}
 
 springdoc:
   swagger-ui:
