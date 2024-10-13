@@ -161,6 +161,21 @@ public class AuthService {
         memberRepository.save(member);
     }
 
+    // 액세스 토큰 + Refresh 토큰 재발급
+    public TokenResponse reissueToken(String refreshToken) {
+
+        Long memberId = validateRefreshToken(refreshToken);
+
+        // Refresh 토큰 재발급
+        String newRefreshToken = UUID.randomUUID().toString();
+        redisUtil.setDataExpire(newRefreshToken, String.valueOf(memberId), rtrProperties.getExpirationLength());
+
+        // 액세스 토큰 재발급
+        String accessToken = jwtProvider.createToken(memberId.toString());
+
+        return TokenResponse.from(accessToken, refreshToken);
+    }
+
     // 닉네임 중복 검증
     private void validateNicknameDuplication(String nickname) {
         Optional<Member> member = memberRepository.findByNickname(nickname);
@@ -196,6 +211,14 @@ public class AuthService {
     // 닉네임 중복 여부 확인
     private boolean isNicknameDuplicated(String nickname) {
         return memberRepository.findByNickname(nickname).isPresent();
+    }
+
+    // 액세스 토큰 검증
+    private Long validateRefreshToken(String refreshToken) {
+        String memberId = redisUtil.getData(refreshToken);
+        Member member = memberRepository.findById(Long.valueOf(memberId))
+                .orElseThrow(NotFoundMemberException::new);
+        return member.getId();
     }
 
 }
