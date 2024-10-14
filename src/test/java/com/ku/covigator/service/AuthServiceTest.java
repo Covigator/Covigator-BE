@@ -7,6 +7,7 @@ import com.ku.covigator.dto.response.KakaoTokenResponse;
 import com.ku.covigator.dto.response.KakaoUserInfoResponse;
 import com.ku.covigator.dto.response.TokenResponse;
 import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
+import com.ku.covigator.exception.badrequest.InvalidRefreshTokenException;
 import com.ku.covigator.exception.badrequest.PasswordMismatchException;
 import com.ku.covigator.exception.notfound.NotFoundEmailException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
@@ -49,6 +50,7 @@ class AuthServiceTest {
     @AfterEach
     void tearDown() {
         memberRepository.deleteAllInBatch();
+        redisUtil.deleteAll();
     }
 
     @DisplayName("등록된 회원에 대한 유효한 이메일, 비밀번호 입력 시 로컬 로그인에 성공한다.")
@@ -410,6 +412,49 @@ class AuthServiceTest {
         //then
         String newPassword = memberRepository.findById(savedMember.getId()).get().getPassword();
         assertThat(oldPassword).isNotEqualTo(newPassword);
+    }
+
+    @DisplayName("유효하지 않은 refresh 토큰 전달 시, 토큰 재발급 요청에 실패한다.")
+    @Test
+    void invalidRefreshToken() {
+        //when //then
+        assertThatThrownBy(() -> authService.reissueToken("refresh_token"))
+                .isInstanceOf(InvalidRefreshTokenException.class);
+    }
+
+    @DisplayName("존재하지 않는 회원에 대한 refresh 토큰 재발급 요청이 실패한다.")
+    @Test
+    void refreshTokenForMemberNotExists() {
+        //given
+        redisUtil.setDataExpire("refresh_token", "100", 3600 * 1000);
+
+        //when //then
+        assertThatThrownBy(() -> authService.reissueToken("refresh_token"))
+                .isInstanceOf(NotFoundMemberException.class);
+    }
+
+    @DisplayName("토큰을 재발급한다.")
+    @Test
+    void reissueToken() {
+        //given
+        Member member = Member.builder()
+                .email("covi@naver.com")
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.KAKAO)
+                .build();
+        Member savedMember = memberRepository.save(member);
+
+        redisUtil.setDataExpire("refresh_token", savedMember.getId().toString(), 3600 * 1000);
+
+        //when
+        TokenResponse response = authService.reissueToken("refresh_token");
+
+        //then
+        assertThat(redisUtil.existData("refresh_token")).isFalse();
+        assertThat(response.refreshToken()).isNotNull();
+        assertThat(response.accessToken()).isNotNull();
     }
 
 }
