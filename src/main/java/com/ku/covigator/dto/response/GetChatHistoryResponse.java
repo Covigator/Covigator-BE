@@ -8,7 +8,7 @@ import java.util.List;
 public record GetChatHistoryResponse(Long myId, List<ChatDto> chat) {
 
     @Builder
-    public record ChatDto(String nickname, String timestamp, String message, String profileImageUrl, Long memberId) {
+    public record ChatDto(String nickname, String time, String message, String profileImageUrl, Long memberId) {
     }
 
     public static GetChatHistoryResponse from(Long myId, List<Chat> chatList) {
@@ -17,7 +17,7 @@ public record GetChatHistoryResponse(Long myId, List<ChatDto> chat) {
                 .map(chat -> ChatDto.builder()
                         .nickname(chat.getNickname())
                         .message(chat.getMessage())
-                        .timestamp(chat.getTime())
+                        .time(chat.getTime())
                         .profileImageUrl(chat.getProfileImageUrl())
                         .memberId(chat.getMemberId())
                         .build()
