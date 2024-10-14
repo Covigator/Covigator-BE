@@ -9,6 +9,7 @@ import com.ku.covigator.dto.response.KakaoUserInfoResponse;
 import com.ku.covigator.dto.response.TokenResponse;
 import com.ku.covigator.exception.badrequest.DuplicateMemberException;
 import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
+import com.ku.covigator.exception.badrequest.InvalidRefreshTokenException;
 import com.ku.covigator.exception.badrequest.PasswordMismatchException;
 import com.ku.covigator.exception.notfound.NotFoundEmailException;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
@@ -58,7 +59,7 @@ public class AuthService {
         String accessToken = jwtProvider.createToken(member.getId().toString());
 
         // RTR
-        String refreshToken = UUID.randomUUID().toString();
+        String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
 
         return TokenResponse.from(accessToken, refreshToken);
@@ -88,7 +89,7 @@ public class AuthService {
 
         // 토큰 반환
         String accessToken = jwtProvider.createToken(savedMember.getId().toString());
-        String refreshToken = UUID.randomUUID().toString();
+        String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
 
         return TokenResponse.from(accessToken, refreshToken);
@@ -110,7 +111,7 @@ public class AuthService {
         // 가입된 회원 반환
         if (savedMember.isPresent()) {
             String accessToken = jwtProvider.createToken(savedMember.get().getId().toString());
-            String refreshToken = UUID.randomUUID().toString();
+            String refreshToken = createRefreshToken();
             redisUtil.setDataExpire(refreshToken, String.valueOf(savedMember.get().getId()), rtrProperties.getExpirationLength());
             return KakaoSignInResponse.fromOldMember(accessToken, refreshToken);
         }
@@ -123,7 +124,7 @@ public class AuthService {
         // 신규 회원 저장
         Member newMember = memberRepository.save(member);
         String accessToken = jwtProvider.createToken(newMember.getId().toString());
-        String refreshToken = UUID.randomUUID().toString();
+        String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(newMember.getId()), rtrProperties.getExpirationLength());
         return KakaoSignInResponse.fromNewMember(accessToken, refreshToken);
 
@@ -166,8 +167,9 @@ public class AuthService {
 
         Long memberId = validateRefreshToken(refreshToken);
 
-        // Refresh 토큰 재발급
-        String newRefreshToken = UUID.randomUUID().toString();
+        // 기존 Refresh 토큰 삭제 및 재발급
+        redisUtil.deleteData(refreshToken);
+        String newRefreshToken = createRefreshToken();
         redisUtil.setDataExpire(newRefreshToken, String.valueOf(memberId), rtrProperties.getExpirationLength());
 
         // 액세스 토큰 재발급
@@ -213,12 +215,22 @@ public class AuthService {
         return memberRepository.findByNickname(nickname).isPresent();
     }
 
-    // 액세스 토큰 검증
+    // Refresh 토큰 검증
     private Long validateRefreshToken(String refreshToken) {
+
+        // Refresh Token이 존재 하지 않는 경우에 대한 예외 처리
+        if (!redisUtil.existData(refreshToken)) {
+            throw new InvalidRefreshTokenException();
+        }
+
         String memberId = redisUtil.getData(refreshToken);
         Member member = memberRepository.findById(Long.valueOf(memberId))
                 .orElseThrow(NotFoundMemberException::new);
         return member.getId();
+    }
+
+    private String createRefreshToken() {
+        return UUID.randomUUID().toString();
     }
 
 }
