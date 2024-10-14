@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,13 @@ public class RedisUtil {
 
     public void deleteData(String key) {
         template.delete(key);
+    }
+
+    public void deleteAll() {
+        Set<String> keys = template.keys("*");
+        if (keys != null && !keys.isEmpty()) {
+            template.delete(keys);
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.ku.covigator.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ku.covigator.dto.request.*;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.dto.response.TokenResponse;
@@ -149,7 +150,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
-                .andExpectAll(
+                .andExpect(
                         status().isOk()
                 );
     }
@@ -166,7 +167,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
-                .andExpectAll(
+                .andExpect(
                         status().isBadRequest()
                 );
     }
@@ -183,7 +184,7 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
-                .andExpectAll(
+                .andExpect(
                         status().isOk()
                 );
     }
@@ -204,7 +205,7 @@ class AuthControllerTest {
 
     @DisplayName("비밀번호 변경을 요청한다.")
     @Test
-    void changePassword() throws Exception{
+    void changePassword() throws Exception {
         //given
         ChangePasswordRequest request = new ChangePasswordRequest("covigator123!", "covigator123!");
 
@@ -214,6 +215,26 @@ class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
                 .andExpect(status().isOk());
+    }
+
+    @DisplayName("리프레시/액세스 토큰을 재발급한다.")
+    @Test
+    void reissueToken() throws Exception {
+        //given
+        PostReissueTokenRequest request = new PostReissueTokenRequest("refreshtoken");
+        TokenResponse response = new TokenResponse("access_token", "refresh_token");
+        given(authService.reissueToken(any())).willReturn(response);
+
+        //when //then
+        mockMvc.perform(post("/accounts/reissue-token")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.access_token").value(response.accessToken()),
+                        jsonPath("$.refresh_token").value(response.refreshToken())
+                );
     }
 
 }
