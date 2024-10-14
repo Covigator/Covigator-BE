@@ -5,6 +5,7 @@ import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.dto.response.KakaoTokenResponse;
 import com.ku.covigator.dto.response.KakaoUserInfoResponse;
+import com.ku.covigator.dto.response.TokenResponse;
 import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
 import com.ku.covigator.exception.badrequest.PasswordMismatchException;
 import com.ku.covigator.exception.notfound.NotFoundEmailException;
@@ -68,11 +69,13 @@ class AuthServiceTest {
         memberRepository.save(member);
 
         //when
-        String token = authService.signIn(member.getEmail(), password);
+        TokenResponse response = authService.signIn(member.getEmail(), password);
 
         //then
-        assertNotNull(token);
-        assertFalse(token.isBlank());
+        assertNotNull(response.accessToken());
+        assertNotNull(response.refreshToken());
+        assertFalse(response.accessToken().isBlank());
+        assertFalse(response.refreshToken().isBlank());
     }
 
     @DisplayName("존재하지 않는 회원의 이메일로 로컬 로그인을 시도할 경우 예외가 발생한다.")
@@ -137,8 +140,8 @@ class AuthServiceTest {
                 .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
 
         //when
-        String accessToken = authService.signUp(member, imageFile);
-        Long savedMemberId = Long.parseLong(jwtProvider.getPrincipal(accessToken));
+        TokenResponse response = authService.signUp(member, imageFile);
+        Long savedMemberId = Long.parseLong(jwtProvider.getPrincipal(response.accessToken()));
 
         //then
         assertThat(savedMemberId).isEqualTo(member.getId());
