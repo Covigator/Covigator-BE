@@ -362,9 +362,9 @@ class AuthServiceTest {
         ).isInstanceOf(NotFoundEmailException.class);
     }
 
-    @DisplayName("인증번호 생성시 Redis에 인증번호가 정상적으로 저장된다.")
+    @DisplayName("[이메일] 인증번호 생성시 Redis에 인증번호가 정상적으로 저장된다.")
     @Test
-    void verificationCodeSavedInRedis() {
+    void emailVerificationCodeSavedInRedis() {
         //given
         String email = "covi@naver.com";
         Member member = Member.builder()
@@ -455,6 +455,34 @@ class AuthServiceTest {
         assertThat(redisUtil.existData("refresh_token")).isFalse();
         assertThat(response.refreshToken()).isNotNull();
         assertThat(response.accessToken()).isNotNull();
+    }
+
+    @DisplayName("존재하지 않는 회원에 대한 인증 번호 문자 전송 요청은 실패한다.")
+    @Test
+    void sendSmsFailForMemberNotExists() {
+        //when //then
+        assertThatThrownBy(() -> authService.sendMessage(1L, "01012341234"))
+                .isInstanceOf(NotFoundMemberException.class);
+    }
+
+    @DisplayName("[문자] 인증번호 생성시 Redis에 인증번호가 정상적으로 저장된다.")
+    @Test
+    void smsVerificationCodeSavedInRedis() {
+        //given
+        Member member = Member.builder()
+                .password("covigator123")
+                .nickname("covi")
+                .imageUrl("www.covi.com")
+                .platform(Platform.LOCAL)
+                .build();
+        Member savedMember = memberRepository.save(member);
+        Long memberId = savedMember.getId();
+
+        //when
+        authService.sendMessage(memberId, "01012341234");
+
+        //then
+        assertThat(redisUtil.existData(memberId.toString())).isTrue();
     }
 
 }
