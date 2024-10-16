@@ -26,7 +26,7 @@ public class SmsService {
                     .phoneNumber(PHONE_CODE_KOREA + phoneNumber)
                     .build();
 
-            PublishResponse result = snsClient.publish(request);
+            snsClient.publish(request);
         } catch (Exception e) {
             log.error("send sms error: {}", e.getMessage());
         }
