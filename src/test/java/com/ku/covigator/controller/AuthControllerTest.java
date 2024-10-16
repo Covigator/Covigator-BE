@@ -1,6 +1,5 @@
 package com.ku.covigator.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ku.covigator.dto.request.*;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.dto.response.TokenResponse;

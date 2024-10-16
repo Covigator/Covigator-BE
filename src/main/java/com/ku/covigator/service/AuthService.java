@@ -1,5 +1,6 @@
 package com.ku.covigator.service;
 
+import com.ku.covigator.common.SmsVerificationTemplate;
 import com.ku.covigator.config.properties.RtrProperties;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
@@ -41,6 +42,7 @@ public class AuthService {
     private final KakaoOauthProvider kakaoOauthProvider;
     private final S3Service s3Service;
     private final SESService sesService;
+    private final SmsService smsService;
     private final RedisUtil redisUtil;
     private final RtrProperties rtrProperties;
 
@@ -147,6 +149,26 @@ public class AuthService {
 
         // Redis에 인증번호 저장
         redisUtil.setDataExpire(member.getEmail(), verificationNumber, 60 * 5L);
+
+    }
+
+    //문자 메시지 전송 (인증번호)
+    public void sendMessage(Long memberId, String phoneNumber) {
+
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(NotFoundMemberException::new);
+
+        // 인증번호 생성
+        String verificationNumber = RandomUtil.generateRandomMixStr(VERIFICATION_LENGTH);
+
+        // 문자 전송
+        smsService.sendSms(phoneNumber,
+                SmsVerificationTemplate.CONTENT_PREFIX.getText() +
+                        verificationNumber +
+                        SmsVerificationTemplate.CONTENT_SUFFIX.getText());
+
+        // Redis에 인증번호 저장
+        redisUtil.setDataExpire(member.getEmail(), verificationNumber, 60 * 10L);
 
     }
 

@@ -45,20 +45,28 @@ public class AuthController {
         return ResponseEntity.ok(authService.signInKakao(code));
     }
 
-    @Operation(summary = "비밀번호 찾기 (임시 비밀번호 설정)")
+    @Operation(summary = "비밀번호 찾기 - 이메일 전송")
     @PostMapping("/find-password/send-email")
     public ResponseEntity<Void> findPassword(@Valid @RequestBody FindPasswordRequest request) {
         authService.createVerificationNumber(request.email());
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "이메일 인증번호 인증")
+    @Operation(summary = "비밀번호 찾기 - 이메일 인증번호 인증")
     @PostMapping("/find-password/verify-code")
     public ResponseEntity<Void> verifyNumber(@Valid @RequestBody VerifyCodeRequest request) {
         String code = redisUtil.getData(request.email());
         if(!code.equals(request.code())) {
             throw new WrongVerificationCodeException();
         }
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "이메일 찾기 - 문자 전송")
+    @PostMapping("/find-email/send-message")
+    public ResponseEntity<Void> sendMessage(@Parameter(hidden = true) @LoggedInMemberId Long memberId,
+                                            @Valid @RequestBody SmsRequest request) {
+        authService.sendMessage(memberId, request.phoneNumber());
         return ResponseEntity.ok().build();
     }
 
