@@ -145,7 +145,7 @@ class AuthControllerTest {
         FindPasswordRequest request = new FindPasswordRequest("covi@naver.com");
 
         //when //then
-        mockMvc.perform(post("/accounts/find-password")
+        mockMvc.perform(post("/accounts/find-password/send-email")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
@@ -154,15 +154,53 @@ class AuthControllerTest {
                 );
     }
 
-    @DisplayName(" 이메일 인증번호 입력을 잘못하는 경우 상태코드 400을 반환한다..")
+    @DisplayName("이메일 찾기 요청 - 문자 본인 확인")
     @Test
-    void writeWrongVerificationCode() throws Exception {
+    void findEmail() throws Exception {
+        //given
+        SmsRequest request = new SmsRequest("01012341234");
+
+        //when //then
+        mockMvc.perform(post("/accounts/find-email/send-message")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                ).andDo(print())
+                .andExpect(
+                        status().isOk()
+                );
+    }
+
+    @DisplayName(" 이메일 인증번호 입력을 잘못하는 경우 상태코드 400을 반환한다.")
+    @Test
+    void writeWrongVerificationEmailCode() throws Exception {
         //given
         VerifyEmailCodeRequest request = new VerifyEmailCodeRequest("covi@naver.com", "abcd");
         BDDMockito.given(redisUtil.getData(any())).willReturn("");
 
+
         //when //then
-        mockMvc.perform(post("/accounts/verify-code")
+        mockMvc.perform(post("/accounts/find-password/verify-code")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                ).andDo(print())
+                .andExpect(
+                        status().isBadRequest()
+                );
+    }
+
+    @DisplayName("본인확인 인증번호 입력을 잘못하는 경우 상태코드 400을 반환한다.")
+    @Test
+    void writeWrongVerificationSmsCode() throws Exception {
+        //given
+        VerifySmsCodeRequest request = new VerifySmsCodeRequest("abcd");
+        BDDMockito.given(redisUtil.getData(any())).willReturn("");
+
+        given(jwtAuthArgumentResolver.resolveArgument(any(), any(), any(), any()))
+                .willReturn(1L);
+        given(jwtAuthArgumentResolver.supportsParameter(any())).willReturn(true);
+
+        //when //then
+        mockMvc.perform(post("/accounts/find-email/verify-code")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
@@ -173,13 +211,34 @@ class AuthControllerTest {
 
     @DisplayName("이메일 인증번호 입력에 성공한다.")
     @Test
-    void writeRightVerificationCode() throws Exception {
+    void writeRightVerificationEmailCode() throws Exception {
         //given
         VerifyEmailCodeRequest request = new VerifyEmailCodeRequest("covi@naver.com", "abcd");
         BDDMockito.given(redisUtil.getData(any())).willReturn("abcd");
 
         //when //then
-        mockMvc.perform(post("/accounts/verify-code")
+        mockMvc.perform(post("/accounts/find-password/verify-code")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                ).andDo(print())
+                .andExpect(
+                        status().isOk()
+                );
+    }
+
+    @DisplayName("문자 본인확인 인증번호 입력에 성공한다.")
+    @Test
+    void writeRightVerificationSmsCode() throws Exception {
+        //given
+        VerifySmsCodeRequest request = new VerifySmsCodeRequest("abcd");
+        BDDMockito.given(redisUtil.getData(any())).willReturn("abcd");
+
+        given(jwtAuthArgumentResolver.resolveArgument(any(), any(), any(), any()))
+                .willReturn(1L);
+        given(jwtAuthArgumentResolver.supportsParameter(any())).willReturn(true);
+
+        //when //then
+        mockMvc.perform(post("/accounts/find-email/verify-code")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                 ).andDo(print())
