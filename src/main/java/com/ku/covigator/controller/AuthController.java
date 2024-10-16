@@ -46,14 +46,14 @@ public class AuthController {
     }
 
     @Operation(summary = "비밀번호 찾기 (임시 비밀번호 설정)")
-    @PostMapping("/find-password")
+    @PostMapping("/find-password/send-email")
     public ResponseEntity<Void> findPassword(@Valid @RequestBody FindPasswordRequest request) {
         authService.createVerificationNumber(request.email());
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "이메일 인증번호 인증")
-    @PostMapping("/verify-code")
+    @PostMapping("/find-password/verify-code")
     public ResponseEntity<Void> verifyNumber(@Valid @RequestBody VerifyCodeRequest request) {
         String code = redisUtil.getData(request.email());
         if(!code.equals(request.code())) {
