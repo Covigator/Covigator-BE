@@ -54,7 +54,7 @@ public class AuthController {
 
     @Operation(summary = "비밀번호 찾기 - 이메일 인증번호 인증")
     @PostMapping("/find-password/verify-code")
-    public ResponseEntity<Void> verifyNumber(@Valid @RequestBody VerifyCodeRequest request) {
+    public ResponseEntity<Void> verifyNumber(@Valid @RequestBody VerifyEmailCodeRequest request) {
         String code = redisUtil.getData(request.email());
         if(!code.equals(request.code())) {
             throw new WrongVerificationCodeException();
@@ -67,6 +67,17 @@ public class AuthController {
     public ResponseEntity<Void> sendMessage(@Parameter(hidden = true) @LoggedInMemberId Long memberId,
                                             @Valid @RequestBody SmsRequest request) {
         authService.sendMessage(memberId, request.phoneNumber());
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "이메일 찾기 - 본인확인 인증")
+    @PostMapping("/find-email/verify-code")
+    public ResponseEntity<Void> verifyNumber(@Parameter(hidden = true) @LoggedInMemberId Long memberId,
+                                             @Valid @RequestBody VerifySmsCodeRequest request) {
+        String code = redisUtil.getData(memberId.toString());
+        if(!code.equals(request.code())) {
+            throw new WrongVerificationCodeException();
+        }
         return ResponseEntity.ok().build();
     }
 

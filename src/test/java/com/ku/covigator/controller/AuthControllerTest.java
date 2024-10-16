@@ -158,7 +158,7 @@ class AuthControllerTest {
     @Test
     void writeWrongVerificationCode() throws Exception {
         //given
-        VerifyCodeRequest request = new VerifyCodeRequest("covi@naver.com", "abcd");
+        VerifyEmailCodeRequest request = new VerifyEmailCodeRequest("covi@naver.com", "abcd");
         BDDMockito.given(redisUtil.getData(any())).willReturn("");
 
         //when //then
@@ -175,7 +175,7 @@ class AuthControllerTest {
     @Test
     void writeRightVerificationCode() throws Exception {
         //given
-        VerifyCodeRequest request = new VerifyCodeRequest("covi@naver.com", "abcd");
+        VerifyEmailCodeRequest request = new VerifyEmailCodeRequest("covi@naver.com", "abcd");
         BDDMockito.given(redisUtil.getData(any())).willReturn("abcd");
 
         //when //then
