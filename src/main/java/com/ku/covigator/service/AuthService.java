@@ -168,7 +168,7 @@ public class AuthService {
                         SmsVerificationTemplate.CONTENT_SUFFIX.getText());
 
         // Redis에 인증번호 저장
-        redisUtil.setDataExpire(member.getEmail(), verificationNumber, 60 * 10L);
+        redisUtil.setDataExpire(member.getId().toString(), verificationNumber, 60 * 10L);
 
     }
 
