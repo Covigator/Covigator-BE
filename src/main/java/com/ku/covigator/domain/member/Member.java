@@ -28,6 +28,9 @@ public class Member extends BaseTime {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @Column(name = "password")
     private String password;
 
@@ -50,13 +53,14 @@ public class Member extends BaseTime {
     private List<Dibs> dibs = new ArrayList<>();
 
     @Builder
-    public Member(String nickname, String email, String password, String imageUrl, Platform platform) {
+    public Member(String nickname, String email, String password, String imageUrl, Platform platform, String phoneNumber) {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.imageUrl = imageUrl;
         this.status = Status.ACTIVE;
         this.platform = platform;
+        this.phoneNumber = phoneNumber;
     }
 
     public void savePassword(String password) {
