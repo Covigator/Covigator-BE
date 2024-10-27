@@ -112,7 +112,7 @@ public class AuthService {
             String accessToken = jwtProvider.createToken(savedMember.get().getId().toString());
             String refreshToken = createRefreshToken();
             redisUtil.setDataExpire(refreshToken, String.valueOf(savedMember.get().getId()), rtrProperties.getExpirationLength());
-            return KakaoSignInResponse.fromOldMember(accessToken, refreshToken);
+            return KakaoSignInResponse.fromOldMember(accessToken, refreshToken, savedMember.get().getNickname(), savedMember.get().getEmail());
         }
 
         // 신규 닉네임 생성
@@ -125,7 +125,7 @@ public class AuthService {
         String accessToken = jwtProvider.createToken(newMember.getId().toString());
         String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(newMember.getId()), rtrProperties.getExpirationLength());
-        return KakaoSignInResponse.fromNewMember(accessToken, refreshToken);
+        return KakaoSignInResponse.fromNewMember(accessToken, refreshToken, newMember.getNickname(), newMember.getEmail());
 
     }
 
