@@ -109,7 +109,7 @@ class AuthControllerTest {
     @Test
     void signInKakaoNewMember() throws Exception {
         //given
-        KakaoSignInResponse response = KakaoSignInResponse.fromNewMember("access-token", "refresh-token");
+        KakaoSignInResponse response = KakaoSignInResponse.fromNewMember("access-token", "refresh-token", "covi", "covigator@naver.com");
         given(authService.signInKakao("code")).willReturn(response);
 
         //when //then
@@ -120,7 +120,9 @@ class AuthControllerTest {
                         status().isOk(),
                         jsonPath("$.access_token").value("access-token"),
                         jsonPath("$.refresh_token").value("refresh-token"),
-                        jsonPath("$.is_new").value("True")
+                        jsonPath("$.is_new").value("True"),
+                        jsonPath("$.nickname").value("covi"),
+                        jsonPath("$.email").value("covigator@naver.com")
                 );
     }
 
@@ -128,7 +130,7 @@ class AuthControllerTest {
     @Test
     void signInKakaoOldMember() throws Exception {
         //given
-        KakaoSignInResponse response = KakaoSignInResponse.fromOldMember("access-token", "refresh-token");
+        KakaoSignInResponse response = KakaoSignInResponse.fromOldMember("access-token", "refresh-token", "covi", "covigator@naver.com");
         given(authService.signInKakao("code")).willReturn(response);
 
         //when //then
@@ -139,7 +141,9 @@ class AuthControllerTest {
                         status().isOk(),
                         jsonPath("$.access_token").value("access-token"),
                         jsonPath("$.refresh_token").value("refresh-token"),
-                        jsonPath("$.is_new").value("False")
+                        jsonPath("$.is_new").value("False"),
+                        jsonPath("$.nickname").value("covi"),
+                        jsonPath("$.email").value("covigator@naver.com")
                 );
     }
 
