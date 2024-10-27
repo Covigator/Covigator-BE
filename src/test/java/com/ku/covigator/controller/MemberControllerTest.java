@@ -3,6 +3,8 @@ package com.ku.covigator.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ku.covigator.dto.request.PatchMemberRequest;
 import com.ku.covigator.dto.request.PostVerifyNicknameRequest;
+import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
+import com.ku.covigator.security.jwt.JwtAuthInterceptor;
 import com.ku.covigator.service.MemberService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,12 +15,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ComponentScan({"com.ku.covigator.support.slack", "com.ku.covigator.security.jwt"})
+@ComponentScan("com.ku.covigator.support.slack")
 @WebMvcTest(controllers = MemberController.class)
 class MemberControllerTest {
 
@@ -28,6 +32,10 @@ class MemberControllerTest {
     private ObjectMapper objectMapper;
     @MockBean
     private MemberService memberService;
+    @MockBean
+    private JwtAuthInterceptor jwtAuthInterceptor;
+    @MockBean
+    private JwtAuthArgumentResolver jwtAuthArgumentResolver;
 
     @DisplayName("회원 정보 수정을 요청한다.")
     @Test
@@ -39,8 +47,12 @@ class MemberControllerTest {
                 .passwordVerification("covigator123!")
                 .build();
 
+        given(jwtAuthArgumentResolver.resolveArgument(any(), any(), any(), any()))
+                .willReturn(1L);
+        given(jwtAuthArgumentResolver.supportsParameter(any())).willReturn(true);
+
         //when //then
-        mockMvc.perform(patch("/members/{member_id}", 1L)
+        mockMvc.perform(patch("/members")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
@@ -58,7 +70,7 @@ class MemberControllerTest {
                 .build();
 
         //when //then
-        mockMvc.perform(patch("/members/{member_id}", 1L)
+        mockMvc.perform(patch("/members", 1L)
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())

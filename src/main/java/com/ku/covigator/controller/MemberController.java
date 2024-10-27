@@ -3,8 +3,10 @@ package com.ku.covigator.controller;
 import com.ku.covigator.dto.request.PatchMemberRequest;
 import com.ku.covigator.dto.request.PostVerifyNicknameRequest;
 import com.ku.covigator.exception.badrequest.PasswordVerificationException;
+import com.ku.covigator.security.jwt.LoggedInMemberId;
 import com.ku.covigator.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +22,9 @@ public class MemberController {
     private final MemberService memberService;
 
     @Operation(summary = "회원 정보 수정")
-    @PatchMapping("/{member_id}")
+    @PatchMapping()
     public ResponseEntity<Void> updateMember(
-            @PathVariable(value = "member_id") Long memberId,
+            @Parameter(hidden = true) @LoggedInMemberId Long memberId,
             @Valid @RequestBody PatchMemberRequest request
             ) {
 
