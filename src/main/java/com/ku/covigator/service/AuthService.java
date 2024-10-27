@@ -61,7 +61,7 @@ public class AuthService {
         String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
 
-        return TokenResponse.from(accessToken, refreshToken, member.getNickname(), member.getEmail());
+        return TokenResponse.from(accessToken, refreshToken, member.getNickname(), member.getEmail(), member.getImageUrl());
     }
 
     // 로컬 회원가입
@@ -91,7 +91,7 @@ public class AuthService {
         String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
 
-        return TokenResponse.from(accessToken, refreshToken, savedMember.getNickname(), savedMember.getEmail());
+        return TokenResponse.from(accessToken, refreshToken, savedMember.getNickname(), savedMember.getEmail(), savedMember.getImageUrl());
     }
 
     // 카카오 회원가입
@@ -112,7 +112,7 @@ public class AuthService {
             String accessToken = jwtProvider.createToken(savedMember.get().getId().toString());
             String refreshToken = createRefreshToken();
             redisUtil.setDataExpire(refreshToken, String.valueOf(savedMember.get().getId()), rtrProperties.getExpirationLength());
-            return KakaoSignInResponse.fromOldMember(accessToken, refreshToken, savedMember.get().getNickname(), savedMember.get().getEmail());
+            return KakaoSignInResponse.fromOldMember(accessToken, refreshToken, savedMember.get().getNickname(), savedMember.get().getEmail(), savedMember.get().getImageUrl());
         }
 
         // 신규 닉네임 생성
@@ -125,7 +125,7 @@ public class AuthService {
         String accessToken = jwtProvider.createToken(newMember.getId().toString());
         String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(newMember.getId()), rtrProperties.getExpirationLength());
-        return KakaoSignInResponse.fromNewMember(accessToken, refreshToken, newMember.getNickname(), newMember.getEmail());
+        return KakaoSignInResponse.fromNewMember(accessToken, refreshToken, newMember.getNickname(), newMember.getEmail(), newMember.getImageUrl());
 
     }
 

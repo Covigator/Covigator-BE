@@ -49,7 +49,7 @@ class AuthControllerTest {
         //given
         String email = "covi@naver.com";
         String password = "covigator123";
-        TokenResponse response = new TokenResponse("access-token", "refresh-token","김코비", email);
+        TokenResponse response = new TokenResponse("access-token", "refresh-token","김코비", email, "www.image.com");
         PostSignInRequest request = new PostSignInRequest("covi@naver.com", "covigator123");
 
         given(authService.signIn(email, password)).willReturn(response);
@@ -63,7 +63,8 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.access_token").value(response.accessToken()))
                 .andExpect(jsonPath("$.refresh_token").value(response.refreshToken()))
                 .andExpect(jsonPath("$.nickname").value(response.nickname()))
-                .andExpect(jsonPath("$.email").value(response.email()));
+                .andExpect(jsonPath("$.email").value(response.email()))
+                .andExpect(jsonPath("$.image_url").value(response.imageUrl()));
     }
 
     @DisplayName("회원 가입한다.")
@@ -87,7 +88,7 @@ class AuthControllerTest {
                 objectMapper.writeValueAsBytes(request)
         );
 
-        TokenResponse response = new TokenResponse("access-token", "refresh-token", "covi", "covi123@naver.com");
+        TokenResponse response = new TokenResponse("access-token", "refresh-token", "covi", "covi123@naver.com", "www.image.com");
 
         given(authService.signUp(any(), any())).willReturn(response);
 
@@ -102,14 +103,15 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.access_token").value(response.accessToken()))
                 .andExpect(jsonPath("$.refresh_token").value(response.refreshToken()))
                 .andExpect(jsonPath("$.nickname").value(response.nickname()))
-                .andExpect(jsonPath("$.email").value(response.email()));
+                .andExpect(jsonPath("$.email").value(response.email()))
+                .andExpect(jsonPath("$.image_url").value(response.imageUrl()));
     }
 
     @DisplayName("신규 회원에 대한 카카오 로그인을 요청한다.")
     @Test
     void signInKakaoNewMember() throws Exception {
         //given
-        KakaoSignInResponse response = KakaoSignInResponse.fromNewMember("access-token", "refresh-token", "covi", "covigator@naver.com");
+        KakaoSignInResponse response = KakaoSignInResponse.fromNewMember("access-token", "refresh-token", "covi", "covigator@naver.com", "www.image.com");
         given(authService.signInKakao("code")).willReturn(response);
 
         //when //then
@@ -122,7 +124,8 @@ class AuthControllerTest {
                         jsonPath("$.refresh_token").value("refresh-token"),
                         jsonPath("$.is_new").value("True"),
                         jsonPath("$.nickname").value("covi"),
-                        jsonPath("$.email").value("covigator@naver.com")
+                        jsonPath("$.email").value("covigator@naver.com"),
+                        jsonPath("$.image_url").value("www.image.com")
                 );
     }
 
@@ -130,7 +133,7 @@ class AuthControllerTest {
     @Test
     void signInKakaoOldMember() throws Exception {
         //given
-        KakaoSignInResponse response = KakaoSignInResponse.fromOldMember("access-token", "refresh-token", "covi", "covigator@naver.com");
+        KakaoSignInResponse response = KakaoSignInResponse.fromOldMember("access-token", "refresh-token", "covi", "covigator@naver.com", "www.image.com");
         given(authService.signInKakao("code")).willReturn(response);
 
         //when //then
@@ -143,7 +146,8 @@ class AuthControllerTest {
                         jsonPath("$.refresh_token").value("refresh-token"),
                         jsonPath("$.is_new").value("False"),
                         jsonPath("$.nickname").value("covi"),
-                        jsonPath("$.email").value("covigator@naver.com")
+                        jsonPath("$.email").value("covigator@naver.com"),
+                        jsonPath("$.image_url").value("www.image.com")
                 );
     }
 
