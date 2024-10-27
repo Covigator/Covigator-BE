@@ -2,10 +2,7 @@ package com.ku.covigator.service;
 
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
-import com.ku.covigator.dto.response.KakaoSignInResponse;
-import com.ku.covigator.dto.response.KakaoTokenResponse;
-import com.ku.covigator.dto.response.KakaoUserInfoResponse;
-import com.ku.covigator.dto.response.TokenResponse;
+import com.ku.covigator.dto.response.*;
 import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
 import com.ku.covigator.exception.badrequest.InvalidRefreshTokenException;
 import com.ku.covigator.exception.badrequest.PasswordMismatchException;
@@ -449,7 +446,7 @@ class AuthServiceTest {
         redisUtil.setDataExpire("refresh_token", savedMember.getId().toString(), 3600 * 1000);
 
         //when
-        TokenResponse response = authService.reissueToken("refresh_token");
+        ReissueTokenResponse response = authService.reissueToken("refresh_token");
 
         //then
         assertThat(redisUtil.existData("refresh_token")).isFalse();

@@ -1,6 +1,7 @@
 package com.ku.covigator.controller;
 
 import com.ku.covigator.dto.request.*;
+import com.ku.covigator.dto.response.ReissueTokenResponse;
 import com.ku.covigator.dto.response.TokenResponse;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
 import com.ku.covigator.exception.badrequest.PasswordVerificationException;
@@ -94,7 +95,7 @@ public class AuthController {
 
     @Operation(summary = "액세스/리프레시 토큰 재발급")
     @PostMapping("/reissue-token")
-    public ResponseEntity<TokenResponse> reissueToken(@Valid @RequestBody PostReissueTokenRequest request) {
+    public ResponseEntity<ReissueTokenResponse> reissueToken(@Valid @RequestBody PostReissueTokenRequest request) {
         return ResponseEntity.ok(authService.reissueToken(request.refreshToken()));
     }
 }
