@@ -4,10 +4,7 @@ import com.ku.covigator.common.SmsVerificationTemplate;
 import com.ku.covigator.config.properties.RtrProperties;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
-import com.ku.covigator.dto.response.KakaoSignInResponse;
-import com.ku.covigator.dto.response.KakaoTokenResponse;
-import com.ku.covigator.dto.response.KakaoUserInfoResponse;
-import com.ku.covigator.dto.response.TokenResponse;
+import com.ku.covigator.dto.response.*;
 import com.ku.covigator.exception.badrequest.DuplicateMemberException;
 import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
 import com.ku.covigator.exception.badrequest.InvalidRefreshTokenException;
@@ -64,7 +61,7 @@ public class AuthService {
         String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
 
-        return TokenResponse.from(accessToken, refreshToken);
+        return TokenResponse.from(accessToken, refreshToken, member.getNickname(), member.getEmail());
     }
 
     // 로컬 회원가입
@@ -94,7 +91,7 @@ public class AuthService {
         String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
 
-        return TokenResponse.from(accessToken, refreshToken);
+        return TokenResponse.from(accessToken, refreshToken, savedMember.getNickname(), savedMember.getEmail());
     }
 
     // 카카오 회원가입
@@ -185,7 +182,7 @@ public class AuthService {
     }
 
     // 액세스 토큰 + Refresh 토큰 재발급
-    public TokenResponse reissueToken(String refreshToken) {
+    public ReissueTokenResponse reissueToken(String refreshToken) {
 
         Long memberId = validateRefreshToken(refreshToken);
 
@@ -197,7 +194,7 @@ public class AuthService {
         // 액세스 토큰 재발급
         String accessToken = jwtProvider.createToken(memberId.toString());
 
-        return TokenResponse.from(accessToken, refreshToken);
+        return ReissueTokenResponse.from(accessToken, refreshToken);
     }
 
     // 닉네임 중복 검증

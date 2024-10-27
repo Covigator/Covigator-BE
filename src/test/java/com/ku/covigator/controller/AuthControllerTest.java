@@ -2,6 +2,7 @@ package com.ku.covigator.controller;
 
 import com.ku.covigator.dto.request.*;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
+import com.ku.covigator.dto.response.ReissueTokenResponse;
 import com.ku.covigator.dto.response.TokenResponse;
 import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
 import com.ku.covigator.security.jwt.JwtAuthInterceptor;
@@ -48,7 +49,7 @@ class AuthControllerTest {
         //given
         String email = "covi@naver.com";
         String password = "covigator123";
-        TokenResponse response = new TokenResponse("access-token", "refresh-token");
+        TokenResponse response = new TokenResponse("access-token", "refresh-token","김코비", email);
         PostSignInRequest request = new PostSignInRequest("covi@naver.com", "covigator123");
 
         given(authService.signIn(email, password)).willReturn(response);
@@ -60,7 +61,9 @@ class AuthControllerTest {
                 ).andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").value(response.accessToken()))
-                .andExpect(jsonPath("$.refresh_token").value(response.refreshToken()));
+                .andExpect(jsonPath("$.refresh_token").value(response.refreshToken()))
+                .andExpect(jsonPath("$.nickname").value(response.nickname()))
+                .andExpect(jsonPath("$.email").value(response.email()));
     }
 
     @DisplayName("회원 가입한다.")
@@ -84,7 +87,7 @@ class AuthControllerTest {
                 objectMapper.writeValueAsBytes(request)
         );
 
-        TokenResponse response = new TokenResponse("access-token", "refresh-token");
+        TokenResponse response = new TokenResponse("access-token", "refresh-token", "covi", "covi123@naver.com");
 
         given(authService.signUp(any(), any())).willReturn(response);
 
@@ -97,7 +100,9 @@ class AuthControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").value(response.accessToken()))
-                .andExpect(jsonPath("$.refresh_token").value(response.refreshToken()));
+                .andExpect(jsonPath("$.refresh_token").value(response.refreshToken()))
+                .andExpect(jsonPath("$.nickname").value(response.nickname()))
+                .andExpect(jsonPath("$.email").value(response.email()));
     }
 
     @DisplayName("신규 회원에 대한 카카오 로그인을 요청한다.")
@@ -280,7 +285,7 @@ class AuthControllerTest {
     void reissueToken() throws Exception {
         //given
         PostReissueTokenRequest request = new PostReissueTokenRequest("refreshtoken");
-        TokenResponse response = new TokenResponse("access_token", "refresh_token");
+        ReissueTokenResponse response = new ReissueTokenResponse("access_token", "refresh_token");
         given(authService.reissueToken(any())).willReturn(response);
 
         //when //then
