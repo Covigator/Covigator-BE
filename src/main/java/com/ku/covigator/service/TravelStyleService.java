@@ -1,5 +1,6 @@
 package com.ku.covigator.service;
 
+import com.ku.covigator.domain.member.Gender;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.travelstyle.TravelStyle;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
@@ -17,17 +18,18 @@ public class TravelStyleService {
     private final TravelStyleRepository travelStyleRepository;
     private final MemberRepository memberRepository;
 
-    public void saveTravelStyle(Long memberId, TravelStyle travelStyle) {
+    public void saveTravelStyle(Long memberId, TravelStyle travelStyle, Gender gender) {
         TravelStyle savedTravelStyle = travelStyleRepository.save(travelStyle);
         Member savedMember = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
         savedMember.putTravelStyle(savedTravelStyle);
+        savedMember.updateGender(gender);
     }
 
     public void updateTravelStyle(Long memberId, TravelStyle travelStyle) {
         Member savedMember = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
         // 여행 스타일 정보가 없으면 새로 저장한다.
         if(savedMember.getTravelStyle() == null) {
-            saveTravelStyle(memberId, travelStyle);
+            saveTravelStyle(memberId, travelStyle, null);
         }
         // 여행 스타일 정보가 저장되어 있으면 수정한다.
         savedMember.updateTravelStyle(travelStyle);
