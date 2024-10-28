@@ -31,6 +31,10 @@ public class Member extends BaseTime {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "gender")
+    @Enumerated(value = EnumType.STRING)
+    private Gender gender;
+
     @Column(name = "password")
     private String password;
 
@@ -86,6 +90,10 @@ public class Member extends BaseTime {
 
     public void updateNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public void updateGender(Gender gender) {
+        this.gender = gender;
     }
 
 }

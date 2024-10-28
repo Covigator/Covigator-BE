@@ -1,5 +1,6 @@
 package com.ku.covigator.service;
 
+import com.ku.covigator.domain.member.Gender;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.domain.travelstyle.*;
@@ -43,7 +44,7 @@ class TravelStyleServiceTest {
         memberRepository.save(member);
 
         //when
-        travelStyleService.saveTravelStyle(member.getId(), travelStyle);
+        travelStyleService.saveTravelStyle(member.getId(), travelStyle, Gender.MALE);
         List<TravelStyle> travelStyles = travelStyleRepository.findAll();
         TravelStyle savedTravelStyle = travelStyles.get(0);
         Member savedMember = memberRepository.findById(member.getId()).get();
@@ -51,6 +52,7 @@ class TravelStyleServiceTest {
         //then
         assertAll(
                 () -> assertThat(savedTravelStyle.getId()).isEqualTo(travelStyle.getId()),
+                () -> assertThat(savedMember.getGender()).isEqualTo(Gender.MALE),
                 () -> assertThat(savedMember.getTravelStyle()).usingRecursiveComparison().isEqualTo(travelStyle)
         );
     }
@@ -62,7 +64,7 @@ class TravelStyleServiceTest {
         TravelStyle travelStyle = createTravelStyle();
 
         //when //then
-        assertThatThrownBy(() -> travelStyleService.saveTravelStyle(1L, travelStyle))
+        assertThatThrownBy(() -> travelStyleService.saveTravelStyle(1L, travelStyle, null))
                 .isInstanceOf(NotFoundMemberException.class);
     }
 
