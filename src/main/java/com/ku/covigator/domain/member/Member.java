@@ -35,6 +35,10 @@ public class Member extends BaseTime {
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
+    @Column(name = "generation")
+    @Enumerated(value = EnumType.STRING)
+    private Generation generation;
+
     @Column(name = "password")
     private String password;
 
@@ -95,5 +99,7 @@ public class Member extends BaseTime {
     public void updateGender(Gender gender) {
         this.gender = gender;
     }
+
+    public void updateGeneration(Generation generation) {this.generation = generation;}
 
 }

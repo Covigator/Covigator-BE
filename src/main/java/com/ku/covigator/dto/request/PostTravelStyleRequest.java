@@ -3,13 +3,14 @@ package com.ku.covigator.dto.request;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ku.covigator.domain.member.Gender;
+import com.ku.covigator.domain.member.Generation;
 import com.ku.covigator.domain.travelstyle.*;
 import lombok.Builder;
 
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public record PostTravelStyleRequest(AreaType areaType, Familiarity familiarity, ActivityType activityType,
-                                     PlanningType planningType, PhotoPriority photoPriority, Popularity popularity, Gender gender) {
+public record PostTravelStyleRequest(AreaType areaType, Familiarity familiarity, ActivityType activityType, PlanningType planningType,
+                                     PhotoPriority photoPriority, Popularity popularity, Gender gender, Generation generation) {
 
     public TravelStyle toEntity() {
         return TravelStyle.builder()

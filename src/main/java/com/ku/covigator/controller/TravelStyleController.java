@@ -23,7 +23,7 @@ public class TravelStyleController {
     @PostMapping
     public ResponseEntity<Void> saveTravelStyle(@Parameter(hidden = true) @LoggedInMemberId Long memberId,
                                                 @RequestBody PostTravelStyleRequest request) {
-        travelStyleService.saveTravelStyle(memberId, request.toEntity(), request.gender());
+        travelStyleService.saveTravelStyle(memberId, request.toEntity(), request.gender(), request.generation());
         return ResponseEntity.ok().build();
     }
 
