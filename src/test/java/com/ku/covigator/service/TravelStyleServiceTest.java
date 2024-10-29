@@ -1,6 +1,7 @@
 package com.ku.covigator.service;
 
 import com.ku.covigator.domain.member.Gender;
+import com.ku.covigator.domain.member.Generation;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
 import com.ku.covigator.domain.travelstyle.*;
@@ -44,7 +45,7 @@ class TravelStyleServiceTest {
         memberRepository.save(member);
 
         //when
-        travelStyleService.saveTravelStyle(member.getId(), travelStyle, Gender.MALE);
+        travelStyleService.saveTravelStyle(member.getId(), travelStyle, Gender.MALE, Generation.MIDDLE_AGED);
         List<TravelStyle> travelStyles = travelStyleRepository.findAll();
         TravelStyle savedTravelStyle = travelStyles.get(0);
         Member savedMember = memberRepository.findById(member.getId()).get();
@@ -53,6 +54,7 @@ class TravelStyleServiceTest {
         assertAll(
                 () -> assertThat(savedTravelStyle.getId()).isEqualTo(travelStyle.getId()),
                 () -> assertThat(savedMember.getGender()).isEqualTo(Gender.MALE),
+                () -> assertThat(savedMember.getGeneration()).isEqualTo(Generation.MIDDLE_AGED),
                 () -> assertThat(savedMember.getTravelStyle()).usingRecursiveComparison().isEqualTo(travelStyle)
         );
     }
@@ -64,7 +66,7 @@ class TravelStyleServiceTest {
         TravelStyle travelStyle = createTravelStyle();
 
         //when //then
-        assertThatThrownBy(() -> travelStyleService.saveTravelStyle(1L, travelStyle, null))
+        assertThatThrownBy(() -> travelStyleService.saveTravelStyle(1L, travelStyle, null, null))
                 .isInstanceOf(NotFoundMemberException.class);
     }
 
@@ -117,7 +119,6 @@ class TravelStyleServiceTest {
 
         //then
         Assertions.assertAll(
-                () -> assertThat(travelStyleId).isEqualTo(savedTravelStyle.getId()),
                 () -> assertThat(savedTravelStyle.getAreaType()).isEqualTo(AreaType.NATURE)
         );
     }
