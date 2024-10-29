@@ -5,6 +5,6 @@ import lombok.Getter;
 @Getter
 public enum PhotoPriority {
 
-    IMPORTANT, NOT_IMPORTANT, NEUTRALITY
+    IMPORTANT, NOT_IMPORTANT, BOTH
 
 }

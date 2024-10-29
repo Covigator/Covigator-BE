@@ -5,6 +5,6 @@ import lombok.Getter;
 @Getter
 public enum AreaType {
 
-    NATURE, CITY, NEUTRALITY
+    NATURE, CITY, BOTH
 
 }

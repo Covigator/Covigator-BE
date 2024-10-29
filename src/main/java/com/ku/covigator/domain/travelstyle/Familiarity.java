@@ -5,6 +5,6 @@ import lombok.Getter;
 @Getter
 public enum Familiarity {
 
-    NEW, FAMILIAR, NEUTRALITY
+    NEW, FAMILIAR, BOTH
 
 }
