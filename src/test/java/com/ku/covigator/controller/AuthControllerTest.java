@@ -1,5 +1,7 @@
 package com.ku.covigator.controller;
 
+import com.ku.covigator.domain.member.Gender;
+import com.ku.covigator.domain.member.Generation;
 import com.ku.covigator.domain.travelstyle.*;
 import com.ku.covigator.dto.request.*;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
@@ -62,7 +64,7 @@ class AuthControllerTest {
                 .build();
 
         LocalSignInResponse.TravelStyleDto travelStyleDto = LocalSignInResponse.TravelStyleDto.from(travelStyle);
-        LocalSignInResponse response = new LocalSignInResponse("access-token", "refresh-token","김코비", email, "www.image.com", travelStyleDto);
+        LocalSignInResponse response = new LocalSignInResponse("access-token", "refresh-token","김코비", email, "www.image.com", Gender.MALE, Generation.SENIOR, travelStyleDto);
         PostSignInRequest request = new PostSignInRequest("covi@naver.com", "covigator123");
 
         given(authService.signIn(email, password)).willReturn(response);
@@ -83,7 +85,9 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.travel_style.familiarity").value("FAMILIAR"))
                 .andExpect(jsonPath("$.travel_style.photo_priority").value("IMPORTANT"))
                 .andExpect(jsonPath("$.travel_style.popularity").value("WELL_KNOWN"))
-                .andExpect(jsonPath("$.travel_style.activity_type").value("ACTIVITY"));
+                .andExpect(jsonPath("$.travel_style.activity_type").value("ACTIVITY"))
+                .andExpect(jsonPath("$.gender").value("MALE"))
+                .andExpect(jsonPath("$.generation").value("SENIOR"));
     }
 
     @DisplayName("회원 가입한다.")

@@ -62,7 +62,8 @@ public class AuthService {
         redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
 
         LocalSignInResponse.TravelStyleDto travelStyleDto = LocalSignInResponse.TravelStyleDto.from(member.getTravelStyle());
-        return LocalSignInResponse.from(accessToken, refreshToken, member.getNickname(), member.getEmail(), member.getImageUrl(), travelStyleDto);
+        return LocalSignInResponse.from(accessToken, refreshToken, member.getNickname(), member.getEmail(),
+                member.getImageUrl(), member.getGender(), member.getGeneration(), travelStyleDto);
     }
 
     // 로컬 회원가입
