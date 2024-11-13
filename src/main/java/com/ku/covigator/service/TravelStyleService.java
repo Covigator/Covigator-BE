@@ -4,6 +4,7 @@ import com.ku.covigator.domain.member.Gender;
 import com.ku.covigator.domain.member.Generation;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.travelstyle.TravelStyle;
+import com.ku.covigator.dto.response.PostTravelStyleResponse;
 import com.ku.covigator.exception.notfound.NotFoundMemberException;
 import com.ku.covigator.repository.MemberRepository;
 import com.ku.covigator.repository.TravelStyleRepository;
@@ -19,12 +20,14 @@ public class TravelStyleService {
     private final TravelStyleRepository travelStyleRepository;
     private final MemberRepository memberRepository;
 
-    public void saveTravelStyle(Long memberId, TravelStyle travelStyle, Gender gender, Generation generation) {
+    public PostTravelStyleResponse saveTravelStyle(Long memberId, TravelStyle travelStyle, Gender gender, Generation generation) {
         TravelStyle savedTravelStyle = travelStyleRepository.save(travelStyle);
         Member savedMember = memberRepository.findById(memberId).orElseThrow(NotFoundMemberException::new);
         savedMember.putTravelStyle(savedTravelStyle);
         savedMember.updateGender(gender);
         savedMember.updateGeneration(generation);
+
+        return PostTravelStyleResponse.from(savedTravelStyle, gender, generation);
     }
 
     public void updateTravelStyle(Long memberId, TravelStyle travelStyle) {
