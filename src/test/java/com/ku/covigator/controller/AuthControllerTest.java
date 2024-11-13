@@ -1,9 +1,11 @@
 package com.ku.covigator.controller;
 
+import com.ku.covigator.domain.travelstyle.*;
 import com.ku.covigator.dto.request.*;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
+import com.ku.covigator.dto.response.LocalSignInResponse;
 import com.ku.covigator.dto.response.ReissueTokenResponse;
-import com.ku.covigator.dto.response.TokenResponse;
+import com.ku.covigator.dto.response.SignUpResponse;
 import com.ku.covigator.security.jwt.JwtAuthArgumentResolver;
 import com.ku.covigator.security.jwt.JwtAuthInterceptor;
 import com.ku.covigator.service.AuthService;
@@ -49,7 +51,18 @@ class AuthControllerTest {
         //given
         String email = "covi@naver.com";
         String password = "covigator123";
-        TokenResponse response = new TokenResponse("access-token", "refresh-token","김코비", email, "www.image.com");
+
+        TravelStyle travelStyle = TravelStyle.builder()
+                .areaType(AreaType.CITY)
+                .planningType(PlanningType.PLANNED)
+                .familiarity(Familiarity.FAMILIAR)
+                .photoPriority(PhotoPriority.IMPORTANT)
+                .popularity(Popularity.WELL_KNOWN)
+                .activityType(ActivityType.ACTIVITY)
+                .build();
+
+        LocalSignInResponse.TravelStyleDto travelStyleDto = LocalSignInResponse.TravelStyleDto.from(travelStyle);
+        LocalSignInResponse response = new LocalSignInResponse("access-token", "refresh-token","김코비", email, "www.image.com", travelStyleDto);
         PostSignInRequest request = new PostSignInRequest("covi@naver.com", "covigator123");
 
         given(authService.signIn(email, password)).willReturn(response);
@@ -64,7 +77,13 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.refresh_token").value(response.refreshToken()))
                 .andExpect(jsonPath("$.nickname").value(response.nickname()))
                 .andExpect(jsonPath("$.email").value(response.email()))
-                .andExpect(jsonPath("$.image_url").value(response.imageUrl()));
+                .andExpect(jsonPath("$.image_url").value(response.imageUrl()))
+                .andExpect(jsonPath("$.travel_style.area_type").value("CITY"))
+                .andExpect(jsonPath("$.travel_style.planning_type").value("PLANNED"))
+                .andExpect(jsonPath("$.travel_style.familiarity").value("FAMILIAR"))
+                .andExpect(jsonPath("$.travel_style.photo_priority").value("IMPORTANT"))
+                .andExpect(jsonPath("$.travel_style.popularity").value("WELL_KNOWN"))
+                .andExpect(jsonPath("$.travel_style.activity_type").value("ACTIVITY"));
     }
 
     @DisplayName("회원 가입한다.")
@@ -88,7 +107,7 @@ class AuthControllerTest {
                 objectMapper.writeValueAsBytes(request)
         );
 
-        TokenResponse response = new TokenResponse("access-token", "refresh-token", "covi", "covi123@naver.com", "www.image.com");
+        SignUpResponse response = new SignUpResponse("access-token", "refresh-token", "covi", "covi123@naver.com", "www.image.com");
 
         given(authService.signUp(any(), any())).willReturn(response);
 

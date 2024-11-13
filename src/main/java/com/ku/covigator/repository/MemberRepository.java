@@ -2,6 +2,7 @@ package com.ku.covigator.repository;
 
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -9,6 +10,9 @@ import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByEmailAndPlatform(String email, Platform platform);
+
+    @EntityGraph(attributePaths = "travelStyle")
+    Optional<Member> findWithTravelStyleByEmailAndPlatform(String email, Platform platform);
 
     @Query("""
     SELECT m
