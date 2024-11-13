@@ -1,9 +1,10 @@
 package com.ku.covigator.controller;
 
 import com.ku.covigator.dto.request.*;
+import com.ku.covigator.dto.response.LocalSignInResponse;
 import com.ku.covigator.dto.response.ReissueTokenResponse;
-import com.ku.covigator.dto.response.TokenResponse;
 import com.ku.covigator.dto.response.KakaoSignInResponse;
+import com.ku.covigator.dto.response.SignUpResponse;
 import com.ku.covigator.exception.badrequest.PasswordVerificationException;
 import com.ku.covigator.exception.badrequest.WrongVerificationCodeException;
 import com.ku.covigator.security.jwt.LoggedInMemberId;
@@ -29,14 +30,14 @@ public class AuthController {
 
     @Operation(summary = "로컬 로그인")
     @PostMapping("/sign-in")
-    public ResponseEntity<TokenResponse> signIn(@RequestBody @Valid PostSignInRequest request) {
+    public ResponseEntity<LocalSignInResponse> signIn(@RequestBody @Valid PostSignInRequest request) {
         return ResponseEntity.ok(authService.signIn(request.email(), request.password()));
     }
 
     @Operation(summary = "회원가입")
     @PostMapping("/sign-up")
-    public ResponseEntity<TokenResponse> signUp(@RequestPart(value = "postSignUpRequest") @Valid PostSignUpRequest request,
-                                                @RequestPart(value = "image", required = false) MultipartFile image) {
+    public ResponseEntity<SignUpResponse> signUp(@RequestPart(value = "postSignUpRequest") @Valid PostSignUpRequest request,
+                                                 @RequestPart(value = "image", required = false) MultipartFile image) {
         return ResponseEntity.ok(authService.signUp(request.toEntity(), image));
     }
 

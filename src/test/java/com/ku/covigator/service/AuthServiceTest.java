@@ -68,7 +68,7 @@ class AuthServiceTest {
         memberRepository.save(member);
 
         //when
-        TokenResponse response = authService.signIn(member.getEmail(), password);
+        LocalSignInResponse response = authService.signIn(member.getEmail(), password);
 
         //then
         assertNotNull(response.accessToken());
@@ -139,7 +139,7 @@ class AuthServiceTest {
                 .thenReturn("https://s3.amazonaws.com/bucket/test-image.jpg");
 
         //when
-        TokenResponse response = authService.signUp(member, imageFile);
+        SignUpResponse response = authService.signUp(member, imageFile);
         Long savedMemberId = Long.parseLong(jwtProvider.getPrincipal(response.accessToken()));
 
         //then

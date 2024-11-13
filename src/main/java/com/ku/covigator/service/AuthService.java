@@ -48,9 +48,9 @@ public class AuthService {
     private static final int VERIFICATION_LENGTH = 8;
 
     @Transactional(readOnly = true)
-    public TokenResponse signIn(String email, String password) {
+    public LocalSignInResponse signIn(String email, String password) {
 
-        Member member = memberRepository.findByEmailAndPlatform(email, Platform.LOCAL)
+        Member member = memberRepository.findWithTravelStyleByEmailAndPlatform(email, Platform.LOCAL)
                 .orElseThrow(NotFoundMemberException::new);
 
         validatePassword(password, member.getPassword());
@@ -61,11 +61,12 @@ public class AuthService {
         String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
 
-        return TokenResponse.from(accessToken, refreshToken, member.getNickname(), member.getEmail(), member.getImageUrl());
+        LocalSignInResponse.TravelStyleDto travelStyleDto = LocalSignInResponse.TravelStyleDto.from(member.getTravelStyle());
+        return LocalSignInResponse.from(accessToken, refreshToken, member.getNickname(), member.getEmail(), member.getImageUrl(), travelStyleDto);
     }
 
     // 로컬 회원가입
-    public TokenResponse signUp(Member member, MultipartFile image) {
+    public SignUpResponse signUp(Member member, MultipartFile image) {
 
         // 닉네임 중복 검증
         validateNicknameDuplication(member.getNickname());
@@ -91,7 +92,7 @@ public class AuthService {
         String refreshToken = createRefreshToken();
         redisUtil.setDataExpire(refreshToken, String.valueOf(member.getId()), rtrProperties.getExpirationLength());
 
-        return TokenResponse.from(accessToken, refreshToken, savedMember.getNickname(), savedMember.getEmail(), savedMember.getImageUrl());
+        return SignUpResponse.from(accessToken, refreshToken, savedMember.getNickname(), savedMember.getEmail(), savedMember.getImageUrl());
     }
 
     // 카카오 회원가입
