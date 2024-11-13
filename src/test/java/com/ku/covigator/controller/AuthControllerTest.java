@@ -64,7 +64,7 @@ class AuthControllerTest {
                 .build();
 
         LocalSignInResponse.TravelStyleDto travelStyleDto = LocalSignInResponse.TravelStyleDto.from(travelStyle);
-        LocalSignInResponse response = new LocalSignInResponse("access-token", "refresh-token","김코비", email, "www.image.com", Gender.MALE, Generation.SENIOR, travelStyleDto);
+        LocalSignInResponse response = new LocalSignInResponse("access-token", "refresh-token", "김코비", email, "www.image.com", Gender.MALE, Generation.SENIOR, travelStyleDto);
         PostSignInRequest request = new PostSignInRequest("covi@naver.com", "covigator123");
 
         given(authService.signIn(email, password)).willReturn(response);
@@ -156,7 +156,18 @@ class AuthControllerTest {
     @Test
     void signInKakaoOldMember() throws Exception {
         //given
-        KakaoSignInResponse response = KakaoSignInResponse.fromOldMember("access-token", "refresh-token", "covi", "covigator@naver.com", "www.image.com");
+
+        TravelStyle travelStyle = TravelStyle.builder()
+                .areaType(AreaType.CITY)
+                .planningType(PlanningType.PLANNED)
+                .familiarity(Familiarity.FAMILIAR)
+                .photoPriority(PhotoPriority.IMPORTANT)
+                .popularity(Popularity.WELL_KNOWN)
+                .activityType(ActivityType.ACTIVITY)
+                .build();
+
+        KakaoSignInResponse.TravelStyleDto travelStyleDto = KakaoSignInResponse.TravelStyleDto.from(travelStyle);
+        KakaoSignInResponse response = KakaoSignInResponse.fromOldMember("access-token", "refresh-token", "covi", "covigator@naver.com", "www.image.com", Gender.MALE, Generation.SENIOR, travelStyleDto);
         given(authService.signInKakao("code")).willReturn(response);
 
         //when //then
@@ -170,7 +181,15 @@ class AuthControllerTest {
                         jsonPath("$.is_new").value("False"),
                         jsonPath("$.nickname").value("covi"),
                         jsonPath("$.email").value("covigator@naver.com"),
-                        jsonPath("$.image_url").value("www.image.com")
+                        jsonPath("$.image_url").value("www.image.com"),
+                        jsonPath("$.travel_style.area_type").value("CITY"),
+                        jsonPath("$.travel_style.planning_type").value("PLANNED"),
+                        jsonPath("$.travel_style.familiarity").value("FAMILIAR"),
+                        jsonPath("$.travel_style.photo_priority").value("IMPORTANT"),
+                        jsonPath("$.travel_style.popularity").value("WELL_KNOWN"),
+                        jsonPath("$.travel_style.activity_type").value("ACTIVITY"),
+                        jsonPath("$.gender").value("MALE"),
+                        jsonPath("$.generation").value("SENIOR")
                 );
     }
 

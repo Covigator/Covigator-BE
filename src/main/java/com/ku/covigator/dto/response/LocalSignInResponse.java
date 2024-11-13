@@ -12,8 +12,8 @@ public record LocalSignInResponse(String accessToken, String refreshToken, Strin
 
     public static LocalSignInResponse from(final String accessToken, final String refreshToken, final String nickname,
                                            final String email, final String imageUrl, final Gender gender,
-                                           final Generation generation, final TravelStyleDto travelStyleDto) {
-        return new LocalSignInResponse(accessToken, refreshToken, nickname, email, imageUrl, gender, generation, travelStyleDto);
+                                           final Generation generation, final TravelStyleDto travelStyle) {
+        return new LocalSignInResponse(accessToken, refreshToken, nickname, email, imageUrl, gender, generation, travelStyle);
     }
 
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)

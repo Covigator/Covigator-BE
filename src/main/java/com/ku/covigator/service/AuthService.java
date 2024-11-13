@@ -4,6 +4,7 @@ import com.ku.covigator.common.SmsVerificationTemplate;
 import com.ku.covigator.config.properties.RtrProperties;
 import com.ku.covigator.domain.member.Member;
 import com.ku.covigator.domain.member.Platform;
+import com.ku.covigator.domain.travelstyle.TravelStyle;
 import com.ku.covigator.dto.response.*;
 import com.ku.covigator.exception.badrequest.DuplicateMemberException;
 import com.ku.covigator.exception.badrequest.DuplicateMemberNicknameException;
@@ -107,14 +108,17 @@ public class AuthService {
 
         // 회원 가입 여부 확인
         String email = kakaoUserInfoResponse.kakaoAccount().email();
-        Optional<Member> savedMember = memberRepository.findByEmailAndPlatform(email, Platform.KAKAO);
+        Optional<Member> savedMember = memberRepository.findWithTravelStyleByEmailAndPlatform(email, Platform.KAKAO);
 
         // 가입된 회원 반환
         if (savedMember.isPresent()) {
             String accessToken = jwtProvider.createToken(savedMember.get().getId().toString());
             String refreshToken = createRefreshToken();
             redisUtil.setDataExpire(refreshToken, String.valueOf(savedMember.get().getId()), rtrProperties.getExpirationLength());
-            return KakaoSignInResponse.fromOldMember(accessToken, refreshToken, savedMember.get().getNickname(), savedMember.get().getEmail(), savedMember.get().getImageUrl());
+
+            KakaoSignInResponse.TravelStyleDto travelStyleDto = KakaoSignInResponse.TravelStyleDto.from(savedMember.get().getTravelStyle());
+            return KakaoSignInResponse.fromOldMember(accessToken, refreshToken, savedMember.get().getNickname(), savedMember.get().getEmail(),
+                    savedMember.get().getImageUrl(), savedMember.get().getGender(), savedMember.get().getGeneration(), travelStyleDto);
         }
 
         // 신규 닉네임 생성
