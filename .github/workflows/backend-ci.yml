@@ -53,6 +53,7 @@ jobs:
           WEATHER_SERVICE_KEY: ${{ secrets.WEATHER_SERVICE_KEY }}
           RTK_EXPIRATION_LENGTH: ${{ secrets.RTK_EXPIRATION_LENGTH }}
           REST_API_KEY: ${{ secrets.REST_API_KEY }}
+          REDIRECT_URI: ${{ secrets.REDIRECT_URI }}
         with:
           arguments: check
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
