@@ -52,6 +52,7 @@ jobs:
           MONGO_DB_DATABASE: ${{ secrets.MONGO_DB_DATABASE }}
           WEATHER_SERVICE_KEY: ${{ secrets.WEATHER_SERVICE_KEY }}
           RTK_EXPIRATION_LENGTH: ${{ secrets.RTK_EXPIRATION_LENGTH }}
+          REST_API_KEY: ${{ secrets.REST_API_KEY }}
         with:
           arguments: check
           cache-read-only: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/heads/develop' }}
