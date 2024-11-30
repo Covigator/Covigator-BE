@@ -22,14 +22,12 @@ public class KakaoUriBuilder {
 
     public URI buildKakaoTokenRequestUri(String code) {
         return UriComponentsBuilder.fromUriString(kakaoProperties.getTokenUrl())
-                .queryParam(GRANT_TYPE, "{grant_type}")
-                .queryParam(CLIENT_ID, "{client_id}")
-                .queryParam(REDIRECTION_URI, "{redirect_uri}")
-                .queryParam(CODE, "{code}")
-                .build(AUTHORIZATION_CODE,
-                        kakaoProperties.getClientId(),
-                        kakaoProperties.getRedirectUri(),
-                        code);
+                .queryParam(GRANT_TYPE, AUTHORIZATION_CODE)
+                .queryParam(CLIENT_ID, kakaoProperties.getClientId())
+                .queryParam(REDIRECTION_URI, kakaoProperties.getRedirectUri())
+                .queryParam(CODE, code)
+                .build(true)
+                .toUri();
     }
 
     public URI buildKakaoUserInfoRequestUri() {
