@@ -45,4 +45,13 @@ public class MemberController {
         memberService.verifyNicknameDuplication(request.nickname());
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "회원 삭제")
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteMember(
+            @Parameter(hidden = true) @LoggedInMemberId Long memberId
+    ) {
+        memberService.deleteMember(memberId);
+        return ResponseEntity.ok().build();
+    }
 }

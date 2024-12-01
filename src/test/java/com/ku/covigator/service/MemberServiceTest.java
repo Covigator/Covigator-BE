@@ -101,4 +101,24 @@ class MemberServiceTest {
         ).isInstanceOf(DuplicateMemberNicknameException.class);
     }
 
+    @DisplayName("회원을 삭제한다.")
+    @Test
+    void deleteMember() {
+        //given
+        Member member = Member.builder()
+                .email("covi@naver.com")
+                .password("covigator123!")
+                .nickname("covi")
+                .platform(Platform.LOCAL)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
+        //when
+        memberService.deleteMember(savedMember.getId());
+
+        //then
+        assertThat(memberRepository.findAll()).isEmpty();
+    }
+
 }

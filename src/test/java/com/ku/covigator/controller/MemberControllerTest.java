@@ -17,8 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -87,6 +86,20 @@ class MemberControllerTest {
         mockMvc.perform(post("/members/check-for-duplicate/nickname")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @DisplayName("회원 삭제를 요청한다.")
+    @Test
+    void deleteMember() throws Exception {
+        //given
+        given(jwtAuthArgumentResolver.resolveArgument(any(), any(), any(), any()))
+                .willReturn(1L);
+        given(jwtAuthArgumentResolver.supportsParameter(any())).willReturn(true);
+
+        //when //then
+        mockMvc.perform(delete("/members")
                 ).andDo(print())
                 .andExpect(status().isOk());
     }
