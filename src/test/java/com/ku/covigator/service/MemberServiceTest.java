@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 
 @SpringBootTest
@@ -99,6 +101,27 @@ class MemberServiceTest {
         assertThatThrownBy(
                 () -> memberService.verifyNicknameDuplication(nickName)
         ).isInstanceOf(DuplicateMemberNicknameException.class);
+    }
+
+    @DisplayName("회원을 삭제한다.")
+    @Test
+    void deleteMember() {
+        //given
+        Member member = Member.builder()
+                .email("covi@naver.com")
+                .password("covigator123!")
+                .nickname("covi")
+                .platform(Platform.LOCAL)
+                .build();
+
+        Member savedMember = memberRepository.save(member);
+
+        //when
+        memberService.deleteMember(savedMember.getId());
+
+        //then
+        List<Member> members = memberRepository.findAll();
+        assertThat(members.size()).isZero();
     }
 
 }

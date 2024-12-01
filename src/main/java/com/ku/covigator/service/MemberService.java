@@ -34,6 +34,10 @@ public class MemberService {
         memberRepository.save(member);
     }
 
+    public void deleteMember(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
+
     public void verifyNicknameDuplication(String nickname) {
         if(memberRepository.findByNickname(nickname).isPresent()) {
             throw new DuplicateMemberNicknameException();
