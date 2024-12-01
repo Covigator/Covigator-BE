@@ -120,8 +120,7 @@ class MemberServiceTest {
         memberService.deleteMember(savedMember.getId());
 
         //then
-        List<Member> members = memberRepository.findAll();
-        assertThat(members.size()).isZero();
+        assertThat(memberRepository.findAll()).isEmpty();
     }
 
 }
